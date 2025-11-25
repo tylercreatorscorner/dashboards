@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creators Corner - Analytics Dashboard</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADhUlEQVR4nO2WW0hUURSGv3PGKZ1xnMm8lJWWZReNkiAsoosgBVFBD0UQBD1EQVBPEdFLdKGHoi6UQVFR0YXoQhcqAoMudEGjNLM0U7N0vMxkzrkdetgznZlzzowz9tQP/4a999prrf85e+21YAQj+L8h/IuLE47AeV5QZAFC0wLN7X4TJElG/FsEBLmFiHBYJLRLCh9KMsW6AjL5CiLJG8bRcbhcO7P1uO4aXLGOALcbU9IGvPt7K/BqAU6n0j46Opq0tLS+8vLy99Fo9GuSSQgACPyBAImwgAR/K+Cns7S0lIyMDIxGIzabjbi4ONLS0sjMzOT06dOcOHGC4uJiiouLKS8vp7a2li+yQkFxAQEJGHoFBD2kpqZy+vRpdu7cycWLF+ns7ESWZfx+P16vl+TkZEaPHk1rayuzZ89mypQpBAIB3n38FPaQwFAE+qYgPT2d0tJSSktLGT9+PD6fT7W5XC6GDRuGKIoIgoDVasVkMtHZ2UhjYyOdAQ1b/AEqIMoyhYWFHDhwgEWLFhEMBjEYDJjNZlX5er0eQRAQRRGLxUJLSwtWqxWTycTdu3dxOA6rGghJoOfEsizj9/sZO3YsZWVlrFy5kj179qiEQoAhGKxWK3v37sXv9xMIBDAYDCQkJFBeXk5sbCwej4dUfwMBSUG8T0CoAkII7MjISObn55OQkICiKNhsNkZptKptt9uZNGkS2dnZSJKEKIoYjUY0Gg0Wi4U7d+5w5swZFixYwOLFi0lMTKRDnwBDdYQj0NfGxsaSmJiIy+XCarWSl5dHTk4O0dHRxMfHExcXR0REBIIgIAgCBoOBuLg4DAYDkiQhiiJnz57l+vXrbNu2jZSUFGbNmkVCQgJOV4jU9+4FYbNxsbGx2Gw2JEkiPDycMWPGqJO5XK4+sjqdDqfTid/vp7u7G4vFgt/vx+VycePGDW7evElJSQkLFy5k6tSpZGRkkJWVhS0sjFaHI6TjgyIgqU9ERASRkZHEx8djs9nQaDQYDAYmT55MfHw8er0ejUaDTqdDEAS0Wi0GgwGdTkdXVxdPnjzh2rVrnD17ltWrV7Nu3TomTJiAxWIhNjaWVkUhPCIi5KMK4OFDaN2xg9TUVAoKCpg/fz5FRUU4nU70ej1Go5GYmBjMZjNarZaOjg5aWlr49OkTt27doqqqiqqqKoLBIEuWLCE5OZns7GymTZtGvNlMQ3d3yMf4HwGGJ/P/Dr8A5hCVLFmYUKoAAAAASUVORK5CYII=">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo img { width: 40px; height: 40px; }
+        .logo h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-controls { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .control-group { display: flex; align-items: center; gap: 8px; }
+        .control-group label { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+        .control-group select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .control-group select option { background: #1a1a2e; }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .status-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #ffd93d;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.connected { background: #6bcb77; animation: none; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.05);
+        }
+        .tab:hover { background: rgba(255,255,255,0.1); }
+        .tab.active { background: linear-gradient(135deg, #00d4ff, #0099ff); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 5px;
+        }
+        
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+        .stat-change.positive { color: #6bcb77; }
+        .stat-change.negative { color: #ff6b6b; }
+        .stat-change.neutral { color: rgba(255,255,255,0.5); }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 25px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title { font-size: 1.2rem; font-weight: 600; }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+        
+        .chart-container { height: 300px; position: relative; }
+        
+        .table-container { overflow-x: auto; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        th {
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+        }
+        th:hover { color: #00d4ff; }
+        th.sorted-asc::after { content: ' ↑'; }
+        th.sorted-desc::after { content: ' ↓'; }
+        
+        tr:hover { background: rgba(255,255,255,0.03); }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge.catakor { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        .badge.jiyu { background: rgba(78,205,196,0.2); color: #4ecdc4; }
+        .badge.physicians_choice { background: rgba(107,203,119,0.2); color: #6bcb77; }
+        .badge.peach_slices { background: rgba(255,182,193,0.2); color: #ffb6c1; }
+        .badge.yerba_magic { background: rgba(255,215,0,0.2); color: #ffd700; }
+        .badge.managed { background: rgba(138,43,226,0.3); color: #da70d6; }
+        
+        a { color: #00d4ff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        .filters { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        
+        .search-input {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 0.9rem;
+            min-width: 250px;
+        }
+        .search-input::placeholder { color: rgba(255,255,255,0.4); }
+        .search-input:focus { outline: none; border-color: #00d4ff; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.6);
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px; height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .pagination button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .pagination button:hover:not(:disabled) { border-color: #00d4ff; background: rgba(0,212,255,0.1); }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination span { color: rgba(255,255,255,0.7); }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary { background: linear-gradient(135deg, #00d4ff, #0099ff); color: #fff; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,212,255,0.3); }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.7);
+        }
+        .btn-secondary:hover { border-color: #00d4ff; color: #00d4ff; }
+        
+        .managed-section {
+            background: linear-gradient(135deg, rgba(138,43,226,0.1), rgba(218,112,214,0.1));
+            border: 1px solid rgba(138,43,226,0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 25px;
+        }
+        
+        .managed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .managed-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        @media (max-width: 900px) { .managed-stats { grid-template-columns: repeat(2, 1fr); } }
+        
+        .managed-stat {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .managed-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #da70d6;
+        }
+        
+        .managed-stat-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 3px;
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        
+        .modal {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal h2 { margin-bottom: 20px; }
+        
+        .modal textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .wow-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .wow-indicator.up { background: rgba(107,203,119,0.2); color: #6bcb77; }
+        .wow-indicator.down { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        .wow-indicator.new { background: rgba(0,212,255,0.2); color: #00d4ff; }
+        
+        .tier-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .tier-badge.vip { background: rgba(255,215,0,0.2); color: #ffd700; }
+        .tier-badge.closer { background: rgba(138,43,226,0.2); color: #da70d6; }
+        .tier-badge.rising { background: rgba(0,212,255,0.2); color: #00d4ff; }
+        .tier-badge.incubator { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+        
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        .form-group select option { background: #1a1a2e; }
+        .form-group textarea { resize: vertical; font-family: inherit; }
+        
+        .btn-danger {
+            background: rgba(255,107,107,0.2);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        .btn-danger:hover { background: rgba(255,107,107,0.3); }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover { border-color: #00d4ff; color: #00d4ff; }
+        
+        .inactive-row { opacity: 0.5; }
+        .inactive-row td { color: rgba(255,255,255,0.4); }
+        
+        .application-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .application-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .app-info h4 { margin-bottom: 5px; }
+        .app-meta {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .app-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-badge.pending { background: rgba(255,215,0,0.2); color: #ffd700; }
+        .status-badge.approved { background: rgba(107,203,119,0.2); color: #6bcb77; }
+        .status-badge.rejected { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        
+        .app-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin: 15px 0;
+        }
+        
+        .detail-item label {
+            display: block;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+        }
+        
+        .detail-item value {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+        
+        .question-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .question-text { flex: 1; }
+        .question-actions { display: flex; gap: 10px; align-items: center; }
+        
+        .drag-handle {
+            cursor: grab;
+            color: rgba(255,255,255,0.3);
+            margin-right: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .empty-state h3 { margin-bottom: 10px; color: rgba(255,255,255,0.7); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADhUlEQVR4nO2WW0hUURSGv3PGKZ1xnMm8lJWWZReNkiAsoosgBVFBD0UQBD1EQVBPEdFLdKGHoi6UQVFR0YXoQhcqAoMudEGjNLM0U7N0vMxkzrkdetgznZlzzowz9tQP/4a999prrf85e+21YAQj+L8h/IuLE47AeV5QZAFC0wLN7X4TJElG/FsEBLmFiHBYJLRLCh9KMsW6AjL5CiLJG8bRcbhcO7P1uO4aXLGOALcbU9IGvPt7K/BqAU6n0j46Opq0tLS+8vLy99Fo9GuSSQgACPyBAImwgAR/K+Cns7S0lIyMDIxGIzabjbi4ONLS0sjMzOT06dOcOHGC4uJiiouLKS8vp7a2li+yQkFxAQEJGHoFBD2kpqZy+vRpdu7cycWLF+ns7ESWZfx+P16vl+TkZEaPHk1rayuzZ89mypQpBAIB3n38FPaQwFAE+qYgPT2d0tJSSktLGT9+PD6fT7W5XC6GDRuGKIoIgoDVasVkMtHZ2UhjYyOdAQ1b/AEqIMoyhYWFHDhwgEWLFhEMBjEYDJjNZlX5er0eQRAQRRGLxUJLSwtWqxWTycTdu3dxOA6rGghJoOfEsizj9/sZO3YsZWVlrFy5kj179qiEQoAhGKxWK3v37sXv9xMIBDAYDCQkJFBeXk5sbCwej4dUfwMBSUG8T0CoAkII7MjISObn55OQkICiKNhsNkZptKptt9uZNGkS2dnZSJKEKIoYjUY0Gg0Wi4U7d+5w5swZFixYwOLFi0lMTKRDnwBDdYQj0NfGxsaSmJiIy+XCarWSl5dHTk4O0dHRxMfHExcXR0REBIIgIAgCBoOBuLg4DAYDkiQhiiJnz57l+vXrbNu2jZSUFGbNmkVCQgJOV4jU9+4FYbNxsbGx2Gw2JEkiPDycMWPGqJO5XK4+sjqdDqfTid/vp7u7G4vFgt/vx+VycePGDW7evElJSQkLFy5k6tSpZGRkkJWVhS0sjFaHI6TjgyIgqU9ERASRkZHEx8djs9nQaDQYDAYmT55MfHw8er0ejUaDTqdDEAS0Wi0GgwGdTkdXVxdPnjzh2rVrnD17ltWrV7Nu3TomTJiAxWIhNjaWVkUhPCIi5KMK4OFDaN2xg9TUVAoKCpg/fz5FRUU4nU70ej1Go5GYmBjMZjNarZaOjg5aWlr49OkTt27doqqqiqqqKoLBIEuWLCE5OZns7GymTZtGvNlMQ3d3yMf4HwGGJ/P/Dr8A5hCVLFmYUKoAAAAASUVORK5CYII=" alt="Logo">
+                <h1>Analytics Dashboard</h1>
+            </div>
+            <div class="header-controls">
+                <div class="control-group">
+                    <label>Week:</label>
+                    <select id="weekSelect"><option value="">Loading...</option></select>
+                </div>
+                <div class="control-group">
+                    <label>Brand:</label>
+                    <select id="brandFilter">
+                        <option value="all">All Brands</option>
+                        <option value="catakor">Cata-Kor</option>
+                        <option value="jiyu">JiYu</option>
+                        <option value="physicians_choice">Physicians Choice</option>
+                        <option value="peach_slices">Peach Slices</option>
+                        <option value="yerba_magic">Yerba Magic</option>
+                    </select>
+                </div>
+                <button class="btn btn-secondary" onclick="loadDashboard()">↻ Refresh</button>
+                <div class="connection-status">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Connecting...</span>
+                </div>
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('overview')">📊 Overview</div>
+            <div class="tab" onclick="switchTab('creators')">👥 Creators</div>
+            <div class="tab" onclick="switchTab('videos')">🎬 Videos</div>
+            <div class="tab" onclick="switchTab('managed')">⭐ My Creators</div>
+            <div class="tab" onclick="switchTab('onboarding')">📝 Applications <span class="badge" id="pendingBadge" style="background:rgba(255,107,107,0.3);color:#ff6b6b;margin-left:5px;display:none;">0</span></div>
+        </div>
+        
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <!-- Your Creators Summary -->
+            <div class="managed-section" id="managedSummary" style="display:none;">
+                <div class="managed-header">
+                    <h3>⭐ Your Managed Creators</h3>
+                    <span id="managedCount">0 creators tracked</span>
+                </div>
+                <div class="managed-stats">
+                    <div class="managed-stat">
+                        <div class="managed-stat-value" id="managedGMV">$0</div>
+                        <div class="managed-stat-label">Your GMV</div>
+                    </div>
+                    <div class="managed-stat">
+                        <div class="managed-stat-value" id="managedPercent">0%</div>
+                        <div class="managed-stat-label">of Total GMV</div>
+                    </div>
+                    <div class="managed-stat">
+                        <div class="managed-stat-value" id="managedActive">0</div>
+                        <div class="managed-stat-label">Active Creators</div>
+                    </div>
+                    <div class="managed-stat">
+                        <div class="managed-stat-value" id="managedCommission">$0</div>
+                        <div class="managed-stat-label">Commission</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-value" id="statGMV">-</div>
+                    <div class="stat-label">Total GMV</div>
+                    <div class="stat-change neutral" id="statGMVChange">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statOrders">-</div>
+                    <div class="stat-label">Orders</div>
+                    <div class="stat-change neutral" id="statOrdersChange">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statCreators">-</div>
+                    <div class="stat-label">Active Creators</div>
+                    <div class="stat-change neutral" id="statCreatorsChange">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statVideos">-</div>
+                    <div class="stat-label">Videos Posted</div>
+                    <div class="stat-change neutral" id="statVideosChange">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statAOV">-</div>
+                    <div class="stat-label">Avg Order Value</div>
+                    <div class="stat-change neutral" id="statAOVChange">-</div>
+                </div>
+            </div>
+            
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">💰 GMV by Brand</h3></div>
+                    <div class="chart-container"><canvas id="gmvChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📈 Creator Activity Distribution</h3></div>
+                    <div class="chart-container"><canvas id="activityChart"></canvas></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">🏆 Top 10 Creators</h3></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Creator</th>
+                                <th>Brand</th>
+                                <th>GMV</th>
+                                <th>WoW</th>
+                                <th>Orders</th>
+                                <th>Videos</th>
+                                <th>Commission</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topCreatorsTable">
+                            <tr><td colspan="8" class="loading">Loading data</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Creators Tab -->
+        <div id="creators" class="tab-content">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">👥 All Creators</h3></div>
+                <div class="filters">
+                    <input type="text" class="search-input" id="creatorSearch" placeholder="Search creators..." oninput="filterCreators()">
+                    <select id="activityFilter" onchange="filterCreators()">
+                        <option value="all">All Activity</option>
+                        <option value="active">Active (GMV > $0)</option>
+                        <option value="high">High Performers ($1000+)</option>
+                        <option value="inactive">Inactive (GMV = $0)</option>
+                        <option value="managed">My Creators Only</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="creatorsTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortCreators('creator_name')">Creator</th>
+                                <th onclick="sortCreators('brand')">Brand</th>
+                                <th onclick="sortCreators('gmv')">GMV</th>
+                                <th>WoW</th>
+                                <th onclick="sortCreators('orders')">Orders</th>
+                                <th onclick="sortCreators('videos_posted')">Videos</th>
+                                <th onclick="sortCreators('commission')">Commission</th>
+                                <th onclick="sortCreators('refund_rate')">Refund %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="creatorsTableBody">
+                            <tr><td colspan="8" class="loading">Loading data</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="creatorsPagination"></div>
+            </div>
+        </div>
+        
+        <!-- Videos Tab -->
+        <div id="videos" class="tab-content">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">🎬 All Videos</h3></div>
+                <div class="filters">
+                    <input type="text" class="search-input" id="videoSearch" placeholder="Search videos or creators..." oninput="filterVideos()">
+                </div>
+                <div class="table-container">
+                    <table id="videosTable">
+                        <thead>
+                            <tr>
+                                <th onclick="sortVideos('creator_name')">Creator</th>
+                                <th onclick="sortVideos('brand')">Brand</th>
+                                <th onclick="sortVideos('gmv')">GMV</th>
+                                <th onclick="sortVideos('orders')">Orders</th>
+                                <th onclick="sortVideos('views')">Views</th>
+                                <th onclick="sortVideos('conversion_rate')">Conv %</th>
+                                <th>Video</th>
+                            </tr>
+                        </thead>
+                        <tbody id="videosTableBody">
+                            <tr><td colspan="7" class="loading">Loading data</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="videosPagination"></div>
+            </div>
+        </div>
+        
+        <!-- Managed Creators Tab -->
+        <div id="managed" class="tab-content">
+            <div class="managed-section">
+                <div class="managed-header">
+                    <h3>⭐ Your Managed Creators - This Week's Performance</h3>
+                    <span id="managedWeekPerf"></span>
+                </div>
+                <div class="managed-stats">
+                    <div class="managed-stat">
+                        <div class="managed-stat-value" id="managedTabGMV">$0</div>
+                        <div class="managed-stat-label">Total GMV</div>
+                    </div>
+                    <div class="managed-stat">
+                        <div class="managed-stat-value" id="managedTabPercent">0%</div>
+                        <div class="managed-stat-label">of All GMV</div>
+                    </div>
+                    <div class="managed-stat">
+                        <div class="managed-stat-value" id="managedTabCommission">$0</div>
+                        <div class="managed-stat-label">Commission</div>
+                    </div>
+                    <div class="managed-stat">
+                        <div class="managed-stat-value" id="managedTabRetainers">$0</div>
+                        <div class="managed-stat-label">Monthly Retainers</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">👥 Creator Roster</h3>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn btn-secondary" onclick="openBulkAddModal()">📋 Bulk Add</button>
+                        <button class="btn btn-primary" onclick="openCreatorModal()">+ Add Creator</button>
+                    </div>
+                </div>
+                <div class="filters">
+                    <input type="text" class="search-input" id="managedSearch" placeholder="Search roster..." oninput="renderManagedTable()">
+                    <select id="managedBrandFilter" onchange="renderManagedTable()">
+                        <option value="all">All Brands</option>
+                        <option value="catakor">Cata-Kor</option>
+                        <option value="jiyu">JiYu</option>
+                        <option value="physicians_choice">Physicians Choice</option>
+                        <option value="peach_slices">Peach Slices</option>
+                        <option value="yerba_magic">Yerba Magic</option>
+                        <option value="unassigned">Unassigned</option>
+                    </select>
+                    <select id="managedTierFilter" onchange="renderManagedTable()">
+                        <option value="all">All Tiers</option>
+                        <option value="VIP">VIP</option>
+                        <option value="Closer">Closer</option>
+                        <option value="Rising">Rising</option>
+                        <option value="Incubator">Incubator</option>
+                        <option value="unassigned">Unassigned</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Creator</th>
+                                <th>Discord</th>
+                                <th>Brand</th>
+                                <th>Tier</th>
+                                <th>Retainer</th>
+                                <th>This Week GMV</th>
+                                <th>Commission</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="managedTableBody">
+                            <tr><td colspan="8" class="loading">Loading roster</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="rosterSummary" style="margin-top:15px;padding:15px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:0.9rem;color:rgba(255,255,255,0.7);"></div>
+            </div>
+        </div>
+        
+        <!-- Onboarding Tab -->
+        <div id="onboarding" class="tab-content">
+            <!-- Pending Applications -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📝 Pending Applications</h3>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn btn-secondary" onclick="openQuestionsManager()">⚙️ Manage Questions</button>
+                        <button class="btn btn-primary" onclick="copyOnboardingLink()">📋 Copy Form Link</button>
+                    </div>
+                </div>
+                <div class="filters">
+                    <select id="appStatusFilter" onchange="renderApplications()">
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <div id="applicationsContainer"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for adding/editing single creator -->
+    <div class="modal-overlay" id="creatorModal">
+        <div class="modal">
+            <h2 id="creatorModalTitle">Add Creator</h2>
+            <input type="hidden" id="creatorEditId">
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>TikTok Username *</label>
+                    <input type="text" id="creatorTiktok" placeholder="e.g. lotuswellness8">
+                </div>
+                <div class="form-group">
+                    <label>Discord Username</label>
+                    <input type="text" id="creatorDiscord" placeholder="e.g. lotus#1234">
+                </div>
+                <div class="form-group">
+                    <label>Primary Brand</label>
+                    <select id="creatorBrand">
+                        <option value="">-- Select Brand --</option>
+                        <option value="catakor">Cata-Kor</option>
+                        <option value="jiyu">JiYu</option>
+                        <option value="physicians_choice">Physicians Choice</option>
+                        <option value="peach_slices">Peach Slices</option>
+                        <option value="yerba_magic">Yerba Magic</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tier</label>
+                    <select id="creatorTier">
+                        <option value="">-- Select Tier --</option>
+                        <option value="Incubator">Incubator</option>
+                        <option value="Rising">Rising</option>
+                        <option value="Closer">Closer</option>
+                        <option value="VIP">VIP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Monthly Retainer ($)</label>
+                    <input type="number" id="creatorRetainer" placeholder="0" min="0" step="50">
+                </div>
+                <div class="form-group full-width">
+                    <label>Notes</label>
+                    <textarea id="creatorNotes" placeholder="Any notes about this creator..." rows="3"></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="deleteCreatorBtn" onclick="deleteCreator()" style="display:none;margin-right:auto;">Delete</button>
+                <button class="btn btn-secondary" onclick="closeCreatorModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveCreator()">Save Creator</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for bulk adding creators -->
+    <div class="modal-overlay" id="bulkAddModal">
+        <div class="modal">
+            <h2>📋 Bulk Add Creators</h2>
+            <p style="color:rgba(255,255,255,0.6);margin-bottom:15px;">
+                Paste TikTok usernames, one per line. These will be added with default settings (you can edit details later).
+            </p>
+            <textarea id="bulkAddInput" placeholder="lotuswellness8
+mayaholistic1
+shopbyjake
+..." rows="10"></textarea>
+            <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:15px;">
+                <span id="bulkAddCount">0</span> usernames detected
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeBulkAddModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="bulkAddCreators()">Add All</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for reviewing applications -->
+    <div class="modal-overlay" id="appReviewModal">
+        <div class="modal" style="max-width:700px;">
+            <h2 id="appReviewTitle">Review Application</h2>
+            <input type="hidden" id="appReviewId">
+            
+            <div id="appReviewContent"></div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-danger" onclick="rejectApplication()">Reject</button>
+                <button class="btn btn-secondary" onclick="closeAppReviewModal()">Close</button>
+                <button class="btn btn-primary" onclick="approveApplication()">Approve & Add to Roster</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for managing custom questions -->
+    <div class="modal-overlay" id="questionsModal">
+        <div class="modal" style="max-width:800px;">
+            <h2>⚙️ Manage Application Questions</h2>
+            <p style="color:rgba(255,255,255,0.6);margin-bottom:20px;">
+                Customize the questions applicants answer. Discord/TikTok/Brand are always asked.
+            </p>
+            
+            <div id="questionsList" style="margin-bottom:20px;"></div>
+            
+            <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;">
+                <h3 style="margin-bottom:15px;">Add New Question</h3>
+                <div class="form-group">
+                    <input type="text" id="newQuestionText" placeholder="Type your question here..." style="width:100%;margin-bottom:10px;">
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                        <input type="checkbox" id="newQuestionRequired">
+                        <span>Required</span>
+                    </label>
+                </div>
+                <button class="btn btn-primary" onclick="addQuestion()">Add Question</button>
+            </div>
+            
+            <div class="modal-actions" style="margin-top:20px;">
+                <button class="btn btn-secondary" onclick="closeQuestionsManager()">Done</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // =====================================================
+        // CONFIGURATION
+        // =====================================================
+        const SUPABASE_URL = 'https://elrsgxlyejlkzjcnhmak.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscnNneGx5ZWpsa3pqY25obWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMTQ5OTUsImV4cCI6MjA3OTU5MDk5NX0.8XScMdGkFRqRIDMPY3gWS5tk0Z8NbGzDXuH1dsnBdZ0';
+        
+        const BRAND_DISPLAY = {
+            'catakor': 'Cata-Kor',
+            'jiyu': 'JiYu',
+            'physicians_choice': 'Physicians Choice',
+            'peach_slices': 'Peach Slices',
+            'yerba_magic': 'Yerba Magic'
+        };
+        
+        const BRAND_COLORS = {
+            'catakor': '#ff6b6b',
+            'jiyu': '#4ecdc4',
+            'physicians_choice': '#6bcb77',
+            'peach_slices': '#ffb6c1',
+            'yerba_magic': '#ffd700'
+        };
+        
+        let supabase;
+        let creatorsData = [];
+        let prevWeekCreators = [];
+        let videosData = [];
+        let allWeeks = [];
+        let currentWeek = null;
+        let currentBrand = 'all';
+        let managedList = [];
+        let managedCreatorsData = []; // Full records from Supabase
+        let applications = [];
+        let customQuestions = [];
+        
+        let creatorPage = 1;
+        let videoPage = 1;
+        const pageSize = 50;
+        
+        let creatorSortCol = 'gmv';
+        let creatorSortDir = 'desc';
+        let videoSortCol = 'gmv';
+        let videoSortDir = 'desc';
+        
+        let gmvChart = null;
+        let activityChart = null;
+        
+        // =====================================================
+        // INITIALIZATION
+        // =====================================================
+        
+        async function init() {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                const { data, error } = await supabase.from('brands').select('count');
+                if (error) throw error;
+                
+                document.getElementById('statusDot').classList.add('connected');
+                document.getElementById('statusText').textContent = 'Connected';
+                
+                // Load managed creators from Supabase
+                await loadManagedCreators();
+                
+                // Load applications
+                await loadApplications();
+                
+                await loadWeeks();
+                await loadDashboard();
+                
+            } catch (err) {
+                console.error('Connection error:', err);
+                document.getElementById('statusDot').style.background = '#ff6b6b';
+                document.getElementById('statusText').textContent = 'Connection Failed';
+            }
+        }
+        
+        async function loadManagedCreators() {
+            const { data, error } = await supabase
+                .from('managed_creators')
+                .select('*')
+                .eq('is_active', true)
+                .order('tiktok_username');
+            
+            if (error) {
+                console.error('Error loading managed creators:', error);
+                return;
+            }
+            
+            managedCreatorsData = data || [];
+            managedList = managedCreatorsData.map(c => c.tiktok_username);
+        }
+        
+        async function loadWeeks() {
+            const { data, error } = await supabase
+                .from('creator_performance')
+                .select('week_start, week_end')
+                .order('week_end', { ascending: false });
+            
+            if (error) return;
+            
+            allWeeks = [...new Set(data.map(r => `${r.week_start}|${r.week_end}`))];
+            const select = document.getElementById('weekSelect');
+            
+            select.innerHTML = allWeeks.map((w, i) => {
+                const [start, end] = w.split('|');
+                return `<option value="${w}" ${i === 0 ? 'selected' : ''}>${formatDate(start)} - ${formatDate(end)}</option>`;
+            }).join('');
+            
+            if (allWeeks.length > 0) currentWeek = allWeeks[0];
+            
+            select.addEventListener('change', (e) => {
+                currentWeek = e.target.value;
+                loadDashboard();
+            });
+        }
+        
+        // =====================================================
+        // DATA LOADING
+        // =====================================================
+        
+        async function loadDashboard() {
+            if (!currentWeek) return;
+            
+            const [weekStart, weekEnd] = currentWeek.split('|');
+            currentBrand = document.getElementById('brandFilter').value;
+            
+            // Load current week creators
+            let query = supabase.from('creator_performance').select('*')
+                .eq('week_start', weekStart).eq('week_end', weekEnd)
+                .order('gmv', { ascending: false });
+            if (currentBrand !== 'all') query = query.eq('brand', currentBrand);
+            
+            const { data: creators } = await query;
+            creatorsData = creators || [];
+            
+            // Load previous week for comparison
+            const currentIdx = allWeeks.indexOf(currentWeek);
+            if (currentIdx < allWeeks.length - 1) {
+                const [prevStart, prevEnd] = allWeeks[currentIdx + 1].split('|');
+                let prevQuery = supabase.from('creator_performance').select('*')
+                    .eq('week_start', prevStart).eq('week_end', prevEnd);
+                if (currentBrand !== 'all') prevQuery = prevQuery.eq('brand', currentBrand);
+                
+                const { data: prevCreators } = await prevQuery;
+                prevWeekCreators = prevCreators || [];
+            } else {
+                prevWeekCreators = [];
+            }
+            
+            // Load videos
+            let videoQuery = supabase.from('video_performance').select('*')
+                .eq('week_start', weekStart).eq('week_end', weekEnd)
+                .order('gmv', { ascending: false });
+            if (currentBrand !== 'all') videoQuery = videoQuery.eq('brand', currentBrand);
+            
+            const { data: videos } = await videoQuery;
+            videosData = videos || [];
+            
+            updateOverview();
+            updateCharts();
+            updateTopCreators();
+            updateManagedSummary();
+            renderCreatorsTable();
+            renderVideosTable();
+            renderManagedTable();
+        }
+        
+        // =====================================================
+        // WEEK OVER WEEK
+        // =====================================================
+        
+        function getCreatorPrevGMV(creatorName, brand) {
+            const prev = prevWeekCreators.find(c => 
+                c.creator_name.toLowerCase() === creatorName.toLowerCase() && c.brand === brand
+            );
+            return prev ? parseFloat(prev.gmv) || 0 : null;
+        }
+        
+        function calcChange(current, previous) {
+            if (previous === null || previous === undefined) return { pct: null, isNew: true };
+            if (previous === 0) return current > 0 ? { pct: 100, isNew: false } : { pct: 0, isNew: false };
+            return { pct: ((current - previous) / previous) * 100, isNew: false };
+        }
+        
+        function renderWoW(current, previous) {
+            const change = calcChange(current, previous);
+            if (change.isNew) return '<span class="wow-indicator new">NEW</span>';
+            if (change.pct === null) return '-';
+            if (change.pct > 0) return `<span class="wow-indicator up">↑${change.pct.toFixed(0)}%</span>`;
+            if (change.pct < 0) return `<span class="wow-indicator down">↓${Math.abs(change.pct).toFixed(0)}%</span>`;
+            return '<span class="wow-indicator">0%</span>';
+        }
+        
+        // =====================================================
+        // OVERVIEW
+        // =====================================================
+        
+        function updateOverview() {
+            const totalGMV = creatorsData.reduce((sum, c) => sum + (parseFloat(c.gmv) || 0), 0);
+            const totalOrders = creatorsData.reduce((sum, c) => sum + (parseInt(c.orders) || 0), 0);
+            const activeCreators = creatorsData.filter(c => parseFloat(c.gmv) > 0).length;
+            const totalVideos = creatorsData.reduce((sum, c) => sum + (parseInt(c.videos_posted) || 0), 0);
+            const aov = totalOrders > 0 ? totalGMV / totalOrders : 0;
+            
+            // Previous week totals
+            const prevGMV = prevWeekCreators.reduce((sum, c) => sum + (parseFloat(c.gmv) || 0), 0);
+            const prevOrders = prevWeekCreators.reduce((sum, c) => sum + (parseInt(c.orders) || 0), 0);
+            const prevActive = prevWeekCreators.filter(c => parseFloat(c.gmv) > 0).length;
+            const prevVideos = prevWeekCreators.reduce((sum, c) => sum + (parseInt(c.videos_posted) || 0), 0);
+            const prevAOV = prevOrders > 0 ? prevGMV / prevOrders : 0;
+            
+            document.getElementById('statGMV').textContent = '$' + totalGMV.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('statOrders').textContent = totalOrders.toLocaleString();
+            document.getElementById('statCreators').textContent = activeCreators.toLocaleString();
+            document.getElementById('statVideos').textContent = totalVideos.toLocaleString();
+            document.getElementById('statAOV').textContent = '$' + aov.toFixed(2);
+            
+            // WoW changes
+            updateStatChange('statGMVChange', totalGMV, prevGMV);
+            updateStatChange('statOrdersChange', totalOrders, prevOrders);
+            updateStatChange('statCreatorsChange', activeCreators, prevActive);
+            updateStatChange('statVideosChange', totalVideos, prevVideos);
+            updateStatChange('statAOVChange', aov, prevAOV);
+        }
+        
+        function updateStatChange(elementId, current, previous) {
+            const el = document.getElementById(elementId);
+            if (prevWeekCreators.length === 0) {
+                el.textContent = 'No prior week';
+                el.className = 'stat-change neutral';
+                return;
+            }
+            
+            const change = calcChange(current, previous);
+            if (change.pct > 0) {
+                el.textContent = `↑ ${change.pct.toFixed(1)}% vs last week`;
+                el.className = 'stat-change positive';
+            } else if (change.pct < 0) {
+                el.textContent = `↓ ${Math.abs(change.pct).toFixed(1)}% vs last week`;
+                el.className = 'stat-change negative';
+            } else {
+                el.textContent = '0% vs last week';
+                el.className = 'stat-change neutral';
+            }
+        }
+        
+        // =====================================================
+        // MANAGED CREATORS
+        // =====================================================
+        
+        function updateManagedSummary() {
+            if (managedCreatorsData.length === 0) {
+                document.getElementById('managedSummary').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('managedSummary').style.display = 'block';
+            
+            const totalGMV = creatorsData.reduce((sum, c) => sum + (parseFloat(c.gmv) || 0), 0);
+            
+            let managedGMV = 0;
+            let managedActive = 0;
+            let managedCommission = 0;
+            
+            managedCreatorsData.forEach(mc => {
+                const perf = getCreatorAggregatedPerformance(mc);
+                if (perf) {
+                    managedGMV += perf.gmv;
+                    managedCommission += perf.commission;
+                    if (perf.gmv > 0) managedActive++;
+                }
+            });
+            
+            const pct = totalGMV > 0 ? (managedGMV / totalGMV) * 100 : 0;
+            
+            // Count total TikTok accounts being tracked
+            const totalAccounts = managedCreatorsData.reduce((sum, mc) => {
+                return sum + (mc.tiktok_usernames ? mc.tiktok_usernames.length : 1);
+            }, 0);
+            
+            document.getElementById('managedCount').textContent = `${managedCreatorsData.length} creators (${totalAccounts} accounts)`;
+            document.getElementById('managedGMV').textContent = '$' + managedGMV.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('managedPercent').textContent = pct.toFixed(1) + '%';
+            document.getElementById('managedActive').textContent = managedActive;
+            document.getElementById('managedCommission').textContent = '$' + managedCommission.toLocaleString(undefined, {maximumFractionDigits: 0});
+        }
+        
+        function renderManagedTable() {
+            const tbody = document.getElementById('managedTableBody');
+            const search = document.getElementById('managedSearch')?.value?.toLowerCase() || '';
+            const brandFilter = document.getElementById('managedBrandFilter')?.value || 'all';
+            const tierFilter = document.getElementById('managedTierFilter')?.value || 'all';
+            
+            if (managedCreatorsData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.5);padding:40px;">
+                    No managed creators yet. Click "+ Add Creator" to get started.
+                </td></tr>`;
+                document.getElementById('rosterSummary').innerHTML = '';
+                return;
+            }
+            
+            // Filter
+            let filtered = managedCreatorsData.filter(c => {
+                const matchSearch = !search || 
+                    c.tiktok_username.toLowerCase().includes(search) ||
+                    (c.tiktok_usernames || []).some(u => u.toLowerCase().includes(search)) ||
+                    (c.discord_username || '').toLowerCase().includes(search) ||
+                    (c.notes || '').toLowerCase().includes(search);
+                
+                let matchBrand = brandFilter === 'all';
+                if (brandFilter === 'unassigned') matchBrand = !c.brand;
+                else if (brandFilter !== 'all') matchBrand = c.brand === brandFilter;
+                
+                let matchTier = tierFilter === 'all';
+                if (tierFilter === 'unassigned') matchTier = !c.creator_group;
+                else if (tierFilter !== 'all') matchTier = c.creator_group === tierFilter;
+                
+                return matchSearch && matchBrand && matchTier;
+            });
+            
+            // Sort by aggregated GMV (highest first), then by username
+            filtered.sort((a, b) => {
+                const aPerf = getCreatorAggregatedPerformance(a);
+                const bPerf = getCreatorAggregatedPerformance(b);
+                const aGMV = aPerf ? aPerf.gmv : 0;
+                const bGMV = bPerf ? bPerf.gmv : 0;
+                if (bGMV !== aGMV) return bGMV - aGMV;
+                return a.tiktok_username.localeCompare(b.tiktok_username);
+            });
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.5);padding:20px;">
+                    No creators match your filters
+                </td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map(c => {
+                const perf = getCreatorAggregatedPerformance(c);
+                const gmv = perf ? perf.gmv : 0;
+                const commission = perf ? perf.commission : 0;
+                const tierClass = (c.creator_group || '').toLowerCase();
+                
+                // Show all TikTok accounts
+                const allAccounts = c.tiktok_usernames || [c.tiktok_username];
+                const accountsDisplay = allAccounts.length > 1 
+                    ? `${c.tiktok_username} <span style="color:rgba(255,255,255,0.5);">(+${allAccounts.length - 1} more)</span>`
+                    : c.tiktok_username;
+                
+                const accountsTooltip = allAccounts.length > 1 
+                    ? `title="${allAccounts.join(', ')}"`
+                    : '';
+                
+                return `
+                    <tr>
+                        <td ${accountsTooltip}>
+                            <strong>${accountsDisplay}</strong>
+                            ${perf && perf.accounts > 1 ? `<div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:2px;">${perf.accounts} accounts active</div>` : ''}
+                        </td>
+                        <td>${c.discord_username || '<span style="color:rgba(255,255,255,0.3)">-</span>'}</td>
+                        <td>${c.brand ? `<span class="badge ${c.brand}">${BRAND_DISPLAY[c.brand]}</span>` : '<span style="color:rgba(255,255,255,0.3)">-</span>'}</td>
+                        <td>${c.creator_group ? `<span class="tier-badge ${tierClass}">${c.creator_group}</span>` : '<span style="color:rgba(255,255,255,0.3)">-</span>'}</td>
+                        <td>${c.retainer_amount ? '$' + parseFloat(c.retainer_amount).toLocaleString() : '<span style="color:rgba(255,255,255,0.3)">-</span>'}</td>
+                        <td>${perf ? '$' + gmv.toLocaleString() : '<span style="color:rgba(255,255,255,0.3)">No data</span>'}</td>
+                        <td>${perf ? '$' + commission.toLocaleString() : '-'}</td>
+                        <td><button class="action-btn" onclick="editCreator('${c.id}')">Edit</button></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Update summary
+            const totalRetainers = managedCreatorsData.reduce((sum, c) => sum + (parseFloat(c.retainer_amount) || 0), 0);
+            const activeCount = managedCreatorsData.filter(c => {
+                const perf = getCreatorAggregatedPerformance(c);
+                return perf && perf.gmv > 0;
+            }).length;
+            
+            const tierCounts = {};
+            managedCreatorsData.forEach(c => {
+                const tier = c.creator_group || 'Unassigned';
+                tierCounts[tier] = (tierCounts[tier] || 0) + 1;
+            });
+            
+            document.getElementById('rosterSummary').innerHTML = `
+                <strong>${managedCreatorsData.length}</strong> total creators · 
+                <strong>${activeCount}</strong> active this week · 
+                <strong>$${totalRetainers.toLocaleString()}</strong>/mo in retainers · 
+                ${Object.entries(tierCounts).map(([tier, count]) => `${count} ${tier}`).join(' · ')}
+            `;
+            
+            // Update tab stats
+            updateManagedTabStats();
+        }
+        
+        function getCreatorPerformance(username) {
+            return creatorsData.find(c => c.creator_name.toLowerCase() === username.toLowerCase());
+        }
+        
+        // Get aggregated performance across all accounts for a managed creator
+        function getCreatorAggregatedPerformance(managedCreator) {
+            const accounts = managedCreator.tiktok_usernames || [managedCreator.tiktok_username];
+            
+            const performances = creatorsData.filter(c => 
+                accounts.some(account => account.toLowerCase() === c.creator_name.toLowerCase())
+            );
+            
+            if (performances.length === 0) return null;
+            
+            // Aggregate across all accounts
+            return {
+                gmv: performances.reduce((sum, p) => sum + (parseFloat(p.gmv) || 0), 0),
+                orders: performances.reduce((sum, p) => sum + (parseInt(p.orders) || 0), 0),
+                units_sold: performances.reduce((sum, p) => sum + (parseInt(p.units_sold) || 0), 0),
+                videos_posted: performances.reduce((sum, p) => sum + (parseInt(p.videos_posted) || 0), 0),
+                live_sessions: performances.reduce((sum, p) => sum + (parseInt(p.live_sessions) || 0), 0),
+                commission: performances.reduce((sum, p) => sum + (parseFloat(p.commission) || 0), 0),
+                accounts: performances.length,
+                account_names: performances.map(p => p.creator_name)
+            };
+        }
+        
+        function updateManagedTabStats() {
+            const totalGMV = creatorsData.reduce((sum, c) => sum + (parseFloat(c.gmv) || 0), 0);
+            
+            let managedGMV = 0;
+            let managedCommission = 0;
+            
+            managedCreatorsData.forEach(mc => {
+                const perf = getCreatorAggregatedPerformance(mc);
+                if (perf) {
+                    managedGMV += perf.gmv;
+                    managedCommission += perf.commission;
+                }
+            });
+            
+            const totalRetainers = managedCreatorsData.reduce((sum, c) => sum + (parseFloat(c.retainer_amount) || 0), 0);
+            const pct = totalGMV > 0 ? (managedGMV / totalGMV) * 100 : 0;
+            
+            document.getElementById('managedTabGMV').textContent = '$' + managedGMV.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('managedTabPercent').textContent = pct.toFixed(1) + '%';
+            document.getElementById('managedTabCommission').textContent = '$' + managedCommission.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('managedTabRetainers').textContent = '$' + totalRetainers.toLocaleString(undefined, {maximumFractionDigits: 0});
+        }
+        
+        // =====================================================
+        // CREATOR MODAL FUNCTIONS
+        // =====================================================
+        
+        function openCreatorModal(creatorId = null) {
+            document.getElementById('creatorModal').classList.add('active');
+            document.getElementById('creatorEditId').value = creatorId || '';
+            document.getElementById('deleteCreatorBtn').style.display = creatorId ? 'block' : 'none';
+            document.getElementById('creatorModalTitle').textContent = creatorId ? 'Edit Creator' : 'Add Creator';
+            
+            if (creatorId) {
+                const creator = managedCreatorsData.find(c => c.id === creatorId);
+                if (creator) {
+                    document.getElementById('creatorTiktok').value = creator.tiktok_username || '';
+                    document.getElementById('creatorDiscord').value = creator.discord_username || '';
+                    document.getElementById('creatorBrand').value = creator.brand || '';
+                    document.getElementById('creatorTier').value = creator.creator_group || '';
+                    document.getElementById('creatorRetainer').value = creator.retainer_amount || '';
+                    document.getElementById('creatorNotes').value = creator.notes || '';
+                }
+            } else {
+                document.getElementById('creatorTiktok').value = '';
+                document.getElementById('creatorDiscord').value = '';
+                document.getElementById('creatorBrand').value = '';
+                document.getElementById('creatorTier').value = '';
+                document.getElementById('creatorRetainer').value = '';
+                document.getElementById('creatorNotes').value = '';
+            }
+        }
+        
+        function closeCreatorModal() {
+            document.getElementById('creatorModal').classList.remove('active');
+        }
+        
+        function editCreator(creatorId) {
+            openCreatorModal(creatorId);
+        }
+        
+        async function saveCreator() {
+            const editId = document.getElementById('creatorEditId').value;
+            const tiktok = document.getElementById('creatorTiktok').value.trim();
+            
+            if (!tiktok) {
+                alert('TikTok username is required');
+                return;
+            }
+            
+            const creatorData = {
+                tiktok_username: tiktok,
+                discord_username: document.getElementById('creatorDiscord').value.trim() || null,
+                brand: document.getElementById('creatorBrand').value || null,
+                creator_group: document.getElementById('creatorTier').value || null,
+                retainer_amount: parseFloat(document.getElementById('creatorRetainer').value) || null,
+                notes: document.getElementById('creatorNotes').value.trim() || null,
+                is_active: true
+            };
+            
+            try {
+                if (editId) {
+                    // Update existing
+                    const { error } = await supabase
+                        .from('managed_creators')
+                        .update(creatorData)
+                        .eq('id', editId);
+                    if (error) throw error;
+                } else {
+                    // Insert new
+                    const { error } = await supabase
+                        .from('managed_creators')
+                        .upsert(creatorData, { onConflict: 'tiktok_username' });
+                    if (error) throw error;
+                }
+                
+                await loadManagedCreators();
+                closeCreatorModal();
+                renderManagedTable();
+                updateManagedSummary();
+                updateTopCreators();
+                renderCreatorsTable();
+                
+            } catch (err) {
+                console.error('Error saving creator:', err);
+                alert('Error saving: ' + err.message);
+            }
+        }
+        
+        async function deleteCreator() {
+            const editId = document.getElementById('creatorEditId').value;
+            if (!editId) return;
+            
+            const creator = managedCreatorsData.find(c => c.id === editId);
+            if (!confirm(`Remove ${creator?.tiktok_username} from your managed list?`)) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('managed_creators')
+                    .update({ is_active: false })
+                    .eq('id', editId);
+                
+                if (error) throw error;
+                
+                await loadManagedCreators();
+                closeCreatorModal();
+                renderManagedTable();
+                updateManagedSummary();
+                updateTopCreators();
+                renderCreatorsTable();
+                
+            } catch (err) {
+                console.error('Error deleting creator:', err);
+                alert('Error deleting: ' + err.message);
+            }
+        }
+        
+        // =====================================================
+        // BULK ADD MODAL
+        // =====================================================
+        
+        function openBulkAddModal() {
+            document.getElementById('bulkAddModal').classList.add('active');
+            document.getElementById('bulkAddInput').value = '';
+            document.getElementById('bulkAddCount').textContent = '0';
+        }
+        
+        function closeBulkAddModal() {
+            document.getElementById('bulkAddModal').classList.remove('active');
+        }
+        
+        document.getElementById('bulkAddInput')?.addEventListener('input', () => {
+            const text = document.getElementById('bulkAddInput').value;
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+            document.getElementById('bulkAddCount').textContent = lines.length;
+        });
+        
+        async function bulkAddCreators() {
+            const text = document.getElementById('bulkAddInput').value;
+            const usernames = text.split('\n').map(l => l.trim()).filter(l => l);
+            
+            if (usernames.length === 0) {
+                alert('No usernames entered');
+                return;
+            }
+            
+            try {
+                const records = usernames.map(username => ({
+                    tiktok_username: username,
+                    is_active: true
+                }));
+                
+                const { error } = await supabase
+                    .from('managed_creators')
+                    .upsert(records, { onConflict: 'tiktok_username', ignoreDuplicates: false });
+                
+                if (error) throw error;
+                
+                await loadManagedCreators();
+                closeBulkAddModal();
+                renderManagedTable();
+                updateManagedSummary();
+                updateTopCreators();
+                renderCreatorsTable();
+                
+                alert(`Added ${usernames.length} creators to your roster!`);
+                
+            } catch (err) {
+                console.error('Error bulk adding:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        // =====================================================
+        // CHARTS
+        // =====================================================
+        
+        function updateCharts() {
+            const brandGMV = {};
+            creatorsData.forEach(c => {
+                brandGMV[c.brand] = (brandGMV[c.brand] || 0) + (parseFloat(c.gmv) || 0);
+            });
+            
+            const brands = Object.keys(brandGMV).sort((a, b) => brandGMV[b] - brandGMV[a]);
+            
+            if (gmvChart) gmvChart.destroy();
+            gmvChart = new Chart(document.getElementById('gmvChart'), {
+                type: 'bar',
+                data: {
+                    labels: brands.map(b => BRAND_DISPLAY[b] || b),
+                    datasets: [{
+                        label: 'GMV',
+                        data: brands.map(b => brandGMV[b]),
+                        backgroundColor: brands.map(b => BRAND_COLORS[b] || '#00d4ff'),
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => '$' + ctx.raw.toLocaleString() } }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: 'rgba(255,255,255,0.6)', callback: (v) => '$' + (v/1000).toFixed(0) + 'K' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        x: { ticks: { color: 'rgba(255,255,255,0.6)' }, grid: { display: false } }
+                    }
+                }
+            });
+            
+            const inactive = creatorsData.filter(c => parseFloat(c.gmv) === 0).length;
+            const low = creatorsData.filter(c => parseFloat(c.gmv) > 0 && parseFloat(c.gmv) < 100).length;
+            const medium = creatorsData.filter(c => parseFloat(c.gmv) >= 100 && parseFloat(c.gmv) < 1000).length;
+            const high = creatorsData.filter(c => parseFloat(c.gmv) >= 1000 && parseFloat(c.gmv) < 10000).length;
+            const top = creatorsData.filter(c => parseFloat(c.gmv) >= 10000).length;
+            
+            if (activityChart) activityChart.destroy();
+            activityChart = new Chart(document.getElementById('activityChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Inactive ($0)', 'Low ($1-99)', 'Medium ($100-999)', 'High ($1K-10K)', 'Top ($10K+)'],
+                    datasets: [{
+                        data: [inactive, low, medium, high, top],
+                        backgroundColor: ['#666', '#ffd93d', '#4ecdc4', '#667eea', '#6bcb77'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { color: 'rgba(255,255,255,0.7)' } } }
+                }
+            });
+        }
+        
+        function updateTopCreators() {
+            const top10 = creatorsData.slice(0, 10);
+            const tbody = document.getElementById('topCreatorsTable');
+            
+            if (top10.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.5)">No data</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = top10.map((c, i) => {
+                const isManaged = managedList.some(m => m.toLowerCase() === c.creator_name.toLowerCase());
+                const prevGMV = getCreatorPrevGMV(c.creator_name, c.brand);
+                return `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${isManaged ? '<span class="badge managed">⭐</span> ' : ''}${c.creator_name}</td>
+                        <td><span class="badge ${c.brand}">${BRAND_DISPLAY[c.brand] || c.brand}</span></td>
+                        <td>$${parseFloat(c.gmv).toLocaleString()}</td>
+                        <td>${renderWoW(parseFloat(c.gmv), prevGMV)}</td>
+                        <td>${c.orders?.toLocaleString() || 0}</td>
+                        <td>${c.videos_posted || 0}</td>
+                        <td>$${parseFloat(c.commission || 0).toLocaleString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // =====================================================
+        // CREATORS TABLE
+        // =====================================================
+        
+        function renderCreatorsTable() {
+            let filtered = filterCreatorsData();
+            filtered = sortData(filtered, creatorSortCol, creatorSortDir);
+            
+            const start = (creatorPage - 1) * pageSize;
+            const pageData = filtered.slice(start, start + pageSize);
+            
+            const tbody = document.getElementById('creatorsTableBody');
+            
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,0.5)">No creators found</td></tr>';
+            } else {
+                tbody.innerHTML = pageData.map(c => {
+                    const isManaged = managedList.some(m => m.toLowerCase() === c.creator_name.toLowerCase());
+                    const prevGMV = getCreatorPrevGMV(c.creator_name, c.brand);
+                    return `
+                        <tr>
+                            <td>${isManaged ? '<span class="badge managed">⭐</span> ' : ''}${c.creator_name}</td>
+                            <td><span class="badge ${c.brand}">${BRAND_DISPLAY[c.brand] || c.brand}</span></td>
+                            <td>$${parseFloat(c.gmv).toLocaleString()}</td>
+                            <td>${renderWoW(parseFloat(c.gmv), prevGMV)}</td>
+                            <td>${c.orders?.toLocaleString() || 0}</td>
+                            <td>${c.videos_posted || 0}</td>
+                            <td>$${parseFloat(c.commission || 0).toLocaleString()}</td>
+                            <td>${(parseFloat(c.refund_rate) || 0).toFixed(1)}%</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            renderPagination('creatorsPagination', filtered.length, creatorPage, (p) => { creatorPage = p; renderCreatorsTable(); });
+        }
+        
+        function filterCreatorsData() {
+            const search = document.getElementById('creatorSearch').value.toLowerCase();
+            const activity = document.getElementById('activityFilter').value;
+            
+            return creatorsData.filter(c => {
+                const matchSearch = !search || c.creator_name.toLowerCase().includes(search);
+                let matchActivity = true;
+                const gmv = parseFloat(c.gmv) || 0;
+                
+                if (activity === 'active') matchActivity = gmv > 0;
+                if (activity === 'high') matchActivity = gmv >= 1000;
+                if (activity === 'inactive') matchActivity = gmv === 0;
+                if (activity === 'managed') matchActivity = managedList.some(m => m.toLowerCase() === c.creator_name.toLowerCase());
+                
+                return matchSearch && matchActivity;
+            });
+        }
+        
+        function filterCreators() { creatorPage = 1; renderCreatorsTable(); }
+        
+        function sortCreators(col) {
+            if (creatorSortCol === col) creatorSortDir = creatorSortDir === 'asc' ? 'desc' : 'asc';
+            else { creatorSortCol = col; creatorSortDir = 'desc'; }
+            renderCreatorsTable();
+        }
+        
+        // =====================================================
+        // VIDEOS TABLE
+        // =====================================================
+        
+        function renderVideosTable() {
+            let filtered = filterVideosData();
+            filtered = sortData(filtered, videoSortCol, videoSortDir);
+            
+            const start = (videoPage - 1) * pageSize;
+            const pageData = filtered.slice(start, start + pageSize);
+            
+            const tbody = document.getElementById('videosTableBody');
+            
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,0.5)">No videos found</td></tr>';
+            } else {
+                tbody.innerHTML = pageData.map(v => {
+                    const isManaged = managedList.some(m => m.toLowerCase() === v.creator_name.toLowerCase());
+                    return `
+                        <tr>
+                            <td>${isManaged ? '<span class="badge managed">⭐</span> ' : ''}${v.creator_name}</td>
+                            <td><span class="badge ${v.brand}">${BRAND_DISPLAY[v.brand] || v.brand}</span></td>
+                            <td>$${parseFloat(v.gmv).toLocaleString()}</td>
+                            <td>${v.orders?.toLocaleString() || 0}</td>
+                            <td>${(v.views || 0).toLocaleString()}</td>
+                            <td>${(parseFloat(v.conversion_rate) || 0).toFixed(3)}%</td>
+                            <td>${v.video_link ? `<a href="${v.video_link}" target="_blank">View</a>` : '-'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            renderPagination('videosPagination', filtered.length, videoPage, (p) => { videoPage = p; renderVideosTable(); });
+        }
+        
+        function filterVideosData() {
+            const search = document.getElementById('videoSearch').value.toLowerCase();
+            return videosData.filter(v => !search || v.creator_name.toLowerCase().includes(search) || (v.video_title || '').toLowerCase().includes(search));
+        }
+        
+        function filterVideos() { videoPage = 1; renderVideosTable(); }
+        
+        function sortVideos(col) {
+            if (videoSortCol === col) videoSortDir = videoSortDir === 'asc' ? 'desc' : 'asc';
+            else { videoSortCol = col; videoSortDir = 'desc'; }
+            renderVideosTable();
+        }
+        
+        // =====================================================
+        // HELPERS
+        // =====================================================
+        
+        function sortData(data, col, dir) {
+            return [...data].sort((a, b) => {
+                let aVal = a[col], bVal = b[col];
+                if (['gmv', 'orders', 'videos_posted', 'live_sessions', 'commission', 'refund_rate', 'views', 'conversion_rate'].includes(col)) {
+                    aVal = parseFloat(aVal) || 0;
+                    bVal = parseFloat(bVal) || 0;
+                }
+                if (aVal < bVal) return dir === 'asc' ? -1 : 1;
+                if (aVal > bVal) return dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+        
+        function renderPagination(containerId, total, currentPage, onPageChange) {
+            const totalPages = Math.ceil(total / pageSize);
+            const container = document.getElementById(containerId);
+            if (totalPages <= 1) { container.innerHTML = ''; return; }
+            
+            container.innerHTML = `
+                <button ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>
+                <span>Page ${currentPage} of ${totalPages} (${total} total)</span>
+                <button ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>
+            `;
+            container.querySelector('button:first-child').onclick = () => onPageChange(currentPage - 1);
+            container.querySelector('button:last-child').onclick = () => onPageChange(currentPage + 1);
+        }
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        // =====================================================
+        // ONBOARDING APPLICATIONS
+        // =====================================================
+        
+        async function loadApplications() {
+            try {
+                const { data, error } = await supabase
+                    .from('onboarding_applications')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                applications = data || [];
+                
+                // Update pending badge
+                const pendingCount = applications.filter(a => a.status === 'pending').length;
+                const badge = document.getElementById('pendingBadge');
+                if (pendingCount > 0) {
+                    badge.textContent = pendingCount;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+                
+                renderApplications();
+            } catch (err) {
+                console.error('Error loading applications:', err);
+            }
+        }
+        
+        function renderApplications() {
+            const container = document.getElementById('applicationsContainer');
+            const statusFilter = document.getElementById('appStatusFilter')?.value || 'pending';
+            
+            let filtered = applications;
+            if (statusFilter !== 'all') {
+                filtered = applications.filter(a => a.status === statusFilter);
+            }
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No ${statusFilter === 'all' ? '' : statusFilter} applications</h3>
+                        <p>Share your onboarding form link to start receiving applications.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(app => {
+                const tiktokList = app.tiktok_usernames.map(u => '@' + u).join(', ');
+                const createdDate = new Date(app.created_at).toLocaleDateString();
+                
+                return `
+                    <div class="application-card">
+                        <div class="app-header">
+                            <div class="app-info">
+                                <h4>${app.discord_username}</h4>
+                                <div class="app-meta">
+                                    ${tiktokList} · 
+                                    ${app.brand_preference ? BRAND_DISPLAY[app.brand_preference] || app.brand_preference : 'No brand preference'} · 
+                                    Applied ${createdDate}
+                                </div>
+                            </div>
+                            <div class="app-actions">
+                                <span class="status-badge ${app.status}">${app.status.toUpperCase()}</span>
+                                ${app.status === 'pending' ? `
+                                    <button class="action-btn" onclick="reviewApplication('${app.id}')">Review</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ${app.reviewer_notes ? `
+                            <div style="margin-top:10px;padding:10px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:0.85rem;">
+                                <strong>Notes:</strong> ${app.reviewer_notes}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function reviewApplication(appId) {
+            const app = applications.find(a => a.id === appId);
+            if (!app) return;
+            
+            document.getElementById('appReviewModal').classList.add('active');
+            document.getElementById('appReviewId').value = appId;
+            
+            const tiktokList = app.tiktok_usernames.map(u => '@' + u).join(', ');
+            const customQ = Object.entries(app.custom_responses || {})
+                .map(([q, a]) => `
+                    <div style="margin-bottom:15px;">
+                        <strong style="color:rgba(255,255,255,0.7);">${q}</strong>
+                        <div style="margin-top:5px;">${a}</div>
+                    </div>
+                `).join('');
+            
+            document.getElementById('appReviewContent').innerHTML = `
+                <div class="app-details">
+                    <div class="detail-item">
+                        <label>Discord</label>
+                        <value>${app.discord_username}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>TikTok Accounts</label>
+                        <value>${tiktokList}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>Brand Preference</label>
+                        <value>${app.brand_preference ? BRAND_DISPLAY[app.brand_preference] || app.brand_preference : 'None'}</value>
+                    </div>
+                    <div class="detail-item">
+                        <label>Applied</label>
+                        <value>${new Date(app.created_at).toLocaleString()}</value>
+                    </div>
+                </div>
+                ${customQ ? `<div style="margin-top:20px;"><h4 style="margin-bottom:15px;">Responses</h4>${customQ}</div>` : ''}
+                <div style="margin-top:20px;">
+                    <label style="display:block;margin-bottom:8px;font-size:0.9rem;">Internal Notes (optional)</label>
+                    <textarea id="reviewerNotes" placeholder="Add any notes about this application..." rows="3" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;"></textarea>
+                </div>
+            `;
+        }
+        
+        function closeAppReviewModal() {
+            document.getElementById('appReviewModal').classList.remove('active');
+        }
+        
+        async function approveApplication() {
+            const appId = document.getElementById('appReviewId').value;
+            const app = applications.find(a => a.id === appId);
+            if (!app) return;
+            
+            const notes = document.getElementById('reviewerNotes').value.trim();
+            
+            if (!confirm(`Approve ${app.discord_username} and add to your managed roster?`)) return;
+            
+            try {
+                // Update application status
+                const { error: appError } = await supabase
+                    .from('onboarding_applications')
+                    .update({
+                        status: 'approved',
+                        reviewed_at: new Date().toISOString(),
+                        reviewer_notes: notes || null
+                    })
+                    .eq('id', appId);
+                
+                if (appError) throw appError;
+                
+                // Add to managed creators (use first TikTok username as primary, store all in array)
+                const primaryUsername = app.tiktok_usernames[0];
+                const { error: createError } = await supabase
+                    .from('managed_creators')
+                    .upsert({
+                        tiktok_username: primaryUsername,
+                        tiktok_usernames: app.tiktok_usernames, // Store all accounts
+                        discord_username: app.discord_username,
+                        brand: app.brand_preference || null,
+                        creator_group: 'Incubator',
+                        is_active: true
+                    }, { onConflict: 'tiktok_username' });
+                
+                if (createError) throw createError;
+                
+                // Reload data
+                await loadApplications();
+                await loadManagedCreators();
+                closeAppReviewModal();
+                
+                const accountText = app.tiktok_usernames.length > 1 
+                    ? `${app.tiktok_usernames.length} accounts` 
+                    : '1 account';
+                alert(`✅ Approved! ${app.discord_username} (${accountText}) has been added to your roster as an Incubator.`);
+                
+            } catch (err) {
+                console.error('Error approving:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        async function rejectApplication() {
+            const appId = document.getElementById('appReviewId').value;
+            const app = applications.find(a => a.id === appId);
+            if (!app) return;
+            
+            const notes = document.getElementById('reviewerNotes').value.trim();
+            
+            if (!confirm(`Reject application from ${app.discord_username}?`)) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('onboarding_applications')
+                    .update({
+                        status: 'rejected',
+                        reviewed_at: new Date().toISOString(),
+                        reviewer_notes: notes || null
+                    })
+                    .eq('id', appId);
+                
+                if (error) throw error;
+                
+                await loadApplications();
+                closeAppReviewModal();
+                
+            } catch (err) {
+                console.error('Error rejecting:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        function copyOnboardingLink() {
+            // This will be your GitHub Pages link once deployed
+            const link = window.location.origin + window.location.pathname.replace('index.html', '') + 'apply.html';
+            
+            navigator.clipboard.writeText(link).then(() => {
+                alert('✅ Form link copied to clipboard!\n\n' + link);
+            }).catch(() => {
+                prompt('Copy this link:', link);
+            });
+        }
+        
+        // =====================================================
+        // CUSTOM QUESTIONS MANAGER
+        // =====================================================
+        
+        async function openQuestionsManager() {
+            document.getElementById('questionsModal').classList.add('active');
+            await loadCustomQuestions();
+        }
+        
+        function closeQuestionsManager() {
+            document.getElementById('questionsModal').classList.remove('active');
+        }
+        
+        async function loadCustomQuestions() {
+            try {
+                const { data, error } = await supabase
+                    .from('onboarding_questions')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('question_order');
+                
+                if (error) throw error;
+                customQuestions = data || [];
+                renderQuestionsList();
+            } catch (err) {
+                console.error('Error loading questions:', err);
+            }
+        }
+        
+        function renderQuestionsList() {
+            const container = document.getElementById('questionsList');
+            
+            if (customQuestions.length === 0) {
+                container.innerHTML = '<p style="color:rgba(255,255,255,0.5);">No custom questions yet. Add one below.</p>';
+                return;
+            }
+            
+            container.innerHTML = customQuestions.map((q, i) => `
+                <div class="question-item">
+                    <div class="question-text">
+                        <span class="drag-handle">☰</span>
+                        <strong>${q.question_text}</strong>
+                        ${q.is_required ? '<span class="badge" style="background:rgba(255,107,107,0.2);color:#ff6b6b;margin-left:8px;">Required</span>' : ''}
+                    </div>
+                    <div class="question-actions">
+                        <button class="action-btn" onclick="deleteQuestion('${q.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function addQuestion() {
+            const text = document.getElementById('newQuestionText').value.trim();
+            const required = document.getElementById('newQuestionRequired').checked;
+            
+            if (!text) {
+                alert('Please enter a question');
+                return;
+            }
+            
+            try {
+                const maxOrder = customQuestions.length > 0 ? Math.max(...customQuestions.map(q => q.question_order)) : 0;
+                
+                const { error } = await supabase
+                    .from('onboarding_questions')
+                    .insert({
+                        question_text: text,
+                        is_required: required,
+                        question_order: maxOrder + 1,
+                        is_active: true
+                    });
+                
+                if (error) throw error;
+                
+                document.getElementById('newQuestionText').value = '';
+                document.getElementById('newQuestionRequired').checked = false;
+                await loadCustomQuestions();
+                
+            } catch (err) {
+                console.error('Error adding question:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        async function deleteQuestion(questionId) {
+            if (!confirm('Delete this question? Existing applications will still have answers.')) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('onboarding_questions')
+                    .update({ is_active: false })
+                    .eq('id', questionId);
+                
+                if (error) throw error;
+                await loadCustomQuestions();
+            } catch (err) {
+                console.error('Error deleting question:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+        
+        // =====================================================
+        // INITIALIZE
+        // =====================================================
+        
+        document.getElementById('brandFilter').addEventListener('change', loadDashboard);
+        
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    e.target.classList.remove('active');
+                }
+            });
+        });
+        
+        init();
+    </script>
+</body>
+</html>
