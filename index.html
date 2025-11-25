@@ -1817,30 +1817,34 @@
         // Load Data
         async function loadData() {
             try {
-                // Load brands
-                const { data: brandsData } = await supabase.from('brands').select('*');
-                brands = brandsData || [];
+                // Load unique brands from creator_performance
+                const { data: brandData } = await supabase
+                    .from('creator_performance')
+                    .select('brand');
+                
+                const uniqueBrands = [...new Set(brandData?.map(b => b.brand).filter(Boolean) || [])].sort();
+                brands = uniqueBrands.map(name => ({ name }));
 
                 // Populate brand filters
-                const brandOptions = brands.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                const brandOptions = brands.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
                 document.getElementById('brandFilter').innerHTML = `<option value="all">All Brands</option>${brandOptions}`;
                 document.getElementById('creatorBrandFilter').innerHTML = `<option value="all">All Brands</option>${brandOptions}`;
 
-                // Load weeks
+                // Load weeks (using week_end)
                 const { data: weeksData } = await supabase
                     .from('creator_performance')
-                    .select('week_start')
-                    .order('week_start', { ascending: false });
+                    .select('week_end')
+                    .order('week_end', { ascending: false });
 
-                const uniqueWeeks = [...new Set(weeksData?.map(w => w.week_start) || [])];
+                const uniqueWeeks = [...new Set(weeksData?.map(w => w.week_end).filter(Boolean) || [])];
                 weeks = uniqueWeeks;
 
                 const weekOptions = uniqueWeeks.slice(0, 12).map((w, i) => {
-                    const date = new Date(w);
+                    const date = new Date(w + 'T00:00:00');
                     const label = i === 0 ? 'Latest Week' : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                     return `<option value="${w}">${label}</option>`;
                 }).join('');
-                document.getElementById('weekFilter').innerHTML = weekOptions;
+                document.getElementById('weekFilter').innerHTML = weekOptions || '<option value="">No data</option>';
 
                 // Load managed creators
                 await loadManagedCreatorsList();
@@ -1861,7 +1865,7 @@
 
             } catch (error) {
                 console.error('Error loading data:', error);
-                showToast('Error loading data', 'error');
+                showToast('Error loading data: ' + error.message, 'error');
             }
         }
 
@@ -1874,31 +1878,49 @@
             const latestWeek = weeks[0];
             const previousWeek = weeks[1];
 
-            // Get latest week data
-            const { data: latestData } = await supabase
+            if (!latestWeek) {
+                console.log('No weeks found');
+                allCreators = [];
+                updateDashboard();
+                return;
+            }
+
+            // Get latest week data (using week_end and brand as text)
+            const { data: latestData, error: latestError } = await supabase
                 .from('creator_performance')
-                .select('*, brands(name)')
-                .eq('week_start', latestWeek);
+                .select('*')
+                .eq('week_end', latestWeek);
+
+            if (latestError) {
+                console.error('Error loading latest data:', latestError);
+                return;
+            }
 
             // Get previous week data for WoW
-            const { data: previousData } = await supabase
-                .from('creator_performance')
-                .select('creator_name, gmv')
-                .eq('week_start', previousWeek);
-
-            const previousMap = new Map(previousData?.map(p => [p.creator_name.toLowerCase(), p.gmv]) || []);
+            let previousMap = new Map();
+            if (previousWeek) {
+                const { data: previousData } = await supabase
+                    .from('creator_performance')
+                    .select('creator_name, gmv')
+                    .eq('week_end', previousWeek);
+                
+                previousMap = new Map(previousData?.map(p => [p.creator_name?.toLowerCase(), p.gmv]) || []);
+            }
 
             // Process creators
             allCreators = (latestData || []).map(c => {
-                const prevGmv = previousMap.get(c.creator_name.toLowerCase()) || 0;
-                const wowChange = prevGmv > 0 ? ((c.gmv - prevGmv) / prevGmv) * 100 : (c.gmv > 0 ? 100 : 0);
-                const isManaged = managedCreatorsList.includes(c.creator_name.toLowerCase());
-                const tier = getTier(c.gmv);
-                const health = calculateHealthScore({ gmv: c.gmv, wow_change: wowChange, videos: c.videos });
+                const creatorKey = (c.creator_name || c.tiktok_username || '').toLowerCase();
+                const prevGmv = previousMap.get(creatorKey) || 0;
+                const currentGmv = parseFloat(c.gmv) || 0;
+                const wowChange = prevGmv > 0 ? ((currentGmv - prevGmv) / prevGmv) * 100 : (currentGmv > 0 ? 100 : 0);
+                const isManaged = managedCreatorsList.includes(creatorKey);
+                const tier = getTier(currentGmv);
+                const health = calculateHealthScore({ gmv: currentGmv, wow_change: wowChange, videos: c.videos || 0 });
 
                 return {
                     ...c,
-                    brand_name: c.brands?.name || 'Unknown',
+                    gmv: currentGmv,
+                    brand_name: c.brand || 'Unknown',
                     prev_gmv: prevGmv,
                     wow_change: wowChange,
                     is_managed: isManaged,
@@ -1907,19 +1929,45 @@
                 };
             }).sort((a, b) => b.gmv - a.gmv);
 
+            console.log(`Loaded ${allCreators.length} creators`);
             updateDashboard();
         }
 
         async function loadVideoData() {
             const latestWeek = weeks[0];
+            if (!latestWeek) {
+                allVideos = [];
+                return;
+            }
 
-            const { data } = await supabase
+            const { data, error } = await supabase
                 .from('video_performance')
-                .select('*, brands(name)')
-                .eq('week_start', latestWeek)
+                .select('*')
+                .eq('week_end', latestWeek)
                 .order('gmv', { ascending: false });
 
-            allVideos = data || [];
+            if (error) {
+                console.error('Error loading video data:', error);
+                // Try without week filter
+                const { data: allData } = await supabase
+                    .from('video_performance')
+                    .select('*')
+                    .order('gmv', { ascending: false })
+                    .limit(500);
+                allVideos = (allData || []).map(v => ({
+                    ...v,
+                    gmv: parseFloat(v.gmv) || 0,
+                    brand_name: v.brand || 'Unknown'
+                }));
+            } else {
+                allVideos = (data || []).map(v => ({
+                    ...v,
+                    gmv: parseFloat(v.gmv) || 0,
+                    brand_name: v.brand || 'Unknown'
+                }));
+            }
+            
+            console.log(`Loaded ${allVideos.length} videos`);
         }
 
         function updateSeasonDisplay() {
@@ -1967,7 +2015,7 @@
             const managedOnly = document.getElementById('managedOnly').checked;
 
             if (brandFilter !== 'all') {
-                filtered = filtered.filter(c => c.brand_id == brandFilter);
+                filtered = filtered.filter(c => c.brand === brandFilter || c.brand_name === brandFilter);
             }
 
             if (tierFilter !== 'all') {
@@ -2037,16 +2085,18 @@
                 const healthClass = getHealthClass(c.health_score);
                 const wowClass = c.wow_change >= 0 ? 'change-up' : 'change-down';
                 const commission = c.gmv * 0.025;
+                const displayName = c.creator_name || c.tiktok_username || 'Unknown';
+                const initials = displayName.substring(0, 2).toUpperCase();
 
                 return `
                     <tr>
                         <td style="font-weight: 600; color: var(--text-muted);">${i + 1}</td>
                         <td>
                             <div class="creator-name">
-                                <div class="creator-avatar">${c.creator_name.substring(0, 2).toUpperCase()}</div>
+                                <div class="creator-avatar">${initials}</div>
                                 <div class="creator-info">
-                                    <span class="creator-handle">${c.creator_name}${c.is_managed ? '<span class="managed-badge">⭐ Managed</span>' : ''}</span>
-                                    <span class="creator-brand">${c.brand_name}</span>
+                                    <span class="creator-handle">${displayName}${c.is_managed ? '<span class="managed-badge">⭐ Managed</span>' : ''}</span>
+                                    <span class="creator-brand">${c.brand_name || c.brand || 'Unknown'}</span>
                                 </div>
                             </div>
                         </td>
@@ -2079,14 +2129,14 @@
                 const { data } = await supabase
                     .from('creator_performance')
                     .select('gmv')
-                    .eq('week_start', week);
+                    .eq('week_end', week);
 
-                const total = data?.reduce((sum, c) => sum + (c.gmv || 0), 0) || 0;
+                const total = data?.reduce((sum, c) => sum + (parseFloat(c.gmv) || 0), 0) || 0;
                 weeklyGmv.push(total);
             }
 
             const labels = last4Weeks.map(w => {
-                const date = new Date(w);
+                const date = new Date(w + 'T00:00:00');
                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             });
 
@@ -2286,16 +2336,18 @@
                 const healthClass = getHealthClass(c.health_score);
                 const wowClass = c.wow_change >= 0 ? 'change-up' : 'change-down';
                 const commission = c.gmv * 0.025;
+                const displayName = c.creator_name || c.tiktok_username || 'Unknown';
+                const initials = displayName.substring(0, 2).toUpperCase();
 
                 return `
                     <tr>
                         <td style="font-weight: 600; color: var(--text-muted);">${rank}</td>
                         <td>
                             <div class="creator-name">
-                                <div class="creator-avatar">${c.creator_name.substring(0, 2).toUpperCase()}</div>
+                                <div class="creator-avatar">${initials}</div>
                                 <div class="creator-info">
-                                    <span class="creator-handle">${c.creator_name}${c.is_managed ? '<span class="managed-badge">⭐</span>' : ''}</span>
-                                    <span class="creator-brand">${c.brand_name}</span>
+                                    <span class="creator-handle">${displayName}${c.is_managed ? '<span class="managed-badge">⭐</span>' : ''}</span>
+                                    <span class="creator-brand">${c.brand_name || c.brand || 'Unknown'}</span>
                                 </div>
                             </div>
                         </td>
@@ -2335,7 +2387,7 @@
             const search = document.getElementById('creatorSearch').value.toLowerCase();
 
             if (brandFilter !== 'all') {
-                filtered = filtered.filter(c => c.brand_id == brandFilter);
+                filtered = filtered.filter(c => c.brand === brandFilter || c.brand_name === brandFilter);
             }
 
             if (tierFilter !== 'all') {
@@ -2343,7 +2395,10 @@
             }
 
             if (search) {
-                filtered = filtered.filter(c => c.creator_name.toLowerCase().includes(search));
+                filtered = filtered.filter(c => 
+                    (c.creator_name || '').toLowerCase().includes(search) ||
+                    (c.tiktok_username || '').toLowerCase().includes(search)
+                );
             }
 
             // Sort
@@ -2433,16 +2488,18 @@
                 const healthClass = getHealthClass(c.health_score);
                 const wowClass = c.wow_change >= 0 ? 'change-up' : 'change-down';
                 const commission = c.gmv * 0.025;
+                const displayName = c.creator_name || c.tiktok_username || 'Unknown';
+                const initials = displayName.substring(0, 2).toUpperCase();
 
                 return `
                     <tr>
                         <td style="font-weight: 600; color: var(--text-muted);">${i + 1}</td>
                         <td>
                             <div class="creator-name">
-                                <div class="creator-avatar">${c.creator_name.substring(0, 2).toUpperCase()}</div>
+                                <div class="creator-avatar">${initials}</div>
                                 <div class="creator-info">
-                                    <span class="creator-handle">${c.creator_name}</span>
-                                    <span class="creator-brand">${c.brand_name}</span>
+                                    <span class="creator-handle">${displayName}</span>
+                                    <span class="creator-brand">${c.brand_name || c.brand || 'Unknown'}</span>
                                 </div>
                             </div>
                         </td>
@@ -2549,7 +2606,7 @@
                 <tr>
                     <td style="font-weight: 600; color: var(--text-muted);">${i + 1}</td>
                     <td>${v.creator_name || 'Unknown'}</td>
-                    <td>${v.brands?.name || 'Unknown'}</td>
+                    <td>${v.brand_name || v.brand || 'Unknown'}</td>
                     <td style="font-family: 'Space Mono', monospace; font-weight: 600;">${formatCurrency(v.gmv)}</td>
                     <td>${v.orders || 0}</td>
                 </tr>
@@ -2588,17 +2645,19 @@
             const html = paginated.data.map((c, i) => {
                 const rank = (commissionPage - 1) * PAGE_SIZE + i + 1;
                 const commission = c.gmv * rate;
+                const displayName = c.creator_name || c.tiktok_username || 'Unknown';
+                const initials = displayName.substring(0, 2).toUpperCase();
 
                 return `
                     <tr>
                         <td style="font-weight: 600; color: var(--text-muted);">${rank}</td>
                         <td>
                             <div class="creator-name">
-                                <div class="creator-avatar">${c.creator_name.substring(0, 2).toUpperCase()}</div>
-                                <span class="creator-handle">${c.creator_name}${c.is_managed ? '<span class="managed-badge">⭐</span>' : ''}</span>
+                                <div class="creator-avatar">${initials}</div>
+                                <span class="creator-handle">${displayName}${c.is_managed ? '<span class="managed-badge">⭐</span>' : ''}</span>
                             </div>
                         </td>
-                        <td>${c.brand_name}</td>
+                        <td>${c.brand_name || c.brand || 'Unknown'}</td>
                         <td style="font-family: 'Space Mono', monospace;">${formatCurrency(c.gmv)}</td>
                         <td style="font-family: 'Space Mono', monospace; font-weight: 600; color: var(--accent);">${formatCurrency(commission)}</td>
                     </tr>
@@ -2633,16 +2692,15 @@
 
         function exportBrandReport() {
             const brandSummary = {};
-            brands.forEach(b => {
-                brandSummary[b.name] = { gmv: 0, creators: 0, videos: 0 };
-            });
-
+            
             allCreators.forEach(c => {
-                if (brandSummary[c.brand_name]) {
-                    brandSummary[c.brand_name].gmv += c.gmv || 0;
-                    brandSummary[c.brand_name].creators += 1;
-                    brandSummary[c.brand_name].videos += c.videos || 0;
+                const brandName = c.brand || c.brand_name || 'Unknown';
+                if (!brandSummary[brandName]) {
+                    brandSummary[brandName] = { gmv: 0, creators: 0, videos: 0 };
                 }
+                brandSummary[brandName].gmv += c.gmv || 0;
+                brandSummary[brandName].creators += 1;
+                brandSummary[brandName].videos += c.videos || 0;
             });
 
             const data = Object.entries(brandSummary).map(([name, stats]) => ({
@@ -2653,7 +2711,7 @@
                 'Est Commission': (stats.gmv * 0.025).toFixed(2)
             }));
 
-            downloadCSV(data, `brand_summary_${weeks[0]}.csv`);
+            downloadCSV(data, `brand_summary_${weeks[0] || 'export'}.csv`);
             closeExportModal();
             showToast('Brand report exported');
         }
