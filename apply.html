@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Creators Corner</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADhUlEQVR4nO2WW0hUURSGv3PGKZ1xnMm8lJWWZReNkiAsoosgBVFBD0UQBD1EQVBPEdFLdKGHoi6UQVFR0YXoQhcqAoMudEGjNLM0U7N0vMxkzrkdetgznZlzzowz9tQP/4a999prrf85e+21YAQj+L8h/IuLE47AeV5QZAFC0wLN7X4TJElG/FsEBLmFiHBYJLRLCh9KMsW6AjL5CiLJG8bRcbhcO7P1uO4aXLGOALcbU9IGvPt7K/BqAU6n0j46Opq0tLS+8vLy99Fo9GuSSQgACPyBAImwgAR/K+Cns7S0lIyMDIxGIzabjbi4ONLS0sjMzOT06dOcOHGC4uJiiouLKS8vp7a2li+yQkFxAQEJGHoFBD2kpqZy+vRpdu7cycWLF+ns7ESWZfx+P16vl+TkZEaPHk1rayuzZ89mypQpBAIB3n38FPaQwFAE+qYgPT2d0tJSSktLGT9+PD6fT7W5XC6GDRuGKIoIgoDVasVkMtHZ2UljYyOdAQ1b/AEqIMoyhYWFHDhwgEWLFhEMBjEYDJjNZlX5er0eQRAQRRGLxUJLSwtWqxWTycTdu3dxOA6rGghJoOfEsizj9/sZO3YsZWVlrFy5kj179qiEQoAhGKxWK3v37sXv9xMIBDAYDCQkJFBeXk5sbCwej4dUfwMBSUG8T0CoAkII7MjISObn55OQkICiKNhsNkZptKptt9uZNGkS2dnZSJKEKIoYjUY0Gg0Wi4U7d+5w5swZFixYwOLFi0lMTKRDnwBDdYQj0NfGxsaSmJiIy+XCarWSl5dHTk4O0dHRxMfHExcXR0REBIIgIAgCBoOBuLg4DAYDkiQhiiJnz57l+vXrbNu2jZSUFGbNmkVCQgJOV4jU9+4FYbNxsbGx2Gw2JEkiPDycMWPGqJO5XK4+sjqdDqfTid/vp7u7G4vFgt/vx+VycePGDW7evElJSQkLFy5k6tSpZGRkkJWVhS0sjFaHI6TjgyIgqU9ERASRkZHEx8djs9nQaDQYDAYmT55MfHw8er0ejUaDTqdDEAS0Wi0GgwGdTkdXVxdPnjzh2rVrnD17ltWrV7Nu3TomTJiAxWIhNjaWVkUhPCIi5KMK4OFDaN2xg9TUVAoKCpg/fz5FRUU4nU70ej1Go5GYmBjMZjNarZaOjg5aWlr49OkTt27doqqqiqqqKoLBIEuWLCE5OZns7GymTZtGvNlMQ3d3yMf4HwGGJ/P/Dr8A5hCVLFmYUKoAAAAASUVORK5CYII=">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        
+        .container { max-width: 700px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .logo { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .logo img { width: 50px; height: 50px; }
+        .logo h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.7);
+            margin-top: 10px;
+        }
+        
+        .form-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 8px;
+        }
+        
+        .required { color: #ff6b6b; }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(0,212,255,0.05);
+        }
+        
+        .form-group select option { background: #1a1a2e; }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        
+        .input-hint {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+        }
+        
+        .tiktok-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .tiktok-input-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .tiktok-input-row input { flex: 1; }
+        
+        .btn-remove {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,107,107,0.3);
+            background: rgba(255,107,107,0.1);
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-remove:hover { background: rgba(255,107,107,0.2); }
+        
+        .btn-add {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,212,255,0.3);
+            background: rgba(0,212,255,0.1);
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .btn-add:hover { background: rgba(0,212,255,0.2); }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+        }
+        
+        .btn-submit:disabled {
+            background: rgba(255,255,255,0.2);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .success-message,
+        .error-message {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .success-message {
+            background: rgba(107,203,119,0.2);
+            border: 1px solid rgba(107,203,119,0.3);
+            color: #6bcb77;
+        }
+        
+        .error-message {
+            background: rgba(255,107,107,0.2);
+            border: 1px solid rgba(255,107,107,0.3);
+            color: #ff6b6b;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADhUlEQVR4nO2WW0hUURSGv3PGKZ1xnMm8lJWWZReNkiAsoosgBVFBD0UQBD1EQVBPEdFLdKGHoi6UQVFR0YXoQhcqAoMudEGjNLM0U7N0vMxkzrkdetgznZlzzowz9tQP/4a999prrf85e+21YAQj+L8h/IuLE47AeV5QZAFC0wLN7X4TJElG/FsEBLmFiHBYJLRLCh9KMsW6AjL5CiLJG8bRcbhcO7P1uO4aXLGOALcbU9IGvPt7K/BqAU6n0j46Opq0tLS+8vLy99Fo9GuSSQgACPyBAImwgAR/K+Cns7S0lIyMDIxGIzabjbi4ONLS0sjMzOT06dOcOHGC4uJiiouLKS8vp7a2li+yQkFxAQEJGHoFBD2kpqZy+vRpdu7cycWLF+ns7ESWZfx+P16vl+TkZEaPHk1rayuzZ89mypQpBAIB3n38FPaQwFAE+qYgPT2d0tJSSktLGT9+PD6fT7W5XC6GDRuGKIoIgoDVasVkMtHZ2UhjYyOdAQ1b/AEqIMoyhYWFHDhwgEWLFhEMBjEYDJjNZlX5er0eQRAQRRGLxUJLSwtWqxWTycTdu3dxOA6rGghJoOfEsizj9/sZO3YsZWVlrFy5kj179qiEQoAhGKxWK3v37sXv9xMIBDAYDCQkJFBeXk5sbCwej4dUfwMBSUG8T0CoAkII7MjISObn55OQkICiKNhsNkZptKptt9uZNGkS2dnZSJKEKIoYjUY0Gg0Wi4U7d+5w5swZFixYwOLFi0lMTKRDnwBDdYQj0NfGxsaSmJiIy+XCarWSl5dHTk4O0dHRxMfHExcXR0REBIIgIAgCBoOBuLg4DAYDkiQhiiJnz57l+vXrbNu2jZSUFGbNmkVCQgJOV4jU9+4FYbNxsbGx2Gw2JEkiPDycMWPGqJO5XK4+sjqdDqfTid/vp7u7G4vFgt/vx+VycePGDW7evElJSQkLFy5k6tSpZGRkkJWVhS0sjFaHI6TjgyIgqU9ERASRkZHEx8djs9nQaDQYDAYmT55MfHw8er0ejUaDTqdDEAS0Wi0GgwGdTkdXVxdPnjzh2rVrnD17ltWrV7Nu3TomTJiAxWIhNjaWVkUhPCIi5KMK4OFDaN2xg9TUVAoKCpg/fz5FRUU4nU70ej1Go5GYmBjMZjNarZaOjg5aWlr49OkTt27doqqqiqqqKoLBIEuWLCE5OZns7GymTZtGvNlMQ3d3yMf4HwGGJ/P/Dr8A5hCVLFmYUKoAAAAASUVORK5CYII=" alt="Logo">
+                <h1>Creators Corner</h1>
+            </div>
+            <div class="subtitle">Join our community of TikTok Shop creators</div>
+        </div>
+        
+        <div class="form-card" id="formCard">
+            <div id="loadingState" class="loading" style="display:none;">Loading form...</div>
+            
+            <div id="successState" style="display:none;">
+                <div class="success-message">
+                    <h2 style="margin-bottom:10px;">✅ Application Submitted!</h2>
+                    <p>Thank you for applying. We'll review your application and get back to you on Discord soon.</p>
+                </div>
+            </div>
+            
+            <div id="errorState" style="display:none;">
+                <div class="error-message">
+                    <h3 style="margin-bottom:10px;">❌ Submission Failed</h3>
+                    <p id="errorText">Something went wrong. Please try again.</p>
+                </div>
+                <button class="btn-submit" onclick="location.reload()">Try Again</button>
+            </div>
+            
+            <form id="onboardingForm" style="display:none;">
+                <!-- Required Info -->
+                <div class="form-section">
+                    <h3>📋 Basic Information</h3>
+                    
+                    <div class="form-group">
+                        <label>Discord Username <span class="required">*</span></label>
+                        <input type="text" id="discordUsername" required placeholder="e.g. yourname#1234">
+                        <div class="input-hint">We'll use this to contact you</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>TikTok Username(s) <span class="required">*</span></label>
+                        <div class="tiktok-inputs" id="tiktokInputs">
+                            <div class="tiktok-input-row">
+                                <input type="text" class="tiktok-username" required placeholder="e.g. @yourhandle">
+                            </div>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addTikTokInput()">+ Add Another Account</button>
+                        <div class="input-hint">Add all TikTok accounts you'll use</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Which brand interests you most? <span class="required">*</span></label>
+                        <select id="brandPreference" required>
+                            <option value="">-- Select a brand --</option>
+                            <option value="catakor">Cata-Kor</option>
+                            <option value="jiyu">JiYu</option>
+                            <option value="physicians_choice">Physicians Choice</option>
+                            <option value="peach_slices">Peach Slices</option>
+                            <option value="yerba_magic">Yerba Magic</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Custom Questions -->
+                <div class="form-section" id="customQuestionsSection">
+                    <h3>💬 Tell Us More</h3>
+                    <div id="customQuestions"></div>
+                </div>
+                
+                <button type="submit" class="btn-submit" id="submitBtn">Submit Application</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const SUPABASE_URL = 'https://elrsgxlyejlkzjcnhmak.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscnNneGx5ZWpsa3pqY25obWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMTQ5OTUsImV4cCI6MjA3OTU5MDk5NX0.8XScMdGkFRqRIDMPY3gWS5tk0Z8NbGzDXuH1dsnBdZ0';
+        
+        let supabase;
+        let customQuestions = [];
+        
+        async function init() {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                
+                document.getElementById('loadingState').style.display = 'block';
+                
+                // Load custom questions
+                const { data, error } = await supabase
+                    .from('onboarding_questions')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('question_order');
+                
+                if (error) throw error;
+                
+                customQuestions = data || [];
+                renderCustomQuestions();
+                
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('onboardingForm').style.display = 'block';
+                
+            } catch (err) {
+                console.error('Error loading form:', err);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorText').textContent = 'Failed to load form. Please refresh the page.';
+            }
+        }
+        
+        function renderCustomQuestions() {
+            const container = document.getElementById('customQuestions');
+            
+            if (customQuestions.length === 0) {
+                container.innerHTML = '<p style="color:rgba(255,255,255,0.5);">No additional questions at this time.</p>';
+                return;
+            }
+            
+            container.innerHTML = customQuestions.map((q, i) => `
+                <div class="form-group">
+                    <label>
+                        ${q.question_text}
+                        ${q.is_required ? '<span class="required">*</span>' : ''}
+                    </label>
+                    <textarea 
+                        id="customQ${i}" 
+                        data-question-id="${q.id}"
+                        ${q.is_required ? 'required' : ''}
+                        placeholder="Your answer..."></textarea>
+                </div>
+            `).join('');
+        }
+        
+        function addTikTokInput() {
+            const container = document.getElementById('tiktokInputs');
+            const row = document.createElement('div');
+            row.className = 'tiktok-input-row';
+            row.innerHTML = `
+                <input type="text" class="tiktok-username" placeholder="e.g. @anotherhandle">
+                <button type="button" class="btn-remove" onclick="removeTikTokInput(this)">✕</button>
+            `;
+            container.appendChild(row);
+        }
+        
+        function removeTikTokInput(btn) {
+            btn.parentElement.remove();
+        }
+        
+        document.getElementById('onboardingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                // Collect TikTok usernames
+                const tiktokInputs = document.querySelectorAll('.tiktok-username');
+                const tiktokUsernames = Array.from(tiktokInputs)
+                    .map(input => input.value.trim().replace('@', ''))
+                    .filter(u => u);
+                
+                if (tiktokUsernames.length === 0) {
+                    throw new Error('Please add at least one TikTok username');
+                }
+                
+                // Collect custom question responses
+                const customResponses = {};
+                customQuestions.forEach((q, i) => {
+                    const answer = document.getElementById(`customQ${i}`).value.trim();
+                    if (answer) {
+                        customResponses[q.question_text] = answer;
+                    }
+                });
+                
+                // Submit application
+                const { error } = await supabase
+                    .from('onboarding_applications')
+                    .insert({
+                        discord_username: document.getElementById('discordUsername').value.trim(),
+                        tiktok_usernames: tiktokUsernames,
+                        brand_preference: document.getElementById('brandPreference').value || null,
+                        custom_responses: customResponses,
+                        status: 'pending'
+                    });
+                
+                if (error) throw error;
+                
+                // Show success
+                document.getElementById('onboardingForm').style.display = 'none';
+                document.getElementById('successState').style.display = 'block';
+                
+            } catch (err) {
+                console.error('Error submitting:', err);
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorText').textContent = err.message || 'Failed to submit application. Please try again.';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Application';
+            }
+        });
+        
+        init();
+    </script>
+</body>
+</html>
