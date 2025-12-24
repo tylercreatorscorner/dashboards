@@ -293,6 +293,58 @@
             }
         }
         
+        // Quick mark contacted from posting cards (no modal)
+        async function quickMarkContacted(creatorHandle, brand) {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Find the managed creator entry
+                const mc = managedCreators.find(m => {
+                    const accounts = [m.account_1, m.account_2, m.account_3, m.account_4, m.account_5].filter(Boolean).map(a => a.toLowerCase());
+                    return accounts.includes(creatorHandle.toLowerCase()) && m.brand === brand;
+                });
+                
+                if (mc) {
+                    // Update managed_creators table
+                    await supabaseClient
+                        .from('managed_creators')
+                        .update({ last_contact_date: today })
+                        .eq('id', mc.id);
+                    
+                    // Also log to contact_log table for history
+                    await supabaseClient
+                        .from('contact_log')
+                        .insert({
+                            creator_id: mc.id,
+                            creator_name: creatorHandle,
+                            brand: brand,
+                            contact_date: today,
+                            method: 'Discord',
+                            type: 'Quick Check-in',
+                            notes: 'Quick contact from Ops Center'
+                        });
+                    
+                    showToast(`✓ Contacted @${creatorHandle}`, 'success', 2000);
+                    
+                    // Update local data immediately for snappy UI
+                    const creatorInData = postingData.find(c => 
+                        c.handle?.toLowerCase() === creatorHandle.toLowerCase() && c.brand === brand
+                    );
+                    if (creatorInData) {
+                        creatorInData.lastContact = today;
+                    }
+                    
+                    // Re-filter and re-render
+                    filterPostingData();
+                } else {
+                    showToast('Creator not found in roster', 'error');
+                }
+            } catch (err) {
+                console.error('Quick contact failed:', err);
+                showToast('Failed: ' + err.message, 'error');
+            }
+        }
+        
         function scheduleFollowup(creatorName, brand) {
             closeQuickActionMenu();
             // For now, prompt for date
@@ -1696,7 +1748,8 @@
                         </div>
                         <div style="display: flex; gap: 4px;">
                             ${discordBtn}
-                            <button onclick="editCreator(${c.id})" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.7rem;">✏️</button>
+                            <button onclick="quickMarkContacted('${c.handle?.toLowerCase()}', '${c.brand}')" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.7rem; background: #22c55e; color: white;" title="Quick mark as contacted">✓</button>
+                            <button onclick="markContacted('${c.handle?.toLowerCase()}|${c.brand}')" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.7rem;" title="Log contact with details">📝</button>
                         </div>
                     </div>
                 </div>
@@ -2153,10 +2206,12 @@
                     
                     // Determine status based on video count in last 7 days
                     // 0 = ghost, 1-3 = behind, 4-5 = atrisk, 6-9 = ontrack, 10+ = stars
+                    // Status thresholds (must match UI labels):
+                    // Ghost: 0 posts | Behind: 1-2 | At Risk: 3-4 | On Track: 5-9 | Stars: 10+
                     let status = 'ontrack';
                     if (posts7d === 0) status = 'ghost';
-                    else if (posts7d <= 3) status = 'behind';
-                    else if (posts7d <= 5) status = 'atrisk';
+                    else if (posts7d <= 2) status = 'behind';
+                    else if (posts7d <= 4) status = 'atrisk';
                     else if (posts7d >= 10) status = 'stars';
                     
                     // Check if trending down (fewer posts than previous 7 days)
@@ -2319,6 +2374,17 @@
             const atRiskCreators = underperformers.filter(c => c.isRetainer);
             const retainerAtRisk = atRiskCreators.reduce((sum, c) => sum + c.retainer, 0);
             
+            // Calculate contacted today for each category
+            const today = new Date().toISOString().split('T')[0];
+            const countContactedToday = (creators) => {
+                if (!creators) return 0;
+                return creators.filter(c => c.lastContact === today).length;
+            };
+            
+            const ghostsContacted = countContactedToday(postingCategories.ghosts);
+            const behindContacted = countContactedToday(postingCategories.behind);
+            const atriskContacted = countContactedToday(postingCategories.atrisk);
+            
             // Update stat cards
             document.getElementById('postingGhostsCount').textContent = ghosts;
             document.getElementById('postingBehindCount').textContent = behind;
@@ -2328,10 +2394,10 @@
             document.getElementById('postingRetainerAtRisk').textContent = fmtMoney(retainerAtRisk);
             document.getElementById('postingAtRiskRetainerCount').textContent = `${atRiskCreators.length} creator${atRiskCreators.length !== 1 ? 's' : ''}`;
             
-            // Update section badges
-            document.getElementById('postingGhostsBadge').textContent = ghosts;
-            document.getElementById('postingBehindBadge').textContent = behind;
-            document.getElementById('postingAtriskBadge').textContent = atrisk;
+            // Update section badges with contact progress
+            document.getElementById('postingGhostsBadge').innerHTML = `${ghosts} <span style="color: #22c55e; font-size: 0.7rem; margin-left: 4px;">(${ghostsContacted} ✓)</span>`;
+            document.getElementById('postingBehindBadge').innerHTML = `${behind} <span style="color: #22c55e; font-size: 0.7rem; margin-left: 4px;">(${behindContacted} ✓)</span>`;
+            document.getElementById('postingAtriskBadge').innerHTML = `${atrisk} <span style="color: #22c55e; font-size: 0.7rem; margin-left: 4px;">(${atriskContacted} ✓)</span>`;
             document.getElementById('postingOntrackBadge').textContent = ontrack;
             document.getElementById('postingStarsBadge').textContent = stars;
             
@@ -2514,9 +2580,9 @@
                         ${dailyBars ? `<div style="display: flex; gap: 3px; align-items: flex-end; height: 32px;">${dailyBars}</div>` : ''}
                         <div style="display: flex; gap: 4px;">
                             ${discordBtn}
-                            <button onclick="markContacted('${c.handle?.toLowerCase()}|${c.brand}')" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.7rem;" title="Log Contact">📞</button>
+                            <button onclick="quickMarkContacted('${c.handle?.toLowerCase()}', '${c.brand}')" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.7rem; background: #22c55e; color: white;" title="Quick mark as contacted">✓</button>
+                            <button onclick="markContacted('${c.handle?.toLowerCase()}|${c.brand}')" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.7rem;" title="Log contact with details">📝</button>
                             <button onclick="editCreator(${c.id})" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.7rem;" title="Edit">✏️</button>
-                            <button onclick="removeFromRoster(${c.id}, '${sanitize(c.name)}')" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.7rem; background: var(--danger); color: white;" title="Remove from Roster">🗑️</button>
                         </div>
                     </div>
                 </div>

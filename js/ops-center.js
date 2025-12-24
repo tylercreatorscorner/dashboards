@@ -1104,6 +1104,7 @@
                             <span style="font-size: 0.75rem; color: var(--text-muted);">📹 ${c.videos || 0} videos</span>
                         </div>
                         <div style="display: flex; gap: 4px;">
+                            <button onclick="quickMarkContacted('${accounts[0]?.toLowerCase()}', '${c.brand}')" class="btn btn-small" style="padding: 4px 8px; font-size: 0.7rem; background: #22c55e; color: white;" title="Quick mark as contacted">✓</button>
                             <button onclick="editCreator(${c.id})" class="btn btn-small" style="padding: 4px 8px; font-size: 0.7rem;">Edit</button>
                             ${accounts[0] ? `<a href="https://tiktok.com/@${accounts[0]}" target="_blank" class="btn btn-small" style="padding: 4px 8px; font-size: 0.7rem;">TikTok</a>` : ''}
                         </div>
