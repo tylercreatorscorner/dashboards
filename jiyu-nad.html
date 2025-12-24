@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JiYu NAD+ Moisturizer - Creator Application</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1215;
+            --bg-secondary: #231a1e;
+            --bg-card: #2a1f24;
+            --border: #3d2a32;
+            --border-light: #4d3a42;
+            --text-primary: #eceff4;
+            --text-secondary: #c9b8be;
+            --text-muted: #8a7a80;
+            --accent: #e84a8a;
+            --accent-hover: #f06aa0;
+            --accent-dim: rgba(232, 74, 138, 0.15);
+            --yellow: #f5e654;
+            --success: #34d399;
+            --success-dim: rgba(52, 211, 153, 0.12);
+            --danger: #f87171;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(232, 74, 138, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(245, 230, 84, 0.1) 0%, transparent 50%),
+                var(--bg-primary);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            height: 60px;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .product-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 16px;
+        }
+        
+        /* Product Showcase */
+        .product-showcase {
+            margin-bottom: 32px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--accent) 0%, #f5a0c0 100%);
+            padding: 24px;
+        }
+        
+        .product-carousel {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 8px 0;
+        }
+        
+        .product-carousel::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .product-image {
+            flex: 0 0 auto;
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: white;
+            scroll-snap-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        
+        .product-info {
+            text-align: center;
+            margin-top: 16px;
+            color: white;
+        }
+        
+        .product-info h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .product-info p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .form-label .required {
+            color: #f87171;
+            margin-left: 2px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            color: #f87171;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 48px 24px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-dim);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+        }
+
+        .success-message h2 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: var(--success);
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .form-card {
+                padding: 24px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    
+    <div class="container">
+        <header class="header">
+            <img src="logos/jiyu.png" alt="JiYu" class="logo">
+            <h1>NAD+ Moisturizer Creator Campaign</h1>
+            <p>Apply to be one of the first creators to promote JiYu's new NAD+ Moisturizer</p>
+            <div class="product-badge">
+                ✨ New Product Launch
+            </div>
+        </header>
+
+        <!-- Product Showcase -->
+        <div class="product-showcase">
+            <div class="product-carousel">
+                <img src="images/nad-cream-01.png" alt="NAD+ Moisturizer" class="product-image">
+                <img src="images/nad-cream-04.png" alt="NAD+ Moisturizer with Box" class="product-image">
+                <img src="images/nad-cream-05.png" alt="NAD+ Moisturizer Set" class="product-image">
+                <img src="images/nad-cream-02.png" alt="NAD+ Moisturizer Box" class="product-image">
+            </div>
+            <div class="product-info">
+                <h2>Anti-Aging Moisturizing Cream</h2>
+                <p>Powered by NAD+ • Multi-Hyaluronic Acid Complex • 50ML</p>
+            </div>
+        </div>
+
+        <div class="form-card" id="formCard">
+            <div class="error-message" id="errorMessage"></div>
+            
+            <form id="applicationForm">
+                <div class="form-group">
+                    <label class="form-label">
+                        Full Name <span class="required">*</span>
+                    </label>
+                    <input type="text" name="full_name" class="form-input" placeholder="Your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        TikTok Username <span class="required">*</span>
+                    </label>
+                    <input type="text" name="tiktok_handle" class="form-input" placeholder="@username" required>
+                    <p class="form-hint">Enter your TikTok handle with or without the @</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Drop your best performing page link <span class="required">*</span>
+                    </label>
+                    <input type="url" name="sample_video_url" class="form-input" placeholder="https://tiktok.com/@you/video/..." required>
+                    <p class="form-hint">Share a link to your best performing TikTok video</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        What's your Lifetime GMV? <span class="required">*</span>
+                    </label>
+                    <input type="text" name="lifetime_gmv" class="form-input" placeholder="e.g. $5,000 or $50,000+" required>
+                    <p class="form-hint">Total sales generated through TikTok Shop</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Why do you want to join? <span class="required">*</span>
+                    </label>
+                    <textarea name="why_join" class="form-input" placeholder="Tell us why you're excited about promoting the NAD+ Moisturizer and what makes you a great fit..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Submit Application
+                </button>
+            </form>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+            <h2>Application Submitted!</h2>
+            <p>Thanks for applying to the NAD+ Moisturizer campaign. Our team will review your application and reach out soon.</p>
+        </div>
+
+        <footer class="footer">
+            <p>Powered by <a href="/">Creators Corner</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Supabase config
+        const SUPABASE_URL = 'https://elrsgxlyejlkzjcnhmak.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscnNneGx5ZWpsa3pqY25obWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMTQ5OTUsImV4cCI6MjA3OTU5MDk5NX0.8XScMdGkFRqRIDMPY3gWS5tk0Z8NbGzDXuH1dsnBdZ0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            errorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function normalizeTikTok(handle) {
+            if (!handle) return '';
+            return handle.toLowerCase().replace(/^@/, '').trim();
+        }
+
+        document.getElementById('applicationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Normalize TikTok handle
+                const tiktokHandle = normalizeTikTok(data.tiktok_handle);
+                
+                if (!tiktokHandle) {
+                    throw new Error('Please enter a valid TikTok username');
+                }
+
+                // Check for existing application
+                const { data: existing } = await supabase
+                    .from('creator_applications')
+                    .select('id')
+                    .eq('tiktok_handle', tiktokHandle)
+                    .eq('brand', 'jiyu')
+                    .eq('funnel_slug', 'jiyu-nad-moisturizer')
+                    .in('status', ['pending', 'reviewing', 'accepted'])
+                    .single();
+
+                if (existing) {
+                    throw new Error('You have already applied for this campaign. Please wait for our team to review your application.');
+                }
+
+                // Prepare application data
+                const applicationData = {
+                    full_name: data.full_name || null,
+                    tiktok_handle: tiktokHandle,
+                    sample_video_url: data.sample_video_url || null,
+                    why_join: data.why_join || null,
+                    brand: 'jiyu',
+                    status: 'pending',
+                    funnel_slug: 'jiyu-nad-moisturizer',
+                    extra_data: {
+                        lifetime_gmv: data.lifetime_gmv,
+                        campaign: 'NAD+ Moisturizer Launch',
+                        applied_at: new Date().toISOString()
+                    }
+                };
+
+                const { error } = await supabase
+                    .from('creator_applications')
+                    .insert(applicationData);
+
+                if (error) throw error;
+
+                // Show success
+                document.getElementById('formCard').style.display = 'none';
+                document.getElementById('successMessage').classList.add('show');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            } catch (err) {
+                console.error('Submit error:', err);
+                showError(err.message || 'Something went wrong. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Application';
+            }
+        });
+    </script>
+</body>
+</html>

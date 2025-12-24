@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Report - Creators Corner</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-secondary: #f8fafc;
+            --border: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: contain;
+            background: var(--bg-secondary);
+            padding: 8px;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .report-period {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .report-meta {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .powered-by {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .powered-by img {
+            height: 20px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 6px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .stat-change.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .stat-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Chart */
+        .chart-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            height: 250px;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rank {
+            width: 40px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .rank-1 { color: #f59e0b; }
+        .rank-2 { color: #94a3b8; }
+        .rank-3 { color: #cd7f32; }
+
+        .creator-name {
+            font-weight: 500;
+        }
+
+        .gmv-value {
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* Videos Grid */
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .video-card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .video-thumb {
+            width: 100%;
+            aspect-ratio: 9/16;
+            object-fit: cover;
+            background: #1a1a2e;
+        }
+
+        .video-info {
+            padding: 12px;
+        }
+
+        .video-creator {
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+
+        .video-stats {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 16px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error */
+        .error-container {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .error-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .error-message {
+            color: var(--text-muted);
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .stat-card, .chart-container, .video-card {
+                break-inside: avoid;
+            }
+        }
+
+        /* Dark mode for sharing */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a;
+                --bg-secondary: #1e293b;
+                --border: #334155;
+                --text-primary: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --text-muted: #64748b;
+            }
+
+            .stat-change.positive {
+                background: rgba(16, 185, 129, 0.2);
+            }
+
+            .stat-change.negative {
+                background: rgba(239, 68, 68, 0.2);
+            }
+        }
+
+        /* Actions bar */
+        .actions-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--bg);
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .actions-bar button {
+            background: transparent;
+            border: none;
+            color: inherit;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .actions-bar button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingView" class="loading">
+        <div class="spinner"></div>
+        <div style="color: var(--text-muted);">Loading report...</div>
+    </div>
+
+    <div id="errorView" class="error-container" style="display: none;">
+        <div class="error-icon">📊</div>
+        <div class="error-title">Report Not Found</div>
+        <div class="error-message">This report link may have expired or is invalid.</div>
+    </div>
+
+    <div id="reportView" class="container" style="display: none;">
+        <header class="report-header">
+            <div class="brand-info">
+                <img id="brandLogo" class="brand-logo" src="" alt="">
+                <div>
+                    <div id="brandName" class="brand-name">Brand Name</div>
+                    <div id="reportPeriod" class="report-period">Dec 1 - Dec 7, 2025</div>
+                </div>
+            </div>
+            <div class="report-meta">
+                <div id="generatedDate">Generated Dec 8, 2025</div>
+                <div class="powered-by">
+                    <span>Powered by</span>
+                    <img src="logo.png" alt="Creators Corner">
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div id="totalGmv" class="stat-value">$0</div>
+                <div class="stat-label">Total GMV</div>
+                <div id="gmvChange" class="stat-change positive">+0% vs prior</div>
+            </div>
+            <div class="stat-card">
+                <div id="totalVideos" class="stat-value">0</div>
+                <div class="stat-label">Videos</div>
+                <div id="videosChange" class="stat-change positive">+0% vs prior</div>
+            </div>
+            <div class="stat-card">
+                <div id="totalCreators" class="stat-value">0</div>
+                <div class="stat-label">Active Creators</div>
+                <div id="creatorsChange" class="stat-change positive">+0 vs prior</div>
+            </div>
+            <div class="stat-card">
+                <div id="avgGmvPerCreator" class="stat-value">$0</div>
+                <div class="stat-label">Avg GMV / Creator</div>
+                <div class="stat-change" style="visibility: hidden;">-</div>
+            </div>
+        </div>
+
+        <!-- GMV Trend Chart -->
+        <div class="section">
+            <div class="section-title">📈 Daily GMV Trend</div>
+            <div class="chart-container">
+                <canvas id="gmvChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Top Creators -->
+        <div class="section">
+            <div class="section-title">🏆 Top Creators</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Creator</th>
+                        <th style="text-align: right;">GMV</th>
+                        <th style="text-align: right;">Videos</th>
+                    </tr>
+                </thead>
+                <tbody id="creatorsTable">
+                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Top Videos -->
+        <div class="section">
+            <div class="section-title">🎬 Top Performing Videos</div>
+            <div id="videosGrid" class="videos-grid">
+                <!-- Videos will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Bar (for admin viewing) -->
+    <div id="actionsBar" class="actions-bar no-print" style="display: none;">
+        <button onclick="window.print()">🖨️ Print / PDF</button>
+        <button onclick="copyReportLink()">🔗 Copy Link</button>
+        <button onclick="sendToDiscord()">💬 Send to Discord</button>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://uxlwlqjkibpsgrcodwrb.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4bHdscWpraWJwc2dyY29kd3JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDczNTEzMDQsImV4cCI6MjA2MjkyNzMwNH0.yzaKEN6dVDL-RlSiKHJknf4fQWCjhqC_5MWa0j5LLMU';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const BRAND_DISPLAY = {
+            'catakor': 'Cata-Kor',
+            'jiyu': 'JiYu',
+            'physicians_choice': "Physicians Choice",
+            'peach_slices': 'Peach Slices',
+            'yerba_magic': 'Yerba Magic'
+        };
+
+        const BRAND_LOGOS = {
+            'catakor': 'logos/creators-corner-dark.svg',
+            'jiyu': 'logos/jiyu.png',
+            'physicians_choice': 'logos/physicians_choice.png',
+            'peach_slices': 'logos/peach_slices.png',
+            'yerba_magic': 'logos/yerba_magic.png'
+        };
+
+        let reportData = null;
+        let gmvChart = null;
+
+        // Parse URL params
+        function getReportParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                brand: params.get('brand') || 'all',
+                start: params.get('start'),
+                end: params.get('end'),
+                id: params.get('id') // For saved reports
+            };
+        }
+
+        function formatMoney(val) {
+            return '$' + Math.round(val || 0).toLocaleString();
+        }
+
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        async function loadReport() {
+            const params = getReportParams();
+            
+            // Default to last 7 days if no dates
+            let endDate = params.end ? new Date(params.end) : new Date();
+            let startDate = params.start ? new Date(params.start) : new Date(endDate);
+            if (!params.start) {
+                startDate.setDate(startDate.getDate() - 6);
+            }
+
+            const startStr = startDate.toISOString().split('T')[0];
+            const endStr = endDate.toISOString().split('T')[0];
+
+            // Prior period for comparison
+            const periodDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            const priorEnd = new Date(startDate);
+            priorEnd.setDate(priorEnd.getDate() - 1);
+            const priorStart = new Date(priorEnd);
+            priorStart.setDate(priorStart.getDate() - periodDays + 1);
+            const priorStartStr = priorStart.toISOString().split('T')[0];
+            const priorEndStr = priorEnd.toISOString().split('T')[0];
+
+            try {
+                // Fetch current period data
+                let query = supabase
+                    .from('video_performance')
+                    .select('video_id, creator_name, product_name, brand, gmv, video_views, video_publish_time')
+                    .gte('video_publish_time', startStr)
+                    .lte('video_publish_time', endStr + 'T23:59:59');
+                
+                if (params.brand && params.brand !== 'all') {
+                    query = query.eq('brand', params.brand);
+                }
+
+                const { data: currentData, error } = await query;
+                if (error) throw error;
+
+                // Fetch prior period data
+                let priorQuery = supabase
+                    .from('video_performance')
+                    .select('video_id, creator_name, gmv')
+                    .gte('video_publish_time', priorStartStr)
+                    .lte('video_publish_time', priorEndStr + 'T23:59:59');
+                
+                if (params.brand && params.brand !== 'all') {
+                    priorQuery = priorQuery.eq('brand', params.brand);
+                }
+
+                const { data: priorData } = await priorQuery;
+
+                // Process data
+                const current = processData(currentData || []);
+                const prior = processData(priorData || []);
+
+                // Render report
+                renderReport(params, startDate, endDate, current, prior, currentData || []);
+
+                // Show admin actions if from admin
+                if (document.referrer.includes('admin.html') || window.opener) {
+                    document.getElementById('actionsBar').style.display = 'flex';
+                }
+
+                document.getElementById('loadingView').style.display = 'none';
+                document.getElementById('reportView').style.display = 'block';
+
+            } catch (err) {
+                console.error('Error loading report:', err);
+                document.getElementById('loadingView').style.display = 'none';
+                document.getElementById('errorView').style.display = 'block';
+            }
+        }
+
+        function processData(data) {
+            const result = {
+                totalGmv: 0,
+                totalVideos: 0,
+                creators: new Set(),
+                byCreator: {},
+                byDay: {}
+            };
+
+            const seenVideos = new Set();
+            data.forEach(row => {
+                if (!seenVideos.has(row.video_id)) {
+                    seenVideos.add(row.video_id);
+                    result.totalVideos++;
+                }
+                
+                result.totalGmv += parseFloat(row.gmv) || 0;
+                result.creators.add(row.creator_name);
+
+                // By creator
+                if (!result.byCreator[row.creator_name]) {
+                    result.byCreator[row.creator_name] = { gmv: 0, videos: 0 };
+                }
+                result.byCreator[row.creator_name].gmv += parseFloat(row.gmv) || 0;
+                if (!seenVideos.has(row.video_id + '_counted')) {
+                    result.byCreator[row.creator_name].videos++;
+                    seenVideos.add(row.video_id + '_counted');
+                }
+
+                // By day
+                if (row.video_publish_time) {
+                    const day = row.video_publish_time.split('T')[0];
+                    if (!result.byDay[day]) result.byDay[day] = 0;
+                    result.byDay[day] += parseFloat(row.gmv) || 0;
+                }
+            });
+
+            result.creatorCount = result.creators.size;
+            return result;
+        }
+
+        function renderReport(params, startDate, endDate, current, prior, rawData) {
+            // Header
+            const brandKey = params.brand || 'all';
+            const brandName = brandKey === 'all' ? 'All Brands' : (BRAND_DISPLAY[brandKey] || brandKey);
+            document.getElementById('brandName').textContent = brandName;
+            document.getElementById('brandLogo').src = BRAND_LOGOS[brandKey] || 'logo.png';
+            document.getElementById('reportPeriod').textContent = `${formatDate(startDate)} - ${formatDate(endDate)}`;
+            document.getElementById('generatedDate').textContent = `Generated ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+            // Stats
+            document.getElementById('totalGmv').textContent = formatMoney(current.totalGmv);
+            document.getElementById('totalVideos').textContent = current.totalVideos.toLocaleString();
+            document.getElementById('totalCreators').textContent = current.creatorCount.toLocaleString();
+            
+            const avgGmv = current.creatorCount > 0 ? current.totalGmv / current.creatorCount : 0;
+            document.getElementById('avgGmvPerCreator').textContent = formatMoney(avgGmv);
+
+            // Changes
+            updateChange('gmvChange', current.totalGmv, prior.totalGmv, true);
+            updateChange('videosChange', current.totalVideos, prior.totalVideos, true);
+            updateChange('creatorsChange', current.creatorCount, prior.creatorCount, false);
+
+            // Chart
+            renderChart(current.byDay, startDate, endDate);
+
+            // Top creators
+            renderCreatorsTable(current.byCreator);
+
+            // Top videos
+            renderVideosGrid(rawData);
+
+            // Store for Discord
+            reportData = { params, startDate, endDate, current, prior };
+        }
+
+        function updateChange(elId, current, prior, isPercent) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+
+            if (prior === 0) {
+                el.textContent = current > 0 ? 'New' : '-';
+                el.className = 'stat-change positive';
+                return;
+            }
+
+            if (isPercent) {
+                const pct = ((current - prior) / prior * 100).toFixed(0);
+                el.textContent = `${pct >= 0 ? '+' : ''}${pct}% vs prior`;
+                el.className = `stat-change ${pct >= 0 ? 'positive' : 'negative'}`;
+            } else {
+                const diff = current - prior;
+                el.textContent = `${diff >= 0 ? '+' : ''}${diff} vs prior`;
+                el.className = `stat-change ${diff >= 0 ? 'positive' : 'negative'}`;
+            }
+        }
+
+        function renderChart(byDay, startDate, endDate) {
+            const labels = [];
+            const data = [];
+            
+            const current = new Date(startDate);
+            while (current <= endDate) {
+                const dateStr = current.toISOString().split('T')[0];
+                labels.push(current.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+                data.push(byDay[dateStr] || 0);
+                current.setDate(current.getDate() + 1);
+            }
+
+            const ctx = document.getElementById('gmvChart').getContext('2d');
+            
+            if (gmvChart) gmvChart.destroy();
+            
+            gmvChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'GMV',
+                        data,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#6366f1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => '$' + Math.round(ctx.raw).toLocaleString()
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: val => '$' + (val / 1000).toFixed(0) + 'K'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderCreatorsTable(byCreator) {
+            const sorted = Object.entries(byCreator)
+                .sort((a, b) => b[1].gmv - a[1].gmv)
+                .slice(0, 10);
+
+            const tbody = document.getElementById('creatorsTable');
+            
+            if (sorted.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No creator data</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = sorted.map(([name, stats], i) => {
+                const rankClass = i < 3 ? `rank-${i + 1}` : '';
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+                return `
+                    <tr>
+                        <td class="rank ${rankClass}">${medal}</td>
+                        <td class="creator-name">${escapeHtml(name)}</td>
+                        <td style="text-align: right;" class="gmv-value">${formatMoney(stats.gmv)}</td>
+                        <td style="text-align: right;">${stats.videos}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderVideosGrid(rawData) {
+            // Dedupe videos and sort by GMV
+            const videoMap = {};
+            rawData.forEach(row => {
+                if (!videoMap[row.video_id] || videoMap[row.video_id].gmv < row.gmv) {
+                    videoMap[row.video_id] = row;
+                }
+            });
+
+            const videos = Object.values(videoMap)
+                .sort((a, b) => (b.gmv || 0) - (a.gmv || 0))
+                .slice(0, 6);
+
+            const container = document.getElementById('videosGrid');
+
+            if (videos.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-muted); padding: 20px; text-align: center;">No video data</div>';
+                return;
+            }
+
+            container.innerHTML = videos.map(v => {
+                const thumbUrl = `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@user/video/${v.video_id}`;
+                return `
+                    <div class="video-card">
+                        <div class="video-thumb" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); display: flex; align-items: center; justify-content: center;">
+                            <a href="https://www.tiktok.com/@${encodeURIComponent(v.creator_name)}/video/${v.video_id}" target="_blank" style="color: white; text-decoration: none; text-align: center; padding: 20px;">
+                                <div style="font-size: 2rem; margin-bottom: 8px;">▶️</div>
+                                <div style="font-size: 0.75rem; opacity: 0.8;">Watch on TikTok</div>
+                            </a>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-creator">${escapeHtml(v.creator_name)}</div>
+                            <div class="video-stats">${formatMoney(v.gmv)} GMV</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        function copyReportLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        }
+
+        async function sendToDiscord() {
+            if (!reportData) return;
+
+            const webhooks = JSON.parse(localStorage.getItem('discordWebhooks') || '[]');
+            const reportWebhooks = webhooks.filter(w => w.forReports);
+
+            if (reportWebhooks.length === 0) {
+                alert('No Discord webhooks configured for Reports. Add one in Settings > Integrations.');
+                return;
+            }
+
+            const { params, startDate, endDate, current } = reportData;
+            const brandName = params.brand === 'all' ? 'All Brands' : (BRAND_DISPLAY[params.brand] || params.brand);
+
+            const topCreators = Object.entries(current.byCreator)
+                .sort((a, b) => b[1].gmv - a[1].gmv)
+                .slice(0, 5)
+                .map(([name, stats], i) => `${['🥇','🥈','🥉','4.','5.'][i]} **${name}** - ${formatMoney(stats.gmv)}`)
+                .join('\n');
+
+            const embed = {
+                title: `📊 ${brandName} Performance Report`,
+                description: `**${formatDate(startDate)} - ${formatDate(endDate)}**`,
+                fields: [
+                    { name: '💰 Total GMV', value: formatMoney(current.totalGmv), inline: true },
+                    { name: '🎬 Videos', value: current.totalVideos.toString(), inline: true },
+                    { name: '👥 Creators', value: current.creatorCount.toString(), inline: true },
+                    { name: '🏆 Top Performers', value: topCreators || 'No data', inline: false }
+                ],
+                color: 5763719,
+                footer: { text: 'Creators Corner • Weekly Report' },
+                timestamp: new Date().toISOString()
+            };
+
+            let sent = 0;
+            for (const webhook of reportWebhooks) {
+                try {
+                    const response = await fetch(webhook.url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ embeds: [embed] })
+                    });
+                    if (response.ok) sent++;
+                } catch (err) {
+                    console.error('Error sending to Discord:', err);
+                }
+            }
+
+            alert(sent > 0 ? `Report sent to ${sent} Discord channel(s)!` : 'Failed to send report.');
+        }
+
+        // Initialize
+        loadReport();
+    </script>
+</body>
+</html>

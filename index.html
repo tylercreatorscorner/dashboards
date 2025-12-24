@@ -3,2832 +3,742 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creators Corner HQ v2</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADhUlEQVR4nO2WW0hUURSGv3PGKZ1xnMm8lJWWZReNkiAsoosgBVFBD0UQBD1EQVBPEdFLdKGHoi6UQVFR0YXoQhcqAoMudEGjNLM0U7N0vMxkzrkdetgznZlzzowz9tQP/4a999prrf85e+21YAQj+L8h/IuLE47AeV5QZAFC0wLN7X4TJElG/FsEBLmFiHBYJLRLCh9KMsW6AjL5CiLJG8bRcbhcO7P1uO4aXLGOALcbU9IGvPt7K/BqAU6n0j46Opq0tLS+8vLy99Fo9GuSSQgACPyBAImwgAR/K+Cns7S0lIyMDIxGIzabjbi4ONLS0sjMzOT06dOcOHGC4uJiiouLKS8vp7a2li+yQkFxAQEJGHoFBD2kpqZy+vRpdu7cycWLF+ns7ESWZfx+P16vl+TkZEaPHk1rayuzZ89mypQpBAIB3n38FPaQwFAE+qYgPT2d0tJSSktLGT9+PD6fT7W5XC6GDRuGKIoIgoDVasVkMtHZ2UhjYyOdAQ1b/AEqIMoyhYWFHDhwgEWLFhEMBjEYDJjNZlX5er0eQRAQRRGLxUJLSwtWqxWTycTdu3dxOA6rGghJoOfEsizj9/sZO3YsZWVlrFy5kj179qiEQoAhGKxWK3v37sXv9xMIBDAYDCQkJFBeXk5sbCwej4dUfwMBSUG8T0CoAkII7MjISObn55OQkICiKNhsNkZptKptt9uZNGkS2dnZSJKEKIoYjUY0Gg0Wi4U7d+5w5swZFixYwOLFi0lMTKRDnwBDdYQj0NfGxsaSmJiIy+XCarWSl5dHTk4O0dHRxMfHExcXR0REBIIgIAgCBoOBuLg4DAYDkiQhiiJnz57l+vXrbNu2jZSUFGbNmkVCQgJOV4jU9+4FYbNxsbGx2Gw2JEkiPDycMWPGqJO5XK4+sjqdDqfTid/vp7u7G4vFgt/vx+VycePGDW7evElJSQkLFy5k6tSpZGRkkJWVhS0sjFaHI6TjgyIgqU9ERASRkZHEx8djs9nQaDQYDAYmT55MfHw8er0ejUaDTqdDEAS0Wi0GgwGdTkdXVxdPnjzh2rVrnD17ltWrV7Nu3TomTJiAxWIhNjaWVkUhPCIi5KMK4OFDaN2xg9TUVAoKCpg/fz5FRUU4nU70ej1Go5GYmBjMZjNarZaOjg5aWlr49OkTt27doqqqiqqqKoLBIEuWLCE5OZns7GymTZtGvNlMQ3d3yMf4HwGGJ/P/Dr8A5hCVLFmYUKoAAAAASUVORK5CYII=">
+    <title>Creators Corner - Login</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #1a1a24;
-            --bg-card-hover: #22222e;
-            --border: #2a2a3a;
-            --text-primary: #f0f0f5;
-            --text-secondary: #8888a0;
-            --text-muted: #555566;
-            --accent: #00d4aa;
-            --accent-dim: rgba(0, 212, 170, 0.15);
-            --warning: #ffaa00;
-            --warning-dim: rgba(255, 170, 0, 0.15);
-            --danger: #ff4466;
-            --danger-dim: rgba(255, 68, 102, 0.15);
-            --success: #00cc88;
-            --tier-bronze: #cd7f32;
-            --tier-silver: #c0c0c0;
-            --tier-gold: #ffd700;
-            --tier-platinum: #e5e4e2;
-            --tier-diamond: #b9f2ff;
-            --tier-emerald: #50c878;
-            --tier-ruby: #e0115f;
+            --bg-primary: #12141a;
+            --bg-secondary: #1a1d24;
+            --bg-card: #21252e;
+            --border: #2e3440;
+            --text-primary: #eceff4;
+            --text-secondary: #9aa5b8;
+            --text-muted: #6b7280;
+            --accent: #f5c518;
+            --accent-hover: #ffd43b;
+            --accent-dim: rgba(245, 197, 24, 0.12);
+            --success: #34d399;
+            --danger: #f87171;
+            --discord: #5865F2;
+            --discord-hover: #4752c4;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            line-height: 1.5;
-        }
-
-        /* Layout */
-        .app-container {
             display: flex;
-            min-height: 100vh;
+            flex-direction: column;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border);
-            padding: 24px 16px;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .logo {
-            font-family: 'Space Mono', monospace;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-
-        .logo-subtitle {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-        }
-
-        .nav-section {
-            margin-bottom: 24px;
-        }
-
-        .nav-label {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            padding-left: 12px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-            position: relative;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-card);
-            color: var(--text-primary);
-        }
-
-        .nav-item.active {
-            background: var(--accent-dim);
-            color: var(--accent);
-        }
-
-        .nav-item .badge {
-            position: absolute;
-            right: 12px;
-            background: var(--danger);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .nav-icon {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Season Card */
-        .season-card {
-            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(0, 212, 170, 0.1) 100%);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 24px;
-        }
-
-        .season-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-            margin-bottom: 4px;
-        }
-
-        .season-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .season-progress {
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-
-        .season-progress-fill {
-            height: 100%;
-            background: var(--accent);
-            border-radius: 2px;
-            transition: width 0.5s;
-        }
-
-        .season-dates {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        /* Main Content */
-        .main-content {
+        .container {
             flex: 1;
-            margin-left: 260px;
-            padding: 24px 32px;
-        }
-
-        /* Header */
-        .page-header {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 24px;
-        }
-
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .page-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: var(--bg-primary);
-        }
-
-        .btn-primary:hover {
-            background: #00e6b8;
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--text-muted);
-        }
-
-        /* Filter Bar */
-        .filter-bar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        .filter-select {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-family: inherit;
-            cursor: pointer;
-            min-width: 160px;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--accent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .stat-card:hover::before {
-            opacity: 1;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            font-family: 'Space Mono', monospace;
-            margin-bottom: 8px;
-        }
-
-        .stat-change {
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .stat-change.positive { color: var(--success); }
-        .stat-change.negative { color: var(--danger); }
-        .stat-change.neutral { color: var(--text-muted); }
-
-        /* Alerts Panel */
-        .alerts-panel {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 24px;
-            overflow: hidden;
-        }
-
-        .alerts-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .alerts-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .alerts-title .count {
-            background: var(--danger);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
-        .alert-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border);
-            transition: background 0.2s;
-        }
-
-        .alert-item:last-child {
-            border-bottom: none;
-        }
-
-        .alert-item:hover {
-            background: var(--bg-card-hover);
-        }
-
-        .alert-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
-            flex-shrink: 0;
+            padding: 24px;
         }
 
-        .alert-icon.warning {
-            background: var(--warning-dim);
-            color: var(--warning);
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        .alert-icon.danger {
-            background: var(--danger-dim);
-            color: var(--danger);
-        }
-
-        .alert-icon.success {
-            background: var(--accent-dim);
-            color: var(--accent);
-        }
-
-        .alert-content {
-            flex: 1;
-        }
-
-        .alert-message {
-            font-size: 0.85rem;
-            margin-bottom: 2px;
-        }
-
-        .alert-meta {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .alert-action {
-            padding: 6px 12px;
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .alert-action:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        /* Two Column Layout */
-        .two-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        /* Cards */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .card-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        /* Tier Distribution */
-        .tier-bar {
-            display: flex;
-            height: 32px;
-            border-radius: 6px;
-            overflow: hidden;
+        .logo-img {
+            height: 80px;
             margin-bottom: 16px;
         }
 
-        .tier-segment {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--bg-primary);
-            transition: flex 0.5s;
-            min-width: 0;
-        }
-
-        .tier-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .tier-legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .tier-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        /* Creator Table */
-        .creator-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .creator-table th {
-            text-align: left;
-            padding: 12px 16px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border);
-            font-weight: 500;
-        }
-
-        .creator-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.85rem;
-        }
-
-        .creator-table tbody tr {
-            transition: background 0.2s;
-        }
-
-        .creator-table tbody tr:hover {
-            background: var(--bg-card-hover);
-        }
-
-        .creator-name {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .creator-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .creator-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .creator-handle {
-            font-weight: 500;
-        }
-
-        .creator-brand {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .managed-badge {
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            background: var(--accent-dim);
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--accent);
-            border-radius: 4px;
-            margin-left: 6px;
+            letter-spacing: 2px;
         }
 
-        /* Tier Badges */
-        .tier-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 10px;
+        .tagline {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .tier-badge.bronze { background: rgba(205, 127, 50, 0.2); color: var(--tier-bronze); }
-        .tier-badge.silver { background: rgba(192, 192, 192, 0.2); color: var(--tier-silver); }
-        .tier-badge.gold { background: rgba(255, 215, 0, 0.2); color: var(--tier-gold); }
-        .tier-badge.platinum { background: rgba(229, 228, 226, 0.2); color: var(--tier-platinum); }
-        .tier-badge.diamond { background: rgba(185, 242, 255, 0.2); color: var(--tier-diamond); }
-        .tier-badge.emerald { background: rgba(80, 200, 120, 0.2); color: var(--tier-emerald); }
-        .tier-badge.ruby { background: rgba(224, 17, 95, 0.2); color: var(--tier-ruby); }
-        .tier-badge.none { background: var(--bg-secondary); color: var(--text-muted); }
-
-        /* Progress Bar */
-        .tier-progress {
+            padding: 40px;
             width: 100%;
-            height: 6px;
-            background: var(--border);
-            border-radius: 3px;
-            overflow: hidden;
+            max-width: 420px;
         }
 
-        .tier-progress-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.5s;
-        }
-
-        .tier-progress-text {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* Health Score */
-        .health-score {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 0.8rem;
+        .login-title {
+            font-size: 1.5rem;
             font-weight: 700;
-            font-family: 'Space Mono', monospace;
-        }
-
-        .health-score.excellent { background: rgba(0, 204, 136, 0.2); color: var(--success); }
-        .health-score.good { background: rgba(0, 212, 170, 0.2); color: var(--accent); }
-        .health-score.fair { background: var(--warning-dim); color: var(--warning); }
-        .health-score.poor { background: var(--danger-dim); color: var(--danger); }
-
-        /* Commission */
-        .commission-cell {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .commission-amount {
-            font-family: 'Space Mono', monospace;
-            font-weight: 600;
-        }
-
-        .commission-rate {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-        }
-
-        /* Change Indicators */
-        .change-up { color: var(--success); }
-        .change-down { color: var(--danger); }
-        .change-neutral { color: var(--text-muted); }
-
-        /* Charts */
-        .chart-container {
-            position: relative;
-            height: 200px;
-        }
-
-        /* Video Analytics */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        .video-stat {
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            padding: 16px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
-        .video-stat-value {
-            font-size: 1.25rem;
-            font-weight: 700;
-            font-family: 'Space Mono', monospace;
-            margin-bottom: 4px;
-        }
-
-        .video-stat-label {
-            font-size: 0.7rem;
+        .login-subtitle {
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+            text-align: center;
+            margin-bottom: 32px;
         }
 
-        /* Modal */
-        .modal-overlay {
+        /* Discord Button */
+        .btn-discord {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: var(--discord);
+            color: white;
+        }
+
+        .btn-discord:hover {
+            background: var(--discord-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(88, 101, 242, 0.4);
+        }
+
+        .btn-discord:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-discord svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 28px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Features List */
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Message */
+        .message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .message.show { display: block; }
+        .message.error { background: rgba(248, 113, 113, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+        .message.success { background: rgba(52, 211, 153, 0.15); color: var(--success); border: 1px solid var(--success); }
+
+        /* Loading State */
+        .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: var(--bg-primary);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 16px;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s;
         }
 
-        .modal-overlay.active {
+        .loading-overlay.show {
             opacity: 1;
             visibility: visible;
         }
 
-        .modal {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
-        .modal-header {
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Logged In View */
+        .logged-in-view {
+            display: none;
+        }
+
+        .logged-in-view.active {
+            display: block;
+        }
+
+        .login-view {
+            display: none;
+        }
+
+        .login-view.active {
+            display: block;
+        }
+
+        .user-card {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
+            gap: 16px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            margin-bottom: 24px;
         }
 
-        .modal-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--discord);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
+            font-weight: 700;
+            color: white;
+            overflow: hidden;
         }
 
-        .modal-close:hover {
-            color: var(--text-primary);
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .modal-body {
-            padding: 24px;
+        .user-info {
+            flex: 1;
         }
 
-        /* Export Options */
-        .export-options {
-            display: grid;
+        .user-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .user-role {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Portal Cards */
+        .portal-cards {
+            display: flex;
+            flex-direction: column;
             gap: 12px;
+            margin-bottom: 24px;
         }
 
-        .export-option {
+        .portal-card {
             display: flex;
             align-items: center;
             gap: 16px;
             padding: 16px;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .export-option:hover {
-            border-color: var(--accent);
-            background: var(--accent-dim);
-        }
-
-        .export-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            background: var(--bg-card);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .export-info h4 {
-            font-size: 0.9rem;
-            margin-bottom: 2px;
-        }
-
-        .export-info p {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 4px;
-            background: var(--bg-secondary);
-            padding: 4px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 10px 16px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            background: transparent;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .tab:hover {
-            color: var(--text-primary);
-        }
-
-        .tab.active {
-            background: var(--bg-card);
-            color: var(--accent);
-            font-weight: 500;
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* My Creators Section */
-        .my-creators-summary {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .summary-card {
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
-            border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 20px;
-        }
-
-        .summary-card.highlight {
-            border-color: var(--accent);
-            background: linear-gradient(135deg, var(--accent-dim) 0%, var(--bg-card) 100%);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-muted);
-        }
-
-        .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        .empty-title {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .empty-text {
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-        }
-
-        .pagination button {
-            padding: 8px 14px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
         }
 
-        .pagination button:hover:not(:disabled) {
+        .portal-card:hover {
             border-color: var(--accent);
-            color: var(--accent);
+            transform: translateX(4px);
         }
 
-        .pagination button:disabled {
+        .portal-card.disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        .pagination span {
-            font-size: 0.8rem;
-            color: var(--text-muted);
+        .portal-card.disabled:hover {
+            transform: none;
+            border-color: var(--border);
         }
 
-        /* Loading */
-        .loading {
+        .portal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 60px;
-            color: var(--text-muted);
+            font-size: 1.5rem;
         }
 
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 12px;
-        }
+        .portal-icon.admin { background: rgba(245, 197, 24, 0.15); }
+        .portal-icon.creator { background: rgba(167, 139, 250, 0.15); }
+        .portal-icon.brand { background: rgba(96, 165, 250, 0.15); }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        .portal-info { flex: 1; }
+        .portal-name { font-weight: 600; font-size: 1rem; margin-bottom: 2px; }
+        .portal-desc { font-size: 0.8rem; color: var(--text-muted); }
+        .portal-arrow { color: var(--text-muted); font-size: 1.2rem; }
 
-        /* Toast Notifications */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
+        .badge-soon {
             background: var(--bg-card);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Logout Button */
+        .btn-logout {
+            width: 100%;
+            padding: 14px;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 1100;
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
+        .btn-logout:hover {
+            border-color: var(--danger);
+            color: var(--danger);
         }
 
-        .toast.success { border-left: 3px solid var(--success); }
-        .toast.error { border-left: 3px solid var(--danger); }
-        .toast.warning { border-left: 3px solid var(--warning); }
+        /* Footer */
+        .footer {
+            padding: 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
 
         /* Responsive */
-        @media (max-width: 1200px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .two-col { grid-template-columns: 1fr; }
-            .my-creators-summary { grid-template-columns: repeat(2, 1fr); }
-        }
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 28px 20px;
+            }
 
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .my-creators-summary { grid-template-columns: 1fr; }
-            .video-grid { grid-template-columns: 1fr; }
+            .logo-text {
+                font-size: 1.5rem;
+            }
+
+            .btn-discord {
+                padding: 14px 20px;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">CREATORS CORNER</div>
-            <div class="logo-subtitle">Command Center v2</div>
-
-            <nav>
-                <div class="nav-section">
-                    <div class="nav-label">Overview</div>
-                    <div class="nav-item active" data-page="dashboard">
-                        <span class="nav-icon">📊</span>
-                        Dashboard
-                    </div>
-                    <div class="nav-item" data-page="alerts">
-                        <span class="nav-icon">🔔</span>
-                        Alerts
-                        <span class="badge" id="alertBadge">0</span>
-                    </div>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-label">Creators</div>
-                    <div class="nav-item" data-page="creators">
-                        <span class="nav-icon">👥</span>
-                        All Creators
-                    </div>
-                    <div class="nav-item" data-page="my-creators">
-                        <span class="nav-icon">⭐</span>
-                        My Creators
-                    </div>
-                    <div class="nav-item" data-page="tiers">
-                        <span class="nav-icon">🏆</span>
-                        Tier Tracker
-                    </div>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-label">Analytics</div>
-                    <div class="nav-item" data-page="videos">
-                        <span class="nav-icon">🎬</span>
-                        Video Performance
-                    </div>
-                    <div class="nav-item" data-page="commissions">
-                        <span class="nav-icon">💰</span>
-                        Commissions
-                    </div>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-label">Tools</div>
-                    <div class="nav-item" onclick="window.open('upload.html', '_blank')">
-                        <span class="nav-icon">📤</span>
-                        Upload Data
-                    </div>
-                    <div class="nav-item" onclick="window.open('apply.html', '_blank')">
-                        <span class="nav-icon">📝</span>
-                        Onboarding Form
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Season Card -->
-            <div class="season-card">
-                <div class="season-label">Current Season</div>
-                <div class="season-name" id="seasonName">Q4 2024</div>
-                <div class="season-progress">
-                    <div class="season-progress-fill" id="seasonProgress" style="width: 0%"></div>
-                </div>
-                <div class="season-dates" id="seasonDates">Loading...</div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Dashboard Page -->
-            <div id="page-dashboard" class="page active">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Dashboard</h1>
-                        <p class="page-subtitle" id="lastUpdated">Loading data...</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="btn btn-secondary" onclick="openExportModal()">
-                            📥 Export
-                        </button>
-                        <button class="btn btn-primary" onclick="refreshData()">
-                            ↻ Refresh
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Filters -->
-                <div class="filter-bar">
-                    <select class="filter-select" id="brandFilter" onchange="applyFilters()">
-                        <option value="all">All Brands</option>
-                    </select>
-                    <select class="filter-select" id="weekFilter" onchange="applyFilters()">
-                        <option value="latest">Latest Week</option>
-                    </select>
-                    <select class="filter-select" id="tierFilter" onchange="applyFilters()">
-                        <option value="all">All Tiers</option>
-                        <option value="ruby">Ruby</option>
-                        <option value="emerald">Emerald</option>
-                        <option value="diamond">Diamond</option>
-                        <option value="platinum">Platinum</option>
-                        <option value="gold">Gold</option>
-                        <option value="silver">Silver</option>
-                        <option value="bronze">Bronze</option>
-                        <option value="none">No Tier</option>
-                    </select>
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
-                        <input type="checkbox" id="managedOnly" onchange="applyFilters()"> My Creators Only
-                    </label>
-                </div>
-
-                <!-- Stats Grid -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Total GMV</div>
-                        <div class="stat-value" id="totalGmv">$0</div>
-                        <div class="stat-change neutral" id="gmvChange">Calculating...</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Active Creators</div>
-                        <div class="stat-value" id="activeCreators">0</div>
-                        <div class="stat-change neutral" id="creatorsChange">Calculating...</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Videos Posted</div>
-                        <div class="stat-value" id="totalVideos">0</div>
-                        <div class="stat-change neutral" id="videosChange">Calculating...</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Est. Commission</div>
-                        <div class="stat-value" id="totalCommission">$0</div>
-                        <div class="stat-change neutral" id="commissionChange">@ 2.5% avg</div>
-                    </div>
-                </div>
-
-                <!-- Alerts Panel -->
-                <div class="alerts-panel" id="alertsPanel">
-                    <div class="alerts-header">
-                        <div class="alerts-title">
-                            🔔 Action Required <span class="count" id="alertCount">0</span>
-                        </div>
-                        <button class="alert-action" onclick="navigateTo('alerts')">View All</button>
-                    </div>
-                    <div id="alertsList">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Checking for alerts...
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Two Column Layout -->
-                <div class="two-col">
-                    <!-- Tier Distribution -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">Tier Distribution</div>
-                            <span style="font-size: 0.75rem; color: var(--text-muted);" id="tierTotal">0 creators</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="tier-bar" id="tierBar"></div>
-                            <div class="tier-legend" id="tierLegend"></div>
-                        </div>
-                    </div>
-
-                    <!-- GMV Trend -->
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">GMV Trend (Last 4 Weeks)</div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-container">
-                                <canvas id="gmvChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Top Creators Table -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Top Performers This Week</div>
-                        <button class="btn btn-secondary" onclick="navigateTo('creators')" style="padding: 6px 12px; font-size: 0.75rem;">
-                            View All →
-                        </button>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table class="creator-table">
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Creator</th>
-                                    <th>Tier</th>
-                                    <th>GMV</th>
-                                    <th>WoW</th>
-                                    <th>Health</th>
-                                    <th>Est. Commission</th>
-                                </tr>
-                            </thead>
-                            <tbody id="topCreatorsTable">
-                                <tr>
-                                    <td colspan="7" class="loading">
-                                        <div class="spinner"></div>
-                                        Loading creators...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- All Creators Page -->
-            <div id="page-creators" class="page" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">All Creators</h1>
-                        <p class="page-subtitle" id="creatorsSubtitle">0 creators</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="btn btn-secondary" onclick="exportCreators()">
-                            📥 Export CSV
-                        </button>
-                    </div>
-                </div>
-
-                <div class="filter-bar">
-                    <input type="text" class="filter-select" id="creatorSearch" placeholder="Search creators..." style="flex: 1; max-width: 300px;" oninput="searchCreators()">
-                    <select class="filter-select" id="creatorBrandFilter" onchange="filterCreatorTable()">
-                        <option value="all">All Brands</option>
-                    </select>
-                    <select class="filter-select" id="creatorTierFilter" onchange="filterCreatorTable()">
-                        <option value="all">All Tiers</option>
-                        <option value="ruby">Ruby</option>
-                        <option value="emerald">Emerald</option>
-                        <option value="diamond">Diamond</option>
-                        <option value="platinum">Platinum</option>
-                        <option value="gold">Gold</option>
-                        <option value="silver">Silver</option>
-                        <option value="bronze">Bronze</option>
-                        <option value="none">No Tier</option>
-                    </select>
-                    <select class="filter-select" id="creatorSort" onchange="filterCreatorTable()">
-                        <option value="gmv-desc">GMV (High to Low)</option>
-                        <option value="gmv-asc">GMV (Low to High)</option>
-                        <option value="health-desc">Health Score (Best)</option>
-                        <option value="health-asc">Health Score (Worst)</option>
-                        <option value="wow-desc">WoW Change (Best)</option>
-                        <option value="wow-asc">WoW Change (Worst)</option>
-                    </select>
-                </div>
-
-                <div class="card">
-                    <div style="overflow-x: auto;">
-                        <table class="creator-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Creator</th>
-                                    <th>Tier</th>
-                                    <th>Progress</th>
-                                    <th>GMV</th>
-                                    <th>WoW</th>
-                                    <th>Videos</th>
-                                    <th>Health</th>
-                                    <th>Est. Commission</th>
-                                </tr>
-                            </thead>
-                            <tbody id="allCreatorsTable">
-                                <tr>
-                                    <td colspan="9" class="loading">
-                                        <div class="spinner"></div>
-                                        Loading creators...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="creatorsPagination"></div>
-                </div>
-            </div>
-
-            <!-- My Creators Page -->
-            <div id="page-my-creators" class="page" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">My Creators</h1>
-                        <p class="page-subtitle">Your managed roster performance</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="btn btn-secondary" onclick="openManagedModal()">
-                            ✏️ Edit Roster
-                        </button>
-                        <button class="btn btn-primary" onclick="exportMyCreators()">
-                            📥 Export
-                        </button>
-                    </div>
-                </div>
-
-                <div class="my-creators-summary">
-                    <div class="summary-card highlight">
-                        <div class="stat-label">Your GMV</div>
-                        <div class="stat-value" id="myGmv">$0</div>
-                        <div class="stat-change neutral" id="myGmvPercent">0% of total</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="stat-label">Managed Creators</div>
-                        <div class="stat-value" id="myCreatorCount">0</div>
-                        <div class="stat-change neutral" id="myActiveCount">0 active this week</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="stat-label">Est. Commission</div>
-                        <div class="stat-value" id="myCommission">$0</div>
-                        <div class="stat-change neutral">@ 2.5% avg rate</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="stat-label">Avg Health Score</div>
-                        <div class="stat-value" id="myAvgHealth">--</div>
-                        <div class="stat-change neutral" id="myHealthTrend">--</div>
-                    </div>
-                </div>
-
-                <div class="card" id="myCreatorsCard">
-                    <div style="overflow-x: auto;">
-                        <table class="creator-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Creator</th>
-                                    <th>Tier</th>
-                                    <th>Progress</th>
-                                    <th>GMV</th>
-                                    <th>WoW</th>
-                                    <th>Videos</th>
-                                    <th>Health</th>
-                                    <th>Est. Commission</th>
-                                </tr>
-                            </thead>
-                            <tbody id="myCreatorsTable">
-                                <tr>
-                                    <td colspan="9">
-                                        <div class="empty-state">
-                                            <div class="empty-icon">⭐</div>
-                                            <div class="empty-title">No managed creators yet</div>
-                                            <div class="empty-text">Add your creator roster to track your slice of the pie</div>
-                                            <button class="btn btn-primary" onclick="openManagedModal()">+ Add Creators</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alerts Page -->
-            <div id="page-alerts" class="page" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Alerts & Actions</h1>
-                        <p class="page-subtitle">Items needing your attention</p>
-                    </div>
-                </div>
-
-                <div class="tabs">
-                    <button class="tab active" data-tab="urgent">🔴 Urgent</button>
-                    <button class="tab" data-tab="warnings">🟡 Warnings</button>
-                    <button class="tab" data-tab="celebrations">🟢 Celebrations</button>
-                </div>
-
-                <div class="card">
-                    <div id="alertsFullList">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Loading alerts...
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tiers Page -->
-            <div id="page-tiers" class="page" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Tier Tracker</h1>
-                        <p class="page-subtitle">Season progress and tier achievements</p>
-                    </div>
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: repeat(7, 1fr);">
-                    <div class="stat-card" style="border-top: 3px solid var(--tier-bronze);">
-                        <div class="stat-label">Bronze</div>
-                        <div class="stat-value" id="bronzeCount">0</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">$2K+</div>
-                    </div>
-                    <div class="stat-card" style="border-top: 3px solid var(--tier-silver);">
-                        <div class="stat-label">Silver</div>
-                        <div class="stat-value" id="silverCount">0</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">$5K+</div>
-                    </div>
-                    <div class="stat-card" style="border-top: 3px solid var(--tier-gold);">
-                        <div class="stat-label">Gold</div>
-                        <div class="stat-value" id="goldCount">0</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">$10K+</div>
-                    </div>
-                    <div class="stat-card" style="border-top: 3px solid var(--tier-platinum);">
-                        <div class="stat-label">Platinum</div>
-                        <div class="stat-value" id="platinumCount">0</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">$20K+</div>
-                    </div>
-                    <div class="stat-card" style="border-top: 3px solid var(--tier-diamond);">
-                        <div class="stat-label">Diamond</div>
-                        <div class="stat-value" id="diamondCount">0</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">$50K+</div>
-                    </div>
-                    <div class="stat-card" style="border-top: 3px solid var(--tier-emerald);">
-                        <div class="stat-label">Emerald</div>
-                        <div class="stat-value" id="emeraldCount">0</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">$100K+</div>
-                    </div>
-                    <div class="stat-card" style="border-top: 3px solid var(--tier-ruby);">
-                        <div class="stat-label">Ruby</div>
-                        <div class="stat-value" id="rubyCount">0</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">$200K+</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Recent Tier Achievements</div>
-                    </div>
-                    <div id="tierAchievements" class="card-body">
-                        <div class="empty-state">
-                            <div class="empty-icon">🏆</div>
-                            <div class="empty-title">No tier-ups yet this season</div>
-                            <div class="empty-text">Achievements will appear here as creators hit new tiers</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Videos Page -->
-            <div id="page-videos" class="page" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Video Performance</h1>
-                        <p class="page-subtitle">Content analytics and top performers</p>
-                    </div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Total Videos</div>
-                        <div class="stat-value" id="videoTotalCount">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total Video GMV</div>
-                        <div class="stat-value" id="videoTotalGmv">$0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Avg GMV/Video</div>
-                        <div class="stat-value" id="videoAvgGmv">$0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Top Video GMV</div>
-                        <div class="stat-value" id="videoTopGmv">$0</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Top Performing Videos</div>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table class="creator-table">
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Creator</th>
-                                    <th>Brand</th>
-                                    <th>Video GMV</th>
-                                    <th>Orders</th>
-                                </tr>
-                            </thead>
-                            <tbody id="topVideosTable">
-                                <tr>
-                                    <td colspan="5" class="loading">
-                                        <div class="spinner"></div>
-                                        Loading videos...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Commissions Page -->
-            <div id="page-commissions" class="page" style="display: none;">
-                <div class="page-header">
-                    <div>
-                        <h1 class="page-title">Commission Tracker</h1>
-                        <p class="page-subtitle">Estimated earnings by creator</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="btn btn-secondary" onclick="exportCommissions()">
-                            📥 Export Report
-                        </button>
-                    </div>
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div class="stat-card">
-                        <div class="stat-label">Total Est. Commission</div>
-                        <div class="stat-value" id="commTotalEst">$0</div>
-                        <div class="stat-change neutral">Based on 2.5% avg rate</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Your Est. Share (2.5%)</div>
-                        <div class="stat-value" id="commYourShare">$0</div>
-                        <div class="stat-change neutral">From managed creators</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Creators Earning</div>
-                        <div class="stat-value" id="commCreatorCount">0</div>
-                        <div class="stat-change neutral">With GMV > $0</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Commission Breakdown</div>
-                        <select class="filter-select" id="commRateSelect" onchange="updateCommissionTable()" style="width: auto;">
-                            <option value="0.025">2.5% Rate</option>
-                            <option value="0.02">2.0% Rate</option>
-                            <option value="0.03">3.0% Rate</option>
-                            <option value="0.05">5.0% Rate</option>
-                        </select>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table class="creator-table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Creator</th>
-                                    <th>Brand</th>
-                                    <th>GMV</th>
-                                    <th>Est. Commission</th>
-                                </tr>
-                            </thead>
-                            <tbody id="commissionTable">
-                                <tr>
-                                    <td colspan="5" class="loading">
-                                        <div class="spinner"></div>
-                                        Loading commissions...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="pagination" id="commissionPagination"></div>
-                </div>
-            </div>
-        </main>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Checking authentication...</div>
     </div>
 
-    <!-- Export Modal -->
-    <div class="modal-overlay" id="exportModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">Export Data</div>
-                <button class="modal-close" onclick="closeExportModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="export-options">
-                    <div class="export-option" onclick="exportWeeklyReport()">
-                        <div class="export-icon">📊</div>
-                        <div class="export-info">
-                            <h4>Weekly Report (CSV)</h4>
-                            <p>All creators with GMV, tiers, and WoW changes</p>
-                        </div>
-                    </div>
-                    <div class="export-option" onclick="exportBrandReport()">
-                        <div class="export-icon">🏷️</div>
-                        <div class="export-info">
-                            <h4>Brand Summary (CSV)</h4>
-                            <p>Performance breakdown by brand</p>
-                        </div>
-                    </div>
-                    <div class="export-option" onclick="exportCommissionReport()">
-                        <div class="export-icon">💰</div>
-                        <div class="export-info">
-                            <h4>Commission Report (CSV)</h4>
-                            <p>Estimated commissions per creator</p>
-                        </div>
-                    </div>
-                    <div class="export-option" onclick="exportTierReport()">
-                        <div class="export-icon">🏆</div>
-                        <div class="export-info">
-                            <h4>Tier Report (CSV)</h4>
-                            <p>All creators with tier status and progress</p>
-                        </div>
-                    </div>
+    <div class="container">
+        <!-- Logo -->
+        <div class="logo-section">
+            <img src="logo.png" alt="Creators Corner" class="logo-img" onerror="this.style.display='none'">
+            <div class="logo-text">CREATORS CORNER</div>
+            <p class="tagline">TikTok Shop Creator Marketing</p>
+        </div>
+
+        <!-- Login View -->
+        <div class="login-card login-view" id="loginView">
+            <h1 class="login-title">Welcome Back</h1>
+            <p class="login-subtitle">Sign in with Discord to access your portal</p>
+
+            <div class="message" id="message"></div>
+
+            <button class="btn-discord" id="discordBtn" onclick="signInWithDiscord()">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                </svg>
+                Continue with Discord
+            </button>
+
+            <div class="divider">Why Discord?</div>
+
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">🔒</span>
+                    <span>Secure authentication - no passwords to remember</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">⚡</span>
+                    <span>One-click sign in from any device</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🎮</span>
+                    <span>Same account as our creator Discord server</span>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Managed Creators Modal -->
-    <div class="modal-overlay" id="managedModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">Manage Your Creator Roster</div>
-                <button class="modal-close" onclick="closeManagedModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p style="margin-bottom: 16px; color: var(--text-secondary); font-size: 0.85rem;">
-                    Enter creator usernames (one per line). These will be saved to Supabase and tracked as your managed creators.
-                </p>
-                <textarea id="managedCreatorsInput" style="width: 100%; height: 300px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--text-primary); font-family: 'Space Mono', monospace; font-size: 0.8rem; resize: vertical;" placeholder="shopbyjake&#10;lalatellsitall&#10;beautybymia"></textarea>
-                <div style="display: flex; gap: 12px; margin-top: 16px;">
-                    <button class="btn btn-secondary" onclick="closeManagedModal()" style="flex: 1;">Cancel</button>
-                    <button class="btn btn-primary" onclick="saveManagedCreators()" style="flex: 1;">Save to Supabase</button>
+        <!-- Logged In View -->
+        <div class="login-card logged-in-view" id="loggedInView">
+            <div class="user-card">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <div class="user-info">
+                    <div class="user-name" id="userName">Loading...</div>
+                    <div class="user-role" id="userRole">Loading...</div>
                 </div>
             </div>
+
+            <div class="portal-cards">
+                <a href="admin.html" class="portal-card" id="adminPortal" style="display: none;">
+                    <div class="portal-icon admin">📊</div>
+                    <div class="portal-info">
+                        <div class="portal-name">Admin Dashboard</div>
+                        <div class="portal-desc">Manage all brands & creators</div>
+                    </div>
+                    <div class="portal-arrow">→</div>
+                </a>
+
+                <a href="creator-portal.html" class="portal-card" id="creatorPortal">
+                    <div class="portal-icon creator">🎬</div>
+                    <div class="portal-info">
+                        <div class="portal-name">Creator Portal</div>
+                        <div class="portal-desc">Track your performance</div>
+                    </div>
+                    <div class="portal-arrow">→</div>
+                </a>
+
+                <a href="brand-portal.html" class="portal-card" id="brandPortal" style="display: none;">
+                    <div class="portal-icon brand">🏷️</div>
+                    <div class="portal-info">
+                        <div class="portal-name">Brand Portal</div>
+                        <div class="portal-desc">Campaign insights</div>
+                    </div>
+                    <div class="portal-arrow">→</div>
+                </a>
+            </div>
+
+            <button class="btn-logout" onclick="handleLogout()">
+                Sign Out
+            </button>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast">
-        <span id="toastMessage"></span>
-    </div>
+    <footer class="footer">
+        <p>© 2025 Creators Corner</p>
+    </footer>
 
     <script>
         // Supabase Config
         const SUPABASE_URL = 'https://elrsgxlyejlkzjcnhmak.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscnNneGx5ZWpsa3pqY25obWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMTQ5OTUsImV4cCI6MjA3OTU5MDk5NX0.8XScMdGkFRqRIDMPY3gWS5tk0Z8NbGzDXuH1dsnBdZ0';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Tier Thresholds (Season GMV)
-        const TIER_THRESHOLDS = {
-            ruby: 200000,
-            emerald: 100000,
-            diamond: 50000,
-            platinum: 20000,
-            gold: 10000,
-            silver: 5000,
-            bronze: 2000
-        };
-
-        const TIER_COLORS = {
-            ruby: 'var(--tier-ruby)',
-            emerald: 'var(--tier-emerald)',
-            diamond: 'var(--tier-diamond)',
-            platinum: 'var(--tier-platinum)',
-            gold: 'var(--tier-gold)',
-            silver: 'var(--tier-silver)',
-            bronze: 'var(--tier-bronze)',
-            none: 'var(--text-muted)'
-        };
-
-        const TIER_ORDER = ['ruby', 'emerald', 'diamond', 'platinum', 'gold', 'silver', 'bronze', 'none'];
-
-        // Global State
-        let allCreators = [];
-        let allVideos = [];
-        let brands = [];
-        let weeks = [];
-        let managedCreatorsList = [];
-        let currentPage = 1;
-        const PAGE_SIZE = 50;
-
-        // Season Config
-        function getSeasonInfo() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const quarter = Math.floor(now.getMonth() / 3) + 1;
-            const seasonStart = new Date(year, (quarter - 1) * 3, 1);
-            const seasonEnd = new Date(year, quarter * 3, 0);
-            const totalDays = (seasonEnd - seasonStart) / (1000 * 60 * 60 * 24);
-            const daysPassed = (now - seasonStart) / (1000 * 60 * 60 * 24);
-            const progress = Math.min(100, (daysPassed / totalDays) * 100);
-
-            return {
-                name: `Q${quarter} ${year}`,
-                start: seasonStart,
-                end: seasonEnd,
-                progress: progress,
-                daysRemaining: Math.ceil(totalDays - daysPassed)
-            };
-        }
-
-        // Calculate Tier from GMV
-        function getTier(gmv) {
-            if (gmv >= TIER_THRESHOLDS.ruby) return 'ruby';
-            if (gmv >= TIER_THRESHOLDS.emerald) return 'emerald';
-            if (gmv >= TIER_THRESHOLDS.diamond) return 'diamond';
-            if (gmv >= TIER_THRESHOLDS.platinum) return 'platinum';
-            if (gmv >= TIER_THRESHOLDS.gold) return 'gold';
-            if (gmv >= TIER_THRESHOLDS.silver) return 'silver';
-            if (gmv >= TIER_THRESHOLDS.bronze) return 'bronze';
-            return 'none';
-        }
-
-        function getNextTier(currentTier) {
-            const idx = TIER_ORDER.indexOf(currentTier);
-            return idx > 0 ? TIER_ORDER[idx - 1] : null;
-        }
-
-        function getTierProgress(gmv) {
-            const tier = getTier(gmv);
-            const nextTier = getNextTier(tier);
-            if (!nextTier) return { percent: 100, remaining: 0, nextTier: null };
-
-            const currentThreshold = tier === 'none' ? 0 : TIER_THRESHOLDS[tier];
-            const nextThreshold = TIER_THRESHOLDS[nextTier];
-            const progress = ((gmv - currentThreshold) / (nextThreshold - currentThreshold)) * 100;
-
-            return {
-                percent: Math.min(100, Math.max(0, progress)),
-                remaining: nextThreshold - gmv,
-                nextTier: nextTier
-            };
-        }
-
-        // Health Score (0-100)
-        function calculateHealthScore(creator) {
-            let score = 0;
-
-            // GMV component (40 pts max)
-            const gmv = creator.gmv || 0;
-            if (gmv >= 10000) score += 40;
-            else if (gmv >= 5000) score += 30;
-            else if (gmv >= 2000) score += 20;
-            else if (gmv >= 500) score += 10;
-            else if (gmv > 0) score += 5;
-
-            // WoW trend component (30 pts max)
-            const wow = creator.wow_change || 0;
-            if (wow >= 50) score += 30;
-            else if (wow >= 20) score += 25;
-            else if (wow >= 0) score += 15;
-            else if (wow >= -20) score += 10;
-            else if (wow >= -50) score += 5;
-
-            // Video activity (30 pts max)
-            const videos = creator.videos || 0;
-            if (videos >= 10) score += 30;
-            else if (videos >= 5) score += 25;
-            else if (videos >= 3) score += 20;
-            else if (videos >= 1) score += 10;
-
-            return Math.round(score);
-        }
-
-        function getHealthClass(score) {
-            if (score >= 80) return 'excellent';
-            if (score >= 60) return 'good';
-            if (score >= 40) return 'fair';
-            return 'poor';
-        }
-
-        // Format helpers
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
-        }
-
-        function formatNumber(num) {
-            return new Intl.NumberFormat('en-US').format(num);
-        }
-
-        function formatPercent(num, includeSign = true) {
-            const sign = includeSign && num > 0 ? '+' : '';
-            return `${sign}${num.toFixed(1)}%`;
-        }
-
-        // Toast notifications
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            toast.className = `toast ${type} show`;
-            toastMessage.textContent = message;
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // Navigation
-        function navigateTo(page) {
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            document.getElementById(`page-${page}`).style.display = 'block';
-            document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
-
-            // Load page-specific data
-            if (page === 'creators') loadAllCreatorsTable();
-            if (page === 'my-creators') loadMyCreators();
-            if (page === 'alerts') loadAllAlerts();
-            if (page === 'tiers') loadTierPage();
-            if (page === 'videos') loadVideoPage();
-            if (page === 'commissions') loadCommissionsPage();
-        }
-
-        // Initialize navigation
-        document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-            item.addEventListener('click', () => navigateTo(item.dataset.page));
-        });
-
-        // Modal functions
-        function openExportModal() {
-            document.getElementById('exportModal').classList.add('active');
-        }
-
-        function closeExportModal() {
-            document.getElementById('exportModal').classList.remove('active');
-        }
-
-        function openManagedModal() {
-            document.getElementById('managedCreatorsInput').value = managedCreatorsList.join('\n');
-            document.getElementById('managedModal').classList.add('active');
-        }
-
-        function closeManagedModal() {
-            document.getElementById('managedModal').classList.remove('active');
-        }
-
-        // Load Data
-        async function loadData() {
-            try {
-                // Load unique brands from creator_performance
-                const { data: brandData } = await supabase
-                    .from('creator_performance')
-                    .select('brand');
-                
-                const uniqueBrands = [...new Set(brandData?.map(b => b.brand).filter(Boolean) || [])].sort();
-                brands = uniqueBrands.map(name => ({ name }));
-
-                // Populate brand filters
-                const brandOptions = brands.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
-                document.getElementById('brandFilter').innerHTML = `<option value="all">All Brands</option>${brandOptions}`;
-                document.getElementById('creatorBrandFilter').innerHTML = `<option value="all">All Brands</option>${brandOptions}`;
-
-                // Load weeks (using week_end)
-                const { data: weeksData } = await supabase
-                    .from('creator_performance')
-                    .select('week_end')
-                    .order('week_end', { ascending: false });
-
-                const uniqueWeeks = [...new Set(weeksData?.map(w => w.week_end).filter(Boolean) || [])];
-                weeks = uniqueWeeks;
-
-                const weekOptions = uniqueWeeks.slice(0, 12).map((w, i) => {
-                    const date = new Date(w + 'T00:00:00');
-                    const label = i === 0 ? 'Latest Week' : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    return `<option value="${w}">${label}</option>`;
-                }).join('');
-                document.getElementById('weekFilter').innerHTML = weekOptions || '<option value="">No data</option>';
-
-                // Load managed creators
-                await loadManagedCreatorsList();
-
-                // Load creator performance
-                await loadCreatorPerformance();
-
-                // Load video data
-                await loadVideoData();
-
-                // Update season info
-                updateSeasonDisplay();
-
-                // Update alerts
-                generateAlerts();
-
-                document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString()}`;
-
-            } catch (error) {
-                console.error('Error loading data:', error);
-                showToast('Error loading data: ' + error.message, 'error');
-            }
-        }
-
-        async function loadManagedCreatorsList() {
-            const { data } = await supabase.from('managed_creators').select('creator_name');
-            managedCreatorsList = data?.map(c => c.creator_name.toLowerCase()) || [];
-        }
-
-        async function loadCreatorPerformance() {
-            const latestWeek = weeks[0];
-            const previousWeek = weeks[1];
-
-            if (!latestWeek) {
-                console.log('No weeks found');
-                allCreators = [];
-                updateDashboard();
-                return;
-            }
-
-            // Get latest week data (using week_end and brand as text)
-            const { data: latestData, error: latestError } = await supabase
-                .from('creator_performance')
-                .select('*')
-                .eq('week_end', latestWeek);
-
-            if (latestError) {
-                console.error('Error loading latest data:', latestError);
-                return;
-            }
-
-            // Get previous week data for WoW
-            let previousMap = new Map();
-            if (previousWeek) {
-                const { data: previousData } = await supabase
-                    .from('creator_performance')
-                    .select('creator_name, gmv')
-                    .eq('week_end', previousWeek);
-                
-                previousMap = new Map(previousData?.map(p => [p.creator_name?.toLowerCase(), p.gmv]) || []);
-            }
-
-            // Process creators
-            allCreators = (latestData || []).map(c => {
-                const creatorKey = (c.creator_name || c.tiktok_username || '').toLowerCase();
-                const prevGmv = previousMap.get(creatorKey) || 0;
-                const currentGmv = parseFloat(c.gmv) || 0;
-                const wowChange = prevGmv > 0 ? ((currentGmv - prevGmv) / prevGmv) * 100 : (currentGmv > 0 ? 100 : 0);
-                const isManaged = managedCreatorsList.includes(creatorKey);
-                const tier = getTier(currentGmv);
-                const health = calculateHealthScore({ gmv: currentGmv, wow_change: wowChange, videos: c.videos || 0 });
-
-                return {
-                    ...c,
-                    gmv: currentGmv,
-                    brand_name: c.brand || 'Unknown',
-                    prev_gmv: prevGmv,
-                    wow_change: wowChange,
-                    is_managed: isManaged,
-                    tier: tier,
-                    health_score: health
-                };
-            }).sort((a, b) => b.gmv - a.gmv);
-
-            console.log(`Loaded ${allCreators.length} creators`);
-            updateDashboard();
-        }
-
-        async function loadVideoData() {
-            const latestWeek = weeks[0];
-            if (!latestWeek) {
-                allVideos = [];
-                return;
-            }
-
-            const { data, error } = await supabase
-                .from('video_performance')
-                .select('*')
-                .eq('week_end', latestWeek)
-                .order('gmv', { ascending: false });
-
-            if (error) {
-                console.error('Error loading video data:', error);
-                // Try without week filter
-                const { data: allData } = await supabase
-                    .from('video_performance')
-                    .select('*')
-                    .order('gmv', { ascending: false })
-                    .limit(500);
-                allVideos = (allData || []).map(v => ({
-                    ...v,
-                    gmv: parseFloat(v.gmv) || 0,
-                    brand_name: v.brand || 'Unknown'
-                }));
-            } else {
-                allVideos = (data || []).map(v => ({
-                    ...v,
-                    gmv: parseFloat(v.gmv) || 0,
-                    brand_name: v.brand || 'Unknown'
-                }));
-            }
-            
-            console.log(`Loaded ${allVideos.length} videos`);
-        }
-
-        function updateSeasonDisplay() {
-            const season = getSeasonInfo();
-            document.getElementById('seasonName').textContent = season.name;
-            document.getElementById('seasonProgress').style.width = `${season.progress}%`;
-            document.getElementById('seasonDates').textContent = `${season.daysRemaining} days remaining`;
-        }
-
-        function updateDashboard() {
-            const filtered = getFilteredCreators();
-
-            // Stats
-            const totalGmv = filtered.reduce((sum, c) => sum + (c.gmv || 0), 0);
-            const activeCount = filtered.filter(c => c.gmv > 0).length;
-            const totalVids = filtered.reduce((sum, c) => sum + (c.videos || 0), 0);
-            const commission = totalGmv * 0.025;
-
-            document.getElementById('totalGmv').textContent = formatCurrency(totalGmv);
-            document.getElementById('activeCreators').textContent = formatNumber(activeCount);
-            document.getElementById('totalVideos').textContent = formatNumber(totalVids);
-            document.getElementById('totalCommission').textContent = formatCurrency(commission);
-
-            // WoW changes
-            const avgWow = filtered.length > 0 ? filtered.reduce((sum, c) => sum + (c.wow_change || 0), 0) / filtered.length : 0;
-            updateChangeIndicator('gmvChange', avgWow);
-            updateChangeIndicator('creatorsChange', 0);
-            updateChangeIndicator('videosChange', 0);
-
-            // Tier distribution
-            updateTierDistribution(filtered);
-
-            // Top creators table
-            updateTopCreatorsTable(filtered.slice(0, 10));
-
-            // GMV Chart
-            updateGmvChart();
-        }
-
-        function getFilteredCreators() {
-            let filtered = [...allCreators];
-
-            const brandFilter = document.getElementById('brandFilter').value;
-            const tierFilter = document.getElementById('tierFilter').value;
-            const managedOnly = document.getElementById('managedOnly').checked;
-
-            if (brandFilter !== 'all') {
-                filtered = filtered.filter(c => c.brand === brandFilter || c.brand_name === brandFilter);
-            }
-
-            if (tierFilter !== 'all') {
-                filtered = filtered.filter(c => c.tier === tierFilter);
-            }
-
-            if (managedOnly) {
-                filtered = filtered.filter(c => c.is_managed);
-            }
-
-            return filtered;
-        }
-
-        function updateChangeIndicator(elementId, change) {
-            const el = document.getElementById(elementId);
-            if (change > 0) {
-                el.className = 'stat-change positive';
-                el.textContent = `↑ ${formatPercent(change)} vs last week`;
-            } else if (change < 0) {
-                el.className = 'stat-change negative';
-                el.textContent = `↓ ${formatPercent(Math.abs(change), false)} vs last week`;
-            } else {
-                el.className = 'stat-change neutral';
-                el.textContent = 'No change';
-            }
-        }
-
-        function updateTierDistribution(creators) {
-            const tierCounts = {};
-            TIER_ORDER.forEach(t => tierCounts[t] = 0);
-            creators.forEach(c => tierCounts[c.tier]++);
-
-            const total = creators.length || 1;
-            document.getElementById('tierTotal').textContent = `${creators.length} creators`;
-
-            // Tier bar
-            let barHtml = '';
-            TIER_ORDER.forEach(tier => {
-                const count = tierCounts[tier];
-                const percent = (count / total) * 100;
-                if (percent > 0) {
-                    barHtml += `<div class="tier-segment" style="flex: ${percent}; background: ${TIER_COLORS[tier]};">${count}</div>`;
-                }
-            });
-            document.getElementById('tierBar').innerHTML = barHtml;
-
-            // Legend
-            let legendHtml = '';
-            TIER_ORDER.forEach(tier => {
-                const count = tierCounts[tier];
-                const label = tier === 'none' ? 'No Tier' : tier.charAt(0).toUpperCase() + tier.slice(1);
-                legendHtml += `<div class="tier-legend-item"><div class="tier-dot" style="background: ${TIER_COLORS[tier]};"></div>${label}: ${count}</div>`;
-            });
-            document.getElementById('tierLegend').innerHTML = legendHtml;
-        }
-
-        function updateTopCreatorsTable(creators) {
-            if (creators.length === 0) {
-                document.getElementById('topCreatorsTable').innerHTML = `
-                    <tr><td colspan="7" class="empty-state">No creators found</td></tr>
-                `;
-                return;
-            }
-
-            const html = creators.map((c, i) => {
-                const progress = getTierProgress(c.gmv);
-                const healthClass = getHealthClass(c.health_score);
-                const wowClass = c.wow_change >= 0 ? 'change-up' : 'change-down';
-                const commission = c.gmv * 0.025;
-                const displayName = c.creator_name || c.tiktok_username || 'Unknown';
-                const initials = displayName.substring(0, 2).toUpperCase();
-
-                return `
-                    <tr>
-                        <td style="font-weight: 600; color: var(--text-muted);">${i + 1}</td>
-                        <td>
-                            <div class="creator-name">
-                                <div class="creator-avatar">${initials}</div>
-                                <div class="creator-info">
-                                    <span class="creator-handle">${displayName}${c.is_managed ? '<span class="managed-badge">⭐ Managed</span>' : ''}</span>
-                                    <span class="creator-brand">${c.brand_name || c.brand || 'Unknown'}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="tier-badge ${c.tier}">${c.tier === 'none' ? '—' : c.tier.charAt(0).toUpperCase() + c.tier.slice(1)}</span></td>
-                        <td style="font-family: 'Space Mono', monospace; font-weight: 600;">${formatCurrency(c.gmv)}</td>
-                        <td class="${wowClass}">${formatPercent(c.wow_change)}</td>
-                        <td><span class="health-score ${healthClass}">${c.health_score}</span></td>
-                        <td>
-                            <div class="commission-cell">
-                                <span class="commission-amount">${formatCurrency(commission)}</span>
-                                <span class="commission-rate">@ 2.5%</span>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            document.getElementById('topCreatorsTable').innerHTML = html;
-        }
-
-        let gmvChart = null;
-        async function updateGmvChart() {
-            const ctx = document.getElementById('gmvChart').getContext('2d');
-
-            // Get last 4 weeks of data
-            const last4Weeks = weeks.slice(0, 4).reverse();
-            const weeklyGmv = [];
-
-            for (const week of last4Weeks) {
-                const { data } = await supabase
-                    .from('creator_performance')
-                    .select('gmv')
-                    .eq('week_end', week);
-
-                const total = data?.reduce((sum, c) => sum + (parseFloat(c.gmv) || 0), 0) || 0;
-                weeklyGmv.push(total);
-            }
-
-            const labels = last4Weeks.map(w => {
-                const date = new Date(w + 'T00:00:00');
-                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            });
-
-            if (gmvChart) gmvChart.destroy();
-
-            gmvChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'GMV',
-                        data: weeklyGmv,
-                        borderColor: '#00d4aa',
-                        backgroundColor: 'rgba(0, 212, 170, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#00d4aa',
-                        pointBorderColor: '#00d4aa',
-                        pointRadius: 6,
-                        pointHoverRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1a1a24',
-                            titleColor: '#f0f0f5',
-                            bodyColor: '#f0f0f5',
-                            borderColor: '#2a2a3a',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: (ctx) => formatCurrency(ctx.raw)
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { color: 'rgba(42, 42, 58, 0.5)' },
-                            ticks: { color: '#8888a0' }
-                        },
-                        y: {
-                            grid: { color: 'rgba(42, 42, 58, 0.5)' },
-                            ticks: {
-                                color: '#8888a0',
-                                callback: (val) => formatCurrency(val)
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Alerts
-        function generateAlerts() {
-            const alerts = [];
-
-            // Creators with big drops
-            allCreators.filter(c => c.wow_change < -50 && c.prev_gmv > 500).forEach(c => {
-                alerts.push({
-                    type: 'danger',
-                    icon: '📉',
-                    message: `${c.creator_name} dropped ${Math.abs(c.wow_change).toFixed(0)}% WoW`,
-                    meta: `${c.brand_name} • Was ${formatCurrency(c.prev_gmv)}, now ${formatCurrency(c.gmv)}`,
-                    category: 'urgent'
-                });
-            });
-
-            // Inactive managed creators
-            managedCreatorsList.forEach(name => {
-                const creator = allCreators.find(c => c.creator_name.toLowerCase() === name);
-                if (!creator || creator.gmv === 0) {
-                    alerts.push({
-                        type: 'warning',
-                        icon: '⚠️',
-                        message: `${name} has no GMV this week`,
-                        meta: 'Managed creator • May need outreach',
-                        category: 'warnings'
-                    });
-                }
-            });
-
-            // Tier-ups
-            allCreators.filter(c => c.prev_gmv > 0).forEach(c => {
-                const prevTier = getTier(c.prev_gmv);
-                const currentTier = c.tier;
-                if (TIER_ORDER.indexOf(currentTier) < TIER_ORDER.indexOf(prevTier) && currentTier !== 'none') {
-                    alerts.push({
-                        type: 'success',
-                        icon: '🏆',
-                        message: `${c.creator_name} hit ${currentTier.toUpperCase()} tier!`,
-                        meta: `${c.brand_name} • ${formatCurrency(c.gmv)} GMV`,
-                        category: 'celebrations'
-                    });
-                }
-            });
-
-            // Big gainers
-            allCreators.filter(c => c.wow_change > 100 && c.gmv > 1000).slice(0, 5).forEach(c => {
-                alerts.push({
-                    type: 'success',
-                    icon: '🚀',
-                    message: `${c.creator_name} up ${c.wow_change.toFixed(0)}% WoW!`,
-                    meta: `${c.brand_name} • ${formatCurrency(c.gmv)} GMV`,
-                    category: 'celebrations'
-                });
-            });
-
-            // Update badge
-            const urgentCount = alerts.filter(a => a.category === 'urgent').length;
-            document.getElementById('alertBadge').textContent = urgentCount;
-            document.getElementById('alertBadge').style.display = urgentCount > 0 ? 'block' : 'none';
-            document.getElementById('alertCount').textContent = urgentCount;
-
-            // Update dashboard alerts (show top 5)
-            const topAlerts = alerts.slice(0, 5);
-            if (topAlerts.length === 0) {
-                document.getElementById('alertsList').innerHTML = `
-                    <div style="padding: 20px; text-align: center; color: var(--text-muted);">
-                        ✅ No urgent alerts
-                    </div>
-                `;
-            } else {
-                document.getElementById('alertsList').innerHTML = topAlerts.map(a => `
-                    <div class="alert-item">
-                        <div class="alert-icon ${a.type}">${a.icon}</div>
-                        <div class="alert-content">
-                            <div class="alert-message">${a.message}</div>
-                            <div class="alert-meta">${a.meta}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // Store for full alerts page
-            window.allAlerts = alerts;
-        }
-
-        function loadAllAlerts() {
-            const alerts = window.allAlerts || [];
-
-            // Set up tabs
-            document.querySelectorAll('.tabs .tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    filterAlertsByCategory(tab.dataset.tab);
-                });
-            });
-
-            filterAlertsByCategory('urgent');
-        }
-
-        function filterAlertsByCategory(category) {
-            const alerts = window.allAlerts || [];
-            const filtered = alerts.filter(a => a.category === category);
-
-            if (filtered.length === 0) {
-                document.getElementById('alertsFullList').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">✅</div>
-                        <div class="empty-title">No ${category} alerts</div>
-                    </div>
-                `;
-            } else {
-                document.getElementById('alertsFullList').innerHTML = filtered.map(a => `
-                    <div class="alert-item">
-                        <div class="alert-icon ${a.type}">${a.icon}</div>
-                        <div class="alert-content">
-                            <div class="alert-message">${a.message}</div>
-                            <div class="alert-meta">${a.meta}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // All Creators Page
-        function loadAllCreatorsTable() {
-            const filtered = getFilteredCreatorsForTable();
-            const paginated = paginateData(filtered, currentPage, PAGE_SIZE);
-
-            document.getElementById('creatorsSubtitle').textContent = `${filtered.length} creators`;
-
-            if (paginated.data.length === 0) {
-                document.getElementById('allCreatorsTable').innerHTML = `
-                    <tr><td colspan="9" class="empty-state">No creators found</td></tr>
-                `;
-                return;
-            }
-
-            const html = paginated.data.map((c, i) => {
-                const rank = (currentPage - 1) * PAGE_SIZE + i + 1;
-                const progress = getTierProgress(c.gmv);
-                const healthClass = getHealthClass(c.health_score);
-                const wowClass = c.wow_change >= 0 ? 'change-up' : 'change-down';
-                const commission = c.gmv * 0.025;
-                const displayName = c.creator_name || c.tiktok_username || 'Unknown';
-                const initials = displayName.substring(0, 2).toUpperCase();
-
-                return `
-                    <tr>
-                        <td style="font-weight: 600; color: var(--text-muted);">${rank}</td>
-                        <td>
-                            <div class="creator-name">
-                                <div class="creator-avatar">${initials}</div>
-                                <div class="creator-info">
-                                    <span class="creator-handle">${displayName}${c.is_managed ? '<span class="managed-badge">⭐</span>' : ''}</span>
-                                    <span class="creator-brand">${c.brand_name || c.brand || 'Unknown'}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="tier-badge ${c.tier}">${c.tier === 'none' ? '—' : c.tier.charAt(0).toUpperCase() + c.tier.slice(1)}</span></td>
-                        <td style="min-width: 100px;">
-                            <div class="tier-progress">
-                                <div class="tier-progress-fill" style="width: ${progress.percent}%; background: ${TIER_COLORS[progress.nextTier] || TIER_COLORS[c.tier]};"></div>
-                            </div>
-                            <div class="tier-progress-text">${progress.nextTier ? `${formatCurrency(progress.remaining)} to ${progress.nextTier}` : 'Max tier!'}</div>
-                        </td>
-                        <td style="font-family: 'Space Mono', monospace; font-weight: 600;">${formatCurrency(c.gmv)}</td>
-                        <td class="${wowClass}">${formatPercent(c.wow_change)}</td>
-                        <td>${c.videos || 0}</td>
-                        <td><span class="health-score ${healthClass}">${c.health_score}</span></td>
-                        <td>
-                            <div class="commission-cell">
-                                <span class="commission-amount">${formatCurrency(commission)}</span>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            document.getElementById('allCreatorsTable').innerHTML = html;
-            renderPagination('creatorsPagination', paginated.totalPages, currentPage, (page) => {
-                currentPage = page;
-                loadAllCreatorsTable();
-            });
-        }
-
-        function getFilteredCreatorsForTable() {
-            let filtered = [...allCreators];
-
-            const brandFilter = document.getElementById('creatorBrandFilter').value;
-            const tierFilter = document.getElementById('creatorTierFilter').value;
-            const sortBy = document.getElementById('creatorSort').value;
-            const search = document.getElementById('creatorSearch').value.toLowerCase();
-
-            if (brandFilter !== 'all') {
-                filtered = filtered.filter(c => c.brand === brandFilter || c.brand_name === brandFilter);
-            }
-
-            if (tierFilter !== 'all') {
-                filtered = filtered.filter(c => c.tier === tierFilter);
-            }
-
-            if (search) {
-                filtered = filtered.filter(c => 
-                    (c.creator_name || '').toLowerCase().includes(search) ||
-                    (c.tiktok_username || '').toLowerCase().includes(search)
-                );
-            }
-
-            // Sort
-            switch (sortBy) {
-                case 'gmv-desc': filtered.sort((a, b) => b.gmv - a.gmv); break;
-                case 'gmv-asc': filtered.sort((a, b) => a.gmv - b.gmv); break;
-                case 'health-desc': filtered.sort((a, b) => b.health_score - a.health_score); break;
-                case 'health-asc': filtered.sort((a, b) => a.health_score - b.health_score); break;
-                case 'wow-desc': filtered.sort((a, b) => b.wow_change - a.wow_change); break;
-                case 'wow-asc': filtered.sort((a, b) => a.wow_change - b.wow_change); break;
-            }
-
-            return filtered;
-        }
-
-        function filterCreatorTable() {
-            currentPage = 1;
-            loadAllCreatorsTable();
-        }
-
-        function searchCreators() {
-            currentPage = 1;
-            loadAllCreatorsTable();
-        }
-
-        function paginateData(data, page, size) {
-            const totalPages = Math.ceil(data.length / size);
-            const start = (page - 1) * size;
-            const end = start + size;
-            return {
-                data: data.slice(start, end),
-                totalPages: totalPages
-            };
-        }
-
-        function renderPagination(containerId, totalPages, current, onClick) {
-            if (totalPages <= 1) {
-                document.getElementById(containerId).innerHTML = '';
-                return;
-            }
-
-            let html = `
-                <button ${current === 1 ? 'disabled' : ''} onclick="arguments[0].stopPropagation(); (${onClick})(${current - 1})">← Prev</button>
-                <span>Page ${current} of ${totalPages}</span>
-                <button ${current === totalPages ? 'disabled' : ''} onclick="arguments[0].stopPropagation(); (${onClick})(${current + 1})">Next →</button>
-            `;
-
-            document.getElementById(containerId).innerHTML = html;
-        }
-
-        // My Creators
-        async function loadMyCreators() {
-            const myCreators = allCreators.filter(c => c.is_managed);
-
-            const totalGmv = allCreators.reduce((sum, c) => sum + (c.gmv || 0), 0);
-            const myGmv = myCreators.reduce((sum, c) => sum + (c.gmv || 0), 0);
-            const myCommission = myGmv * 0.025;
-            const activeCount = myCreators.filter(c => c.gmv > 0).length;
-            const avgHealth = myCreators.length > 0 ? myCreators.reduce((sum, c) => sum + c.health_score, 0) / myCreators.length : 0;
-
-            document.getElementById('myGmv').textContent = formatCurrency(myGmv);
-            document.getElementById('myGmvPercent').textContent = `${((myGmv / totalGmv) * 100).toFixed(1)}% of total`;
-            document.getElementById('myCreatorCount').textContent = managedCreatorsList.length;
-            document.getElementById('myActiveCount').textContent = `${activeCount} active this week`;
-            document.getElementById('myCommission').textContent = formatCurrency(myCommission);
-            document.getElementById('myAvgHealth').textContent = Math.round(avgHealth);
-            document.getElementById('myHealthTrend').textContent = getHealthClass(avgHealth);
-
-            if (myCreators.length === 0) {
-                document.getElementById('myCreatorsTable').innerHTML = `
-                    <tr>
-                        <td colspan="9">
-                            <div class="empty-state">
-                                <div class="empty-icon">⭐</div>
-                                <div class="empty-title">No managed creators found</div>
-                                <div class="empty-text">Add your creator roster to track your slice of the pie</div>
-                                <button class="btn btn-primary" onclick="openManagedModal()">+ Add Creators</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            const html = myCreators.sort((a, b) => b.gmv - a.gmv).map((c, i) => {
-                const progress = getTierProgress(c.gmv);
-                const healthClass = getHealthClass(c.health_score);
-                const wowClass = c.wow_change >= 0 ? 'change-up' : 'change-down';
-                const commission = c.gmv * 0.025;
-                const displayName = c.creator_name || c.tiktok_username || 'Unknown';
-                const initials = displayName.substring(0, 2).toUpperCase();
-
-                return `
-                    <tr>
-                        <td style="font-weight: 600; color: var(--text-muted);">${i + 1}</td>
-                        <td>
-                            <div class="creator-name">
-                                <div class="creator-avatar">${initials}</div>
-                                <div class="creator-info">
-                                    <span class="creator-handle">${displayName}</span>
-                                    <span class="creator-brand">${c.brand_name || c.brand || 'Unknown'}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="tier-badge ${c.tier}">${c.tier === 'none' ? '—' : c.tier.charAt(0).toUpperCase() + c.tier.slice(1)}</span></td>
-                        <td style="min-width: 100px;">
-                            <div class="tier-progress">
-                                <div class="tier-progress-fill" style="width: ${progress.percent}%; background: ${TIER_COLORS[progress.nextTier] || TIER_COLORS[c.tier]};"></div>
-                            </div>
-                            <div class="tier-progress-text">${progress.nextTier ? `${formatCurrency(progress.remaining)} to ${progress.nextTier}` : 'Max tier!'}</div>
-                        </td>
-                        <td style="font-family: 'Space Mono', monospace; font-weight: 600;">${formatCurrency(c.gmv)}</td>
-                        <td class="${wowClass}">${formatPercent(c.wow_change)}</td>
-                        <td>${c.videos || 0}</td>
-                        <td><span class="health-score ${healthClass}">${c.health_score}</span></td>
-                        <td>
-                            <div class="commission-cell">
-                                <span class="commission-amount">${formatCurrency(commission)}</span>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            document.getElementById('myCreatorsTable').innerHTML = html;
-        }
-
-        async function saveManagedCreators() {
-            const input = document.getElementById('managedCreatorsInput').value;
-            const names = input.split('\n').map(n => n.trim().toLowerCase()).filter(n => n);
-
-            try {
-                // Clear existing
-                await supabase.from('managed_creators').delete().neq('id', 0);
-
-                // Insert new
-                if (names.length > 0) {
-                    const rows = names.map(name => ({ creator_name: name }));
-                    await supabase.from('managed_creators').insert(rows);
-                }
-
-                managedCreatorsList = names;
-
-                // Refresh data
-                await loadCreatorPerformance();
-                closeManagedModal();
-                showToast(`Saved ${names.length} managed creators`, 'success');
-
-            } catch (error) {
-                console.error('Error saving managed creators:', error);
-                showToast('Error saving creators', 'error');
-            }
-        }
-
-        // Tier Page
-        function loadTierPage() {
-            const tierCounts = {};
-            TIER_ORDER.forEach(t => tierCounts[t] = 0);
-            allCreators.forEach(c => tierCounts[c.tier]++);
-
-            document.getElementById('bronzeCount').textContent = tierCounts.bronze;
-            document.getElementById('silverCount').textContent = tierCounts.silver;
-            document.getElementById('goldCount').textContent = tierCounts.gold;
-            document.getElementById('platinumCount').textContent = tierCounts.platinum;
-            document.getElementById('diamondCount').textContent = tierCounts.diamond;
-            document.getElementById('emeraldCount').textContent = tierCounts.emerald;
-            document.getElementById('rubyCount').textContent = tierCounts.ruby;
-
-            // Recent tier-ups from alerts
-            const tierUps = (window.allAlerts || []).filter(a => a.icon === '🏆');
-            if (tierUps.length > 0) {
-                document.getElementById('tierAchievements').innerHTML = tierUps.map(a => `
-                    <div class="alert-item" style="background: var(--bg-secondary); border-radius: 8px; margin-bottom: 8px;">
-                        <div class="alert-icon success">${a.icon}</div>
-                        <div class="alert-content">
-                            <div class="alert-message">${a.message}</div>
-                            <div class="alert-meta">${a.meta}</div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // Video Page
-        function loadVideoPage() {
-            const totalVideos = allVideos.length;
-            const totalGmv = allVideos.reduce((sum, v) => sum + (v.gmv || 0), 0);
-            const avgGmv = totalVideos > 0 ? totalGmv / totalVideos : 0;
-            const topGmv = allVideos.length > 0 ? allVideos[0].gmv : 0;
-
-            document.getElementById('videoTotalCount').textContent = formatNumber(totalVideos);
-            document.getElementById('videoTotalGmv').textContent = formatCurrency(totalGmv);
-            document.getElementById('videoAvgGmv').textContent = formatCurrency(avgGmv);
-            document.getElementById('videoTopGmv').textContent = formatCurrency(topGmv);
-
-            const topVideos = allVideos.slice(0, 20);
-            if (topVideos.length === 0) {
-                document.getElementById('topVideosTable').innerHTML = `
-                    <tr><td colspan="5" class="empty-state">No video data</td></tr>
-                `;
-                return;
-            }
-
-            const html = topVideos.map((v, i) => `
-                <tr>
-                    <td style="font-weight: 600; color: var(--text-muted);">${i + 1}</td>
-                    <td>${v.creator_name || 'Unknown'}</td>
-                    <td>${v.brand_name || v.brand || 'Unknown'}</td>
-                    <td style="font-family: 'Space Mono', monospace; font-weight: 600;">${formatCurrency(v.gmv)}</td>
-                    <td>${v.orders || 0}</td>
-                </tr>
-            `).join('');
-
-            document.getElementById('topVideosTable').innerHTML = html;
-        }
-
-        // Commissions Page
-        let commissionPage = 1;
-        function loadCommissionsPage() {
-            updateCommissionTable();
-        }
-
-        function updateCommissionTable() {
-            const rate = parseFloat(document.getElementById('commRateSelect').value);
-            const creatorsWithGmv = allCreators.filter(c => c.gmv > 0).sort((a, b) => b.gmv - a.gmv);
-
-            const totalEst = creatorsWithGmv.reduce((sum, c) => sum + (c.gmv * rate), 0);
-            const myCreatorsGmv = creatorsWithGmv.filter(c => c.is_managed).reduce((sum, c) => sum + c.gmv, 0);
-            const yourShare = myCreatorsGmv * rate;
-
-            document.getElementById('commTotalEst').textContent = formatCurrency(totalEst);
-            document.getElementById('commYourShare').textContent = formatCurrency(yourShare);
-            document.getElementById('commCreatorCount').textContent = creatorsWithGmv.length;
-
-            const paginated = paginateData(creatorsWithGmv, commissionPage, PAGE_SIZE);
-
-            if (paginated.data.length === 0) {
-                document.getElementById('commissionTable').innerHTML = `
-                    <tr><td colspan="5" class="empty-state">No commission data</td></tr>
-                `;
-                return;
-            }
-
-            const html = paginated.data.map((c, i) => {
-                const rank = (commissionPage - 1) * PAGE_SIZE + i + 1;
-                const commission = c.gmv * rate;
-                const displayName = c.creator_name || c.tiktok_username || 'Unknown';
-                const initials = displayName.substring(0, 2).toUpperCase();
-
-                return `
-                    <tr>
-                        <td style="font-weight: 600; color: var(--text-muted);">${rank}</td>
-                        <td>
-                            <div class="creator-name">
-                                <div class="creator-avatar">${initials}</div>
-                                <span class="creator-handle">${displayName}${c.is_managed ? '<span class="managed-badge">⭐</span>' : ''}</span>
-                            </div>
-                        </td>
-                        <td>${c.brand_name || c.brand || 'Unknown'}</td>
-                        <td style="font-family: 'Space Mono', monospace;">${formatCurrency(c.gmv)}</td>
-                        <td style="font-family: 'Space Mono', monospace; font-weight: 600; color: var(--accent);">${formatCurrency(commission)}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            document.getElementById('commissionTable').innerHTML = html;
-            renderPagination('commissionPagination', paginated.totalPages, commissionPage, (page) => {
-                commissionPage = page;
-                updateCommissionTable();
-            });
-        }
-
-        // Export functions
-        function exportWeeklyReport() {
-            const data = allCreators.map(c => ({
-                Creator: c.creator_name,
-                Brand: c.brand_name,
-                Tier: c.tier,
-                GMV: c.gmv,
-                'WoW Change %': c.wow_change.toFixed(1),
-                Videos: c.videos || 0,
-                'Health Score': c.health_score,
-                'Est Commission': (c.gmv * 0.025).toFixed(2),
-                Managed: c.is_managed ? 'Yes' : 'No'
-            }));
-
-            downloadCSV(data, `weekly_report_${weeks[0]}.csv`);
-            closeExportModal();
-            showToast('Weekly report exported');
-        }
-
-        function exportBrandReport() {
-            const brandSummary = {};
-            
-            allCreators.forEach(c => {
-                const brandName = c.brand || c.brand_name || 'Unknown';
-                if (!brandSummary[brandName]) {
-                    brandSummary[brandName] = { gmv: 0, creators: 0, videos: 0 };
-                }
-                brandSummary[brandName].gmv += c.gmv || 0;
-                brandSummary[brandName].creators += 1;
-                brandSummary[brandName].videos += c.videos || 0;
-            });
-
-            const data = Object.entries(brandSummary).map(([name, stats]) => ({
-                Brand: name,
-                'Total GMV': stats.gmv,
-                Creators: stats.creators,
-                Videos: stats.videos,
-                'Est Commission': (stats.gmv * 0.025).toFixed(2)
-            }));
-
-            downloadCSV(data, `brand_summary_${weeks[0] || 'export'}.csv`);
-            closeExportModal();
-            showToast('Brand report exported');
-        }
-
-        function exportCommissionReport() {
-            const rate = 0.025;
-            const data = allCreators.filter(c => c.gmv > 0).map(c => ({
-                Creator: c.creator_name,
-                Brand: c.brand_name,
-                GMV: c.gmv,
-                'Commission Rate': '2.5%',
-                'Est Commission': (c.gmv * rate).toFixed(2),
-                Managed: c.is_managed ? 'Yes' : 'No'
-            }));
-
-            downloadCSV(data, `commission_report_${weeks[0]}.csv`);
-            closeExportModal();
-            showToast('Commission report exported');
-        }
-
-        function exportTierReport() {
-            const data = allCreators.map(c => {
-                const progress = getTierProgress(c.gmv);
-                return {
-                    Creator: c.creator_name,
-                    Brand: c.brand_name,
-                    'Current Tier': c.tier,
-                    GMV: c.gmv,
-                    'Next Tier': progress.nextTier || 'Max',
-                    'GMV to Next Tier': progress.remaining,
-                    'Progress %': progress.percent.toFixed(1)
-                };
-            });
-
-            downloadCSV(data, `tier_report_${weeks[0]}.csv`);
-            closeExportModal();
-            showToast('Tier report exported');
-        }
-
-        function exportCreators() {
-            const filtered = getFilteredCreatorsForTable();
-            const data = filtered.map(c => ({
-                Creator: c.creator_name,
-                Brand: c.brand_name,
-                Tier: c.tier,
-                GMV: c.gmv,
-                'WoW %': c.wow_change.toFixed(1),
-                Videos: c.videos || 0,
-                Health: c.health_score,
-                Managed: c.is_managed ? 'Yes' : 'No'
-            }));
-
-            downloadCSV(data, `all_creators_${weeks[0]}.csv`);
-            showToast('Creators exported');
-        }
-
-        function exportMyCreators() {
-            const myCreators = allCreators.filter(c => c.is_managed);
-            const data = myCreators.map(c => ({
-                Creator: c.creator_name,
-                Brand: c.brand_name,
-                Tier: c.tier,
-                GMV: c.gmv,
-                'WoW %': c.wow_change.toFixed(1),
-                Videos: c.videos || 0,
-                Health: c.health_score,
-                'Est Commission': (c.gmv * 0.025).toFixed(2)
-            }));
-
-            downloadCSV(data, `my_creators_${weeks[0]}.csv`);
-            showToast('My creators exported');
-        }
-
-        function exportCommissions() {
-            exportCommissionReport();
-        }
-
-        function downloadCSV(data, filename) {
-            if (data.length === 0) {
-                showToast('No data to export', 'warning');
-                return;
-            }
-
-            const headers = Object.keys(data[0]);
-            const csv = [
-                headers.join(','),
-                ...data.map(row => headers.map(h => {
-                    const val = row[h];
-                    if (typeof val === 'string' && val.includes(',')) {
-                        return `"${val}"`;
-                    }
-                    return val;
-                }).join(','))
-            ].join('\n');
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // Filter handlers
-        function applyFilters() {
-            updateDashboard();
-        }
-
-        async function refreshData() {
-            showToast('Refreshing data...');
-            await loadData();
-            showToast('Data refreshed');
-        }
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // State
+        let currentUser = null;
+        let userProfile = null;
+
+        // Elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loginView = document.getElementById('loginView');
+        const loggedInView = document.getElementById('loggedInView');
+        const message = document.getElementById('message');
 
         // Initialize
-        loadData();
+        document.addEventListener('DOMContentLoaded', async () => {
+            showLoading(true);
+            
+            // Check for existing session
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                await loadUserProfile();
+                showLoggedInView();
+            } else {
+                showLoginView();
+            }
+            
+            showLoading(false);
+
+            // Listen for auth changes (handles OAuth callback)
+            supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                console.log('Auth event:', event);
+                
+                if (event === 'SIGNED_IN' && session) {
+                    showLoading(true);
+                    currentUser = session.user;
+                    await loadUserProfile();
+                    showLoggedInView();
+                    showLoading(false);
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                    userProfile = null;
+                    showLoginView();
+                }
+            });
+        });
+
+        // Load or create user profile
+        async function loadUserProfile() {
+            if (!currentUser) return;
+
+            // Try to get existing profile
+            const { data, error } = await supabaseClient
+                .from('user_profiles')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .single();
+
+            if (data) {
+                userProfile = data;
+                
+                // Update profile with latest Discord info
+                const discordAvatar = currentUser.user_metadata?.avatar_url;
+                const discordName = currentUser.user_metadata?.full_name || 
+                                   currentUser.user_metadata?.name ||
+                                   currentUser.user_metadata?.preferred_username;
+                
+                if (discordName && discordName !== data.name) {
+                    await supabaseClient
+                        .from('user_profiles')
+                        .update({ 
+                            name: discordName,
+                            discord_avatar: discordAvatar,
+                            discord_id: currentUser.user_metadata?.provider_id
+                        })
+                        .eq('user_id', currentUser.id);
+                    
+                    userProfile.name = discordName;
+                    userProfile.discord_avatar = discordAvatar;
+                }
+            } else {
+                // Create new profile for Discord user
+                const discordData = currentUser.user_metadata || {};
+                const { data: newProfile } = await supabaseClient
+                    .from('user_profiles')
+                    .insert({
+                        user_id: currentUser.id,
+                        email: currentUser.email,
+                        name: discordData.full_name || discordData.name || discordData.preferred_username || 'User',
+                        discord_id: discordData.provider_id,
+                        discord_avatar: discordData.avatar_url,
+                        role: 'creator',
+                        status: 'pending'
+                    })
+                    .select()
+                    .single();
+                
+                userProfile = newProfile;
+            }
+        }
+
+        // Show/Hide functions
+        function showLoading(show) {
+            loadingOverlay.classList.toggle('show', show);
+        }
+
+        function showLoginView() {
+            loginView.classList.add('active');
+            loggedInView.classList.remove('active');
+        }
+
+        function showLoggedInView() {
+            loginView.classList.remove('active');
+            loggedInView.classList.add('active');
+
+            // Get user info from Discord metadata or profile
+            const discordData = currentUser?.user_metadata || {};
+            const name = userProfile?.name || discordData.full_name || discordData.name || 'User';
+            const avatarUrl = userProfile?.discord_avatar || discordData.avatar_url;
+            const role = userProfile?.role || 'creator';
+            const status = userProfile?.status || 'pending';
+
+            // Update avatar
+            const avatarEl = document.getElementById('userAvatar');
+            if (avatarUrl) {
+                avatarEl.innerHTML = `<img src="${avatarUrl}" alt="${name}">`;
+            } else {
+                avatarEl.textContent = name.charAt(0).toUpperCase();
+            }
+
+            // Update name and role display
+            document.getElementById('userName').textContent = name;
+            
+            // Show status if pending, otherwise show role
+            if (status !== 'approved') {
+                document.getElementById('userRole').textContent = getStatusDisplay(status);
+            } else {
+                document.getElementById('userRole').textContent = getRoleDisplay(role);
+            }
+
+            // Show/hide portals based on role AND status
+            const adminPortal = document.getElementById('adminPortal');
+            const creatorPortal = document.getElementById('creatorPortal');
+            const brandPortal = document.getElementById('brandPortal');
+
+            // Reset all portals
+            adminPortal.style.display = 'none';
+            creatorPortal.style.display = 'none';
+            if (brandPortal) brandPortal.style.display = 'none';
+
+            // Define team roles that can access admin dashboard
+            const teamRoles = ['admin', 'content_lead', 'analyst', 'payments', 'automations', 'va'];
+
+            // Only show portals if approved
+            if (status === 'approved') {
+                if (teamRoles.includes(role)) {
+                    // Team members see Admin Dashboard
+                    adminPortal.style.display = 'flex';
+                    creatorPortal.style.display = 'flex';
+                    if (brandPortal) brandPortal.style.display = 'flex';
+                } else if (role === 'creator') {
+                    creatorPortal.style.display = 'flex';
+                } else if (role === 'brand') {
+                    if (brandPortal) brandPortal.style.display = 'flex';
+                }
+            } else {
+                // Pending/rejected - show message
+                creatorPortal.style.display = 'none';
+            }
+            
+            // Debug: Log role info to console
+            console.log('User profile:', { role, status, userId: currentUser?.id });
+        }
+
+        function getStatusDisplay(status) {
+            const statuses = {
+                'pending': '⏳ Pending Approval',
+                'approved': '✅ Approved',
+                'rejected': '❌ Not Approved'
+            };
+            return statuses[status] || '⏳ Pending Approval';
+        }
+
+        function getRoleDisplay(role) {
+            const roles = {
+                'admin': '👑 Administrator',
+                'content_lead': '📝 Content Lead',
+                'analyst': '📊 Analyst',
+                'payments': '💵 Payments',
+                'automations': '⚙️ Automations',
+                'va': '🖥️ VA',
+                'creator': '🎬 Creator',
+                'brand': '🏷️ Brand Partner',
+                'pending': '⏳ Pending Approval'
+            };
+            return roles[role] || role;
+        }
+
+        // Discord Sign In
+        async function signInWithDiscord() {
+            const btn = document.getElementById('discordBtn');
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;">
+                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                </svg>
+                Connecting...
+            `;
+
+            const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'discord',
+                options: {
+                    redirectTo: window.location.origin + '/index.html',
+                    scopes: 'identify email'
+                }
+            });
+
+            if (error) {
+                showMessage(error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                    </svg>
+                    Continue with Discord
+                `;
+            }
+            // If successful, browser will redirect to Discord
+        }
+
+        // Logout
+        async function handleLogout() {
+            showLoading(true);
+            await supabaseClient.auth.signOut();
+            showLoading(false);
+            showLoginView();
+        }
+
+        // Show message
+        function showMessage(text, type = 'error') {
+            message.textContent = text;
+            message.className = `message show ${type}`;
+        }
     </script>
 </body>
 </html>

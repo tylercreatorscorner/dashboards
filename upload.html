@@ -3,637 +3,873 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creators Corner - Data Upload Portal</title>
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADhUlEQVR4nO2WW0hUURSGv3PGKZ1xnMm8lJWWZReNkiAsoosgBVFBD0UQBD1EQVBPEdFLdKGHoi6UQVFR0YXoQhcqAoMudEGjNLM0U7N0vMxkzrkdetgznZlzzowz9tQP/4a999prrf85e+21YAQj+L8h/IuLE47AeV5QZAFC0wLN7X4TJElG/FsEBLmFiHBYJLRLCh9KMsW6AjL5CiLJG8bRcbhcO7P1uO4aXLGOALcbU9IGvPt7K/BqAU6n0j46Opq0tLS+8vLy99Fo9GuSSQgACPyBAImwgAR/K+Cns7S0lIyMDIxGIzabjbi4ONLS0sjMzOT06dOcOHGC4uJiiouLKS8vp7a2li+yQkFxAQEJGHoFBD2kpqZy+vRpdu7cycWLF+ns7ESWZfx+P16vl+TkZEaPHk1rayuzZ89mypQpBAIB3n38FPaQwFAE+qYgPT2d0tJSSktLGT9+PD6fT7W5XC6GDRuGKIoIgoDVasVkMtHZ2UljYyOdAQ1b/AEqIMoyhYWFHDhwgEWLFhEMBjEYDJjNZlX5er0eQRAQRRGLxUJLSwtWqxWTycTdu3dxOA6rGghJoOfEsizj9/sZO3YsZWVlrFy5kj179qiEQoAhGKxWK3v37sXv9xMIBDAYDCQkJFBeXk5sbCwej4dUfwMBSUG8T0CoAkII7MjISObn55OQkICiKNhsNkZptKptt9uZNGkS2dnZSJKEKIoYjUY0Gg0Wi4U7d+5w5swZFixYwOLFi0lMTKRDnwBDdYQj0NfGxsaSmJiIy+XCarWSl5dHTk4O0dHRxMfHExcXR0REBIIgIAgCBoOBuLg4DAYDkiQhiiJnz57l+vXrbNu2jZSUFGbNmkVCQgJOV4jU9+4FYbNxsbGx2Gw2JEkiPDycMWPGqJO5XK4+sjqdDqfTid/vp7u7G4vFgt/vx+VycePGDW7evElJSQkLFy5k6tSpZGRkkJWVhS0sjFaHI6TjgyIgqU9ERASRkZHEx8djs9nQaDQYDAYmT55MfHw8er0ejUaDTqdDEAS0Wi0GgwGdTkdXVxdPnjzh2rVrnD17ltWrV7Nu3TomTJiAxWIhNjaWVkUhPCIi5KMK4OFDaN2xg9TUVAoKCpg/fz5FRUU4nU70ej1Go5GYmBjMZjNarZaOjg5aWlr49OkTt27doqqqiqqqKoLBIEuWLCE5OZns7GymTZtGvNlMQ3d3yMf4HwGGJ/P/Dr8A5hCVLFmYUKoAAAAASUVORK5CYII=">
+    <title>Creators Corner - Data Upload</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-primary: #0a0b0f;
+            --bg-secondary: #12141a;
+            --bg-card: #1a1d24;
+            --bg-hover: #21252e;
+            --border: #2a2f3a;
+            --border-light: #363c4a;
+            --text-primary: #f1f3f5;
+            --text-secondary: #9aa5b8;
+            --text-muted: #5c6370;
+            --accent: #f5c518;
+            --accent-dim: rgba(245, 197, 24, 0.12);
+            --success: #34d399;
+            --success-dim: rgba(52, 211, 153, 0.12);
+            --warning: #fbbf24;
+            --warning-dim: rgba(251, 191, 36, 0.12);
+            --error: #f87171;
+            --error-dim: rgba(248, 113, 113, 0.12);
+            --blue: #60a5fa;
+            --blue-dim: rgba(96, 165, 250, 0.12);
+            --purple: #a78bfa;
+            --purple-dim: rgba(167, 139, 250, 0.12);
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            color: #fff;
+            line-height: 1.5;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .logo img {
-            width: 40px;
-            height: 40px;
-        }
-        
-        .logo h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-        
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ffd93d;
-            animation: pulse 2s infinite;
-        }
-        
-        .status-dot.connected {
-            background: #6bcb77;
-            animation: none;
-        }
-        
-        .status-dot.error {
-            background: #ff6b6b;
-            animation: none;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-        
-        @media (max-width: 900px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 24px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+
+        /* Auth Check Overlay */
+        .auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 9999;
+        }
+        .auth-overlay .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .page-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .back-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+        .page-title {
             font-size: 1.5rem;
+            font-weight: 700;
         }
-        
-        .card-icon.creator { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .card-icon.video { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        
-        .card h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-        
-        .card p {
-            color: rgba(255,255,255,0.6);
+        .page-subtitle {
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
-        
-        .upload-zone {
-            border: 2px dashed rgba(255,255,255,0.2);
-            border-radius: 12px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-        
-        .upload-zone:hover {
-            border-color: #00d4ff;
-            background: rgba(0,212,255,0.05);
-        }
-        
-        .upload-zone.dragover {
-            border-color: #6bcb77;
-            background: rgba(107,203,119,0.1);
-            transform: scale(1.02);
-        }
-        
-        .upload-zone.has-file {
-            border-color: #6bcb77;
-            border-style: solid;
-        }
-        
-        .upload-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-        
-        .upload-text {
-            font-size: 1rem;
-            color: rgba(255,255,255,0.8);
-        }
-        
-        .upload-subtext {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.5);
-            margin-top: 5px;
-        }
-        
-        .file-input {
-            display: none;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .form-group {
+        .header-right {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            align-items: center;
+            gap: 12px;
         }
-        
-        .form-group label {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .form-group select,
-        .form-group input {
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            font-size: 1rem;
-        }
-        
-        .form-group select:focus,
-        .form-group input:focus {
-            outline: none;
-            border-color: #00d4ff;
-        }
-        
-        .form-group select option {
-            background: #1a1a2e;
-        }
-        
-        .brand-preview {
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-        }
-        
-        .brand-preview-title {
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 8px;
-        }
-        
-        .brand-tags {
+        .user-badge {
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .version-tag {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
             gap: 8px;
         }
-        
-        .brand-tag {
+        .section-title .icon {
+            font-size: 1.1rem;
+        }
+
+        /* Data Status Matrix */
+        .status-matrix {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        .matrix-table th,
+        .matrix-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .matrix-table th {
+            background: var(--bg-secondary);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .matrix-table th:first-child {
+            text-align: left;
+            padding-left: 16px;
+            min-width: 140px;
+        }
+        .matrix-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            padding-left: 16px;
+        }
+        .matrix-table tr:last-child td {
+            border-bottom: none;
+        }
+        .matrix-table tr:hover td {
+            background: var(--bg-hover);
+        }
+        .matrix-check {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .matrix-check.ok { color: var(--success); }
+        .matrix-check.missing { color: var(--error); }
+        .matrix-check.future { color: var(--text-muted); opacity: 0.5; }
+        .matrix-date-header {
+            font-size: 0.65rem;
+        }
+        .matrix-date-header .day {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .status-cell {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-cell.current {
+            background: var(--success-dim);
+            color: var(--success);
+        }
+        .status-cell.behind {
+            background: var(--warning-dim);
+            color: var(--warning);
+        }
+        .status-cell.missing {
+            background: var(--error-dim);
+            color: var(--error);
+        }
+        .status-cell.never {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+        }
+        .brand-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* Upload Zone */
+        .upload-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .upload-zone {
+            border: 2px dashed var(--border-light);
             border-radius: 12px;
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .upload-zone:hover,
+        .upload-zone.dragging {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+        .upload-zone-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        .upload-zone-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .upload-zone-hint {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .file-input {
+            display: none;
+        }
+
+        /* File Types Legend */
+        .file-types-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .file-type-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+        .file-type-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .file-type-dot.creator { background: var(--success); }
+        .file-type-dot.video { background: var(--purple); }
+        .file-type-dot.videolist { background: var(--blue); }
+        .file-type-dot.affiliate { background: var(--warning); }
+        .file-type-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .file-type-pattern {
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+        }
+
+        /* Upload Queue */
+        .queue-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .queue-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        .queue-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .queue-count {
+            background: var(--accent);
+            color: var(--bg-primary);
             font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .queue-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .queue-empty {
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+        .queue-empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Brand Group */
+        .brand-group {
+            border-bottom: 1px solid var(--border);
+        }
+        .brand-group:last-child {
+            border-bottom: none;
+        }
+        .brand-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .brand-group-header:hover {
+            background: var(--bg-hover);
+        }
+        .brand-group-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-group-toggle {
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+        .brand-group.collapsed .brand-group-toggle {
+            transform: rotate(-90deg);
+        }
+        .brand-group-name {
             font-weight: 600;
         }
-        
-        .brand-tag.catakor, .brand-tag.cata-kor { background: rgba(255,107,107,0.2); color: #ff6b6b; }
-        .brand-tag.jiyu { background: rgba(78,205,196,0.2); color: #4ecdc4; }
-        .brand-tag.physicians_choice, .brand-tag.physicians-choice { background: rgba(107,203,119,0.2); color: #6bcb77; }
-        .brand-tag.peach_slices, .brand-tag.peach-slices { background: rgba(255,182,193,0.2); color: #ffb6c1; }
-        .brand-tag.yerba_magic, .brand-tag.yerba-magic { background: rgba(255,215,0,0.2); color: #ffd700; }
-        
-        .btn {
-            padding: 14px 28px;
+        .brand-group-meta {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        .brand-group-files {
+            padding: 0 20px 16px 52px;
+        }
+        .brand-group.collapsed .brand-group-files {
+            display: none;
+        }
+
+        /* File Item */
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: var(--bg-secondary);
             border-radius: 8px;
-            border: none;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+        .file-item:last-child {
+            margin-bottom: 0;
+        }
+        .file-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .file-item-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .file-item-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .file-item-type {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        .file-item-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .file-item-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .file-item-status {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .file-item-status.ready { color: var(--success); }
+        .file-item-status.warning { color: var(--warning); }
+        .file-item-status.error { color: var(--error); }
+        .file-item-status.uploading { color: var(--blue); }
+        .file-item-status.done { color: var(--success); }
+        .file-item-remove {
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.15s;
         }
-        
+        .file-item-remove:hover {
+            background: var(--error-dim);
+            color: var(--error);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
         .btn-primary {
-            background: linear-gradient(135deg, #00d4ff, #0099ff);
-            color: #fff;
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
         }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+        .btn-primary:hover:not(:disabled) {
+            background: #e5b800;
+            border-color: #e5b800;
         }
-        
         .btn-primary:disabled {
-            background: rgba(255,255,255,0.2);
+            opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
-        
-        .progress-container {
-            margin-top: 20px;
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        /* Progress */
+        .upload-progress {
+            padding: 20px;
+            border-top: 1px solid var(--border);
             display: none;
         }
-        
-        .progress-container.visible {
+        .upload-progress.active {
             display: block;
         }
-        
-        .progress-bar {
+        .progress-bar-container {
             height: 8px;
-            background: rgba(255,255,255,0.1);
+            background: var(--bg-secondary);
             border-radius: 4px;
             overflow: hidden;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
-        
-        .progress-fill {
+        .progress-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #6bcb77);
+            background: var(--accent);
             border-radius: 4px;
             transition: width 0.3s ease;
             width: 0%;
         }
-        
         .progress-text {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.7);
-            text-align: center;
-        }
-        
-        .log-container {
-            margin-top: 15px;
-            max-height: 150px;
-            overflow-y: auto;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            padding: 12px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.75rem;
-        }
-        
-        .log-entry {
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .log-entry:last-child {
-            border-bottom: none;
-        }
-        
-        .log-entry.success { color: #6bcb77; }
-        .log-entry.error { color: #ff6b6b; }
-        .log-entry.info { color: #00d4ff; }
-        
-        /* Stats Section */
-        .stats-section {
-            margin-top: 30px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        @media (max-width: 900px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        .stat-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .stat-label {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.6);
-            margin-top: 5px;
-        }
-        
-        /* Recent Uploads Table */
-        .uploads-section {
-            margin-top: 30px;
-        }
-        
-        .uploads-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        
-        .uploads-table th,
-        .uploads-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .uploads-table th {
-            font-weight: 600;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
-        
-        .uploads-table td {
-            font-size: 0.9rem;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .badge.creator { background: rgba(102,126,234,0.2); color: #667eea; }
-        .badge.video { background: rgba(245,87,108,0.2); color: #f5576c; }
-        .badge.catakor { background: rgba(255,107,107,0.2); color: #ff6b6b; }
-        .badge.jiyu { background: rgba(78,205,196,0.2); color: #4ecdc4; }
-        .badge.physicians_choice { background: rgba(107,203,119,0.2); color: #6bcb77; }
-        .badge.peach_slices { background: rgba(255,182,193,0.2); color: #ffb6c1; }
-        .badge.yerba_magic { background: rgba(255,215,0,0.2); color: #ffd700; }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: rgba(255,255,255,0.5);
-        }
-        
-        .section-header {
             display: flex;
             justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Recent Uploads */
+        .history-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .history-header {
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            display: flex;
             align-items: center;
+            gap: 8px;
         }
-        
-        .section-header h2 {
-            font-size: 1.25rem;
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
         }
-        
-        .refresh-btn {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: rgba(255,255,255,0.7);
-            padding: 8px 16px;
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .history-item:hover {
+            background: var(--bg-hover);
+        }
+        .history-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .history-item-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--success-dim);
+            color: var(--success);
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
+            font-size: 1rem;
         }
-        
-        .refresh-btn:hover {
-            border-color: #00d4ff;
-            color: #00d4ff;
+        .history-item-info {}
+        .history-item-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .history-item-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .history-item-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .history-empty {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Log Output */
+        .log-section {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            display: none;
+        }
+        .log-section.active {
+            display: block;
+        }
+        .log-line {
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .log-line:last-child {
+            border-bottom: none;
+        }
+        .log-line.success { color: var(--success); }
+        .log-line.warning { color: var(--warning); }
+        .log-line.error { color: var(--error); }
+        .log-line.info { color: var(--text-secondary); }
+
+        /* Roster Tab */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: var(--bg-card);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .tab:hover { color: var(--text-primary); }
+        .tab.active { background: var(--accent); color: var(--bg-primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .page-header { flex-direction: column; gap: 16px; text-align: center; }
+            .page-header-left { flex-direction: column; }
+            .matrix-table { font-size: 0.8rem; }
+            .matrix-table th, .matrix-table td { padding: 10px 8px; }
+            .file-types-legend { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+    <!-- Auth Check Overlay -->
+    <div class="auth-overlay" id="authCheck">
+        <div class="spinner"></div>
+    </div>
+
     <div class="container">
-        <header>
-            <div class="logo">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADhUlEQVR4nO2WW0hUURSGv3PGKZ1xnMm8lJWWZReNkiAsoosgBVFBD0UQBD1EQVBPEdFLdKGHoi6UQVFR0YXoQhcqAoMudEGjNLM0U7N0vMxkzrkdetgznZlzzowz9tQP/4a999prrf85e+21YAQj+L8h/IuLE47AeV5QZAFC0wLN7X4TJElG/FsEBLmFiHBYJLRLCh9KMsW6AjL5CiLJG8bRcbhcO7P1uO4aXLGOALcbU9IGvPt7K/BqAU6n0j46Opq0tLS+8vLy99Fo9GuSSQgACPyBAImwgAR/K+Cns7S0lIyMDIxGIzabjbi4ONLS0sjMzOT06dOcOHGC4uJiiouLKS8vp7a2li+yQkFxAQEJGHoFBD2kpqZy+vRpdu7cycWLF+ns7ESWZfx+P16vl+TkZEaPHk1rayuzZ89mypQpBAIB3n38FPaQwFAE+qYgPT2d0tJSSktLGT9+PD6fT7W5XC6GDRuGKIoIgoDVasVkMtHZ2UhjYyOdAQ1b/AEqIMoyhYWFHDhwgEWLFhEMBjEYDJjNZlX5er0eQRAQRRGLxUJLSwtWqxWTycTdu3dxOA6rGghJoOfEsizj9/sZO3YsZWVlrFy5kj179qiEQoAhGKxWK3v37sXv9xMIBDAYDCQkJFBeXk5sbCwej4dUfwMBSUG8T0CoAkII7MjISObn55OQkICiKNhsNkZptKptt9uZNGkS2dnZSJKEKIoYjUY0Gg0Wi4U7d+5w5swZFixYwOLFi0lMTKRDnwBDdYQj0NfGxsaSmJiIy+XCarWSl5dHTk4O0dHRxMfHExcXR0REBIIgIAgCBoOBuLg4DAYDkiQhiiJnz57l+vXrbNu2jZSUFGbNmkVCQgJOV4jU9+4FYbNxsbGx2Gw2JEkiPDycMWPGqJO5XK4+sjqdDqfTid/vp7u7G4vFgt/vx+VycePGDW7evElJSQkLFy5k6tSpZGRkkJWVhS0sjFaHI6TjgyIgqU9ERASRkZHEx8djs9nQaDQYDAYmT55MfHw8er0ejUaDTqdDEAS0Wi0GgwGdTkdXVxdPnjzh2rVrnD17ltWrV7Nu3TomTJiAxWIhNjaWVkUhPCIi5KMK4OFDaN2xg9TUVAoKCpg/fz5FRUU4nU70ej1Go5GYmBjMZjNarZaOjg5aWlr49OkTt27doqqqiqqqKoLBIEuWLCE5OZns7GymTZtGvNlMQ3d3yMf4HwGGJ/P/Dr8A5hCVLFmYUKoAAAAASUVORK5CYII=" alt="Logo">
-                <h1>Upload Portal</h1>
+        <!-- Header -->
+        <header class="page-header">
+            <div class="page-header-left">
+                <a href="admin.html" class="back-btn" title="Back to Dashboard">←</a>
+                <div>
+                    <h1 class="page-title">📊 Data Upload</h1>
+                    <p class="page-subtitle">Import your daily TikTok Shop data</p>
+                </div>
             </div>
-            <div class="connection-status">
-                <div class="status-dot" id="statusDot"></div>
-                <span id="statusText">Connecting...</span>
+            <div class="header-right">
+                <div class="user-badge" id="userBadge">
+                    <span>👤</span>
+                    <span id="userName">Loading...</span>
+                </div>
+                <span class="version-tag">v262</span>
             </div>
         </header>
-        
-        <div class="main-grid">
-            <!-- Creator Data Upload -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon creator">👥</div>
-                    <div>
-                        <h2>Creator Performance</h2>
-                        <p>Upload weekly creator GMV data (all brands)</p>
-                    </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('daily')">📊 Daily Data</button>
+            <button class="tab" onclick="switchTab('roster')">👥 Creator Roster</button>
+        </div>
+
+        <!-- Daily Data Tab -->
+        <div id="tab-daily" class="tab-content active">
+            <!-- Data Status Matrix -->
+            <div class="section-header">
+                <h2 class="section-title"><span class="icon">📅</span> Data Status Matrix</h2>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <select id="matrixFileType" onchange="loadDataMatrix()" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); font-size: 0.85rem;">
+                        <option value="creator">🟢 Creator Data</option>
+                        <option value="video">🟣 Video Data</option>
+                        <option value="videolist">🔵 Video List</option>
+                        <option value="product">🟠 Affiliate Products</option>
+                    </select>
+                    <button class="btn btn-secondary btn-sm" onclick="loadDataMatrix()">↻ Refresh</button>
                 </div>
-                
-                <div class="upload-zone" id="creatorZone" onclick="document.getElementById('creatorFile').click()">
-                    <div class="upload-icon">📁</div>
-                    <div class="upload-text">Drop Creator CSV here</div>
-                    <div class="upload-subtext">File should have "Brand" column</div>
-                </div>
-                <input type="file" id="creatorFile" class="file-input" accept=".csv,.xlsx,.xls">
-                
-                <div class="brand-preview" id="creatorBrandPreview" style="display:none;">
-                    <div class="brand-preview-title">Brands detected:</div>
-                    <div class="brand-tags" id="creatorBrandTags"></div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Week Ending Date</label>
-                        <input type="date" id="creatorWeekEnd">
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" id="creatorUploadBtn" disabled onclick="uploadCreatorData()">
-                    <span>Upload Creator Data</span>
-                </button>
-                
-                <div class="progress-container" id="creatorProgress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="creatorProgressFill"></div>
-                    </div>
-                    <div class="progress-text" id="creatorProgressText">Preparing...</div>
-                </div>
-                
-                <div class="log-container" id="creatorLog"></div>
             </div>
-            
-            <!-- Video Data Upload -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon video">🎬</div>
-                    <div>
-                        <h2>Video Performance</h2>
-                        <p>Upload weekly video analytics (all brands)</p>
+            <div class="status-matrix" style="overflow-x: auto;">
+                <table class="matrix-table" id="matrixTable">
+                    <thead id="matrixHead">
+                        <tr><th>Loading...</th></tr>
+                    </thead>
+                    <tbody id="matrixBody">
+                        <tr><td colspan="15" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading data status...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 12px; display: flex; gap: 16px; font-size: 0.8rem; color: var(--text-muted);">
+                <span><span style="color: var(--success);">✓</span> = Data uploaded</span>
+                <span><span style="color: var(--error);">✗</span> = Missing</span>
+                <span><span style="color: var(--text-muted);">—</span> = Future date</span>
+            </div>
+
+            <!-- Upload Zone -->
+            <div class="upload-section">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-zone-icon">📁</div>
+                    <div class="upload-zone-text">Drop your daily XLSX files here</div>
+                    <div class="upload-zone-hint">or click to browse • supports multiple files</div>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls" multiple>
+
+                <div class="file-types-legend">
+                    <div class="file-type-item">
+                        <div class="file-type-dot creator"></div>
+                        <div>
+                            <div class="file-type-name">Creator Data</div>
+                            <div class="file-type-pattern">{Brand}_Creator_Data_{date}.xlsx</div>
+                        </div>
+                    </div>
+                    <div class="file-type-item">
+                        <div class="file-type-dot video"></div>
+                        <div>
+                            <div class="file-type-name">Video Data</div>
+                            <div class="file-type-pattern">{Brand}_Video_Data_{date}.xlsx</div>
+                        </div>
+                    </div>
+                    <div class="file-type-item">
+                        <div class="file-type-dot videolist"></div>
+                        <div>
+                            <div class="file-type-name">Video List</div>
+                            <div class="file-type-pattern">{Brand}_Video_List_{date}.xlsx</div>
+                        </div>
+                    </div>
+                    <div class="file-type-item">
+                        <div class="file-type-dot affiliate"></div>
+                        <div>
+                            <div class="file-type-name">Affiliate Products</div>
+                            <div class="file-type-pattern">{Brand}_Transaction_Analysis_{date}.xlsx</div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="upload-zone" id="videoZone" onclick="document.getElementById('videoFile').click()">
-                    <div class="upload-icon">📁</div>
-                    <div class="upload-text">Drop Video CSV here</div>
-                    <div class="upload-subtext">File should have "Brand" column</div>
-                </div>
-                <input type="file" id="videoFile" class="file-input" accept=".csv,.xlsx,.xls">
-                
-                <div class="brand-preview" id="videoBrandPreview" style="display:none;">
-                    <div class="brand-preview-title">Brands detected:</div>
-                    <div class="brand-tags" id="videoBrandTags"></div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Week Ending Date</label>
-                        <input type="date" id="videoWeekEnd">
+            </div>
+
+            <!-- Upload Queue -->
+            <div class="queue-section" id="queueSection" style="display: none;">
+                <div class="queue-header">
+                    <div class="queue-title">
+                        <span>📋 Upload Queue</span>
+                        <span class="queue-count" id="queueCount">0</span>
+                    </div>
+                    <div class="queue-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="clearQueue()">Clear All</button>
+                        <button class="btn btn-primary" id="uploadAllBtn" onclick="uploadAll()">Upload All</button>
                     </div>
                 </div>
-                
-                <button class="btn btn-primary" id="videoUploadBtn" disabled onclick="uploadVideoData()">
-                    <span>Upload Video Data</span>
-                </button>
-                
-                <div class="progress-container" id="videoProgress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="videoProgressFill"></div>
-                    </div>
-                    <div class="progress-text" id="videoProgressText">Preparing...</div>
+                <div id="queueContent">
+                    <!-- Brand groups will be inserted here -->
                 </div>
-                
-                <div class="log-container" id="videoLog"></div>
+                <div class="upload-progress" id="uploadProgress">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progressText">Uploading...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                </div>
+                <div class="log-section" id="logSection"></div>
+            </div>
+
+            <!-- Recent Uploads -->
+            <div class="history-section">
+                <div class="history-header">
+                    <span>🕐</span> Recent Uploads
+                </div>
+                <div class="history-list" id="historyList">
+                    <div class="history-empty">Loading upload history...</div>
+                </div>
             </div>
         </div>
-        
-        <!-- Stats Section -->
-        <div class="stats-section card">
-            <div class="section-header">
-                <h2>📊 Database Overview</h2>
-                <button class="refresh-btn" onclick="loadStats()">↻ Refresh</button>
+
+        <!-- Roster Tab -->
+        <div id="tab-roster" class="tab-content">
+            <div class="upload-section">
+                <div class="section-header" style="margin-bottom: 16px;">
+                    <h2 class="section-title"><span class="icon">👥</span> Import Creator Roster</h2>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Upload your master roster spreadsheet to update the managed creators list. This will <strong>replace</strong> the existing roster.
+                </p>
+                
+                <div class="upload-zone" id="rosterUploadZone">
+                    <div class="upload-zone-icon">📋</div>
+                    <div class="upload-zone-text">Drop roster XLSX file here</div>
+                    <div class="upload-zone-hint">Expected columns: Real Name, Discord Name, Brand, Role, Retainer, Account 1-5</div>
+                </div>
+                <input type="file" id="rosterFileInput" class="file-input" accept=".xlsx,.xls">
+
+                <div id="rosterFileInfo" style="margin-top: 16px; display: none;">
+                    <div class="file-item">
+                        <div class="file-item-left">
+                            <div class="file-item-dot" style="background: var(--accent);"></div>
+                            <div class="file-item-info">
+                                <div class="file-item-type" id="rosterFileName">roster.xlsx</div>
+                                <div class="file-item-meta" id="rosterFileMeta">Ready to upload</div>
+                            </div>
+                        </div>
+                        <div class="file-item-right">
+                            <span class="file-item-status ready" id="rosterStatus">✓ Ready</span>
+                            <button class="file-item-remove" onclick="clearRoster()">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; display: flex; gap: 12px;">
+                    <button class="btn btn-primary" id="rosterUploadBtn" onclick="uploadRoster()" disabled>Import Roster</button>
+                </div>
+
+                <div class="log-section" id="rosterLogSection"></div>
             </div>
-            <div class="stats-grid" id="statsGrid">
-                <div class="stat-card">
-                    <div class="stat-value" id="statTotalCreators">-</div>
-                    <div class="stat-label">Total Creator Records</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statTotalVideos">-</div>
-                    <div class="stat-label">Total Video Records</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statTotalGMV">-</div>
-                    <div class="stat-label">Total GMV Tracked</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="statWeeksData">-</div>
-                    <div class="stat-label">Weeks of Data</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Recent Uploads -->
-        <div class="uploads-section card">
-            <div class="section-header">
-                <h2>📋 Recent Uploads</h2>
-            </div>
-            <table class="uploads-table">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Brand</th>
-                        <th>Week</th>
-                        <th>Records</th>
-                        <th>GMV</th>
-                        <th>Uploaded</th>
-                    </tr>
-                </thead>
-                <tbody id="uploadsTable">
-                    <tr>
-                        <td colspan="6" class="empty-state">No uploads yet</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
-    
+
     <script>
-        // =====================================================
-        // SUPABASE CONFIGURATION
-        // =====================================================
+        // ==================== SUPABASE CONFIG ====================
         const SUPABASE_URL = 'https://elrsgxlyejlkzjcnhmak.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVscnNneGx5ZWpsa3pqY25obWFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMTQ5OTUsImV4cCI6MjA3OTU5MDk5NX0.8XScMdGkFRqRIDMPY3gWS5tk0Z8NbGzDXuH1dsnBdZ0';
-        
-        // Brand name mapping
-        const BRAND_MAP = {
-            'cata-kor': 'catakor',
-            'catakor': 'catakor',
-            'jiyu': 'jiyu',
-            'physicians choice': 'physicians_choice',
-            'physicians-choice': 'physicians_choice',
-            'pc': 'physicians_choice',
-            'peach slices': 'peach_slices',
-            'peach-slices': 'peach_slices',
-            'yerba magic': 'yerba_magic',
-            'yerba-magic': 'yerba_magic'
-        };
-        
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ==================== CONSTANTS ====================
+        const BRANDS = ['catakor', 'jiyu', 'physicians_choice', 'peach_slices', 'yerba_magic'];
         const BRAND_DISPLAY = {
             'catakor': 'Cata-Kor',
             'jiyu': 'JiYu',
@@ -641,474 +877,955 @@
             'peach_slices': 'Peach Slices',
             'yerba_magic': 'Yerba Magic'
         };
-        
-        let supabase;
-        let creatorFileData = null;
-        let videoFileData = null;
-        
-        // Normalize brand name
-        function normalizeBrand(brand) {
-            if (!brand) return null;
-            const normalized = brand.toLowerCase().trim();
-            return BRAND_MAP[normalized] || null;
-        }
-        
-        // Initialize Supabase
-        async function initSupabase() {
+        const BRAND_MAP = {
+            'cata-kor': 'catakor', 'catakor': 'catakor', 'cata_kor': 'catakor',
+            'jiyu': 'jiyu',
+            'physicians choice': 'physicians_choice', "physician's choice": 'physicians_choice',
+            'physicians_choice': 'physicians_choice', 'physicianschoice': 'physicians_choice', 'pc': 'physicians_choice',
+            'peach slices': 'peach_slices', 'peach_slices': 'peach_slices', 'peachslices': 'peach_slices',
+            'yerba magic': 'yerba_magic', 'yerba_magic': 'yerba_magic', 'yerbamagic': 'yerba_magic'
+        };
+        const FILE_TYPES = {
+            creator: { name: 'Creator Data', color: 'var(--success)', icon: '🟢' },
+            video: { name: 'Video Data', color: 'var(--purple)', icon: '🟣' },
+            videolist: { name: 'Video List', color: 'var(--blue)', icon: '🔵' },
+            affiliateproduct: { name: 'Affiliate Products', color: 'var(--warning)', icon: '🟠' },
+            product: { name: 'Product List', color: 'var(--warning)', icon: '🟠' },
+            unknown: { name: 'Unknown', color: 'var(--text-muted)', icon: '❓' }
+        };
+
+        // ==================== STATE ====================
+        let uploadQueue = [];
+        let currentUser = null;
+
+        // ==================== AUTH CHECK ====================
+        (async function checkAuth() {
             try {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                
-                // Test connection
-                const { data, error } = await supabase.from('brands').select('count');
-                
-                if (error) throw error;
-                
-                document.getElementById('statusDot').classList.add('connected');
-                document.getElementById('statusText').textContent = 'Connected';
-                
-                // Load initial data
-                loadStats();
-                loadRecentUploads();
-                
-            } catch (err) {
-                console.error('Connection error:', err);
-                document.getElementById('statusDot').classList.add('error');
-                document.getElementById('statusText').textContent = 'Connection Failed';
-            }
-        }
-        
-        // =====================================================
-        // FILE HANDLING
-        // =====================================================
-        
-        function setupDropZone(zoneId, fileInputId, type) {
-            const zone = document.getElementById(zoneId);
-            const input = document.getElementById(fileInputId);
-            
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
-                zone.addEventListener(event, e => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-            });
-            
-            ['dragenter', 'dragover'].forEach(event => {
-                zone.addEventListener(event, () => zone.classList.add('dragover'));
-            });
-            
-            ['dragleave', 'drop'].forEach(event => {
-                zone.addEventListener(event, () => zone.classList.remove('dragover'));
-            });
-            
-            zone.addEventListener('drop', e => {
-                const files = e.dataTransfer.files;
-                if (files.length > 0) handleFile(files[0], type);
-            });
-            
-            input.addEventListener('change', e => {
-                if (e.target.files.length > 0) handleFile(e.target.files[0], type);
-            });
-        }
-        
-        function handleFile(file, type) {
-            const zone = document.getElementById(type + 'Zone');
-            const btn = document.getElementById(type + 'UploadBtn');
-            const brandPreview = document.getElementById(type + 'BrandPreview');
-            const brandTags = document.getElementById(type + 'BrandTags');
-            
-            // Update UI
-            zone.classList.add('has-file');
-            zone.innerHTML = `
-                <div class="upload-icon">✅</div>
-                <div class="upload-text">${file.name}</div>
-                <div class="upload-subtext">${(file.size / 1024).toFixed(1)} KB</div>
-            `;
-            
-            // Parse CSV
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    if (type === 'creator') {
-                        creatorFileData = results.data;
-                    } else {
-                        videoFileData = results.data;
-                    }
-                    
-                    // Detect brands in file
-                    const brands = new Set();
-                    const brandCounts = {};
-                    
-                    results.data.forEach(row => {
-                        const brand = normalizeBrand(row['Brand']);
-                        if (brand) {
-                            brands.add(brand);
-                            brandCounts[brand] = (brandCounts[brand] || 0) + 1;
-                        }
-                    });
-                    
-                    // Show brand preview
-                    if (brands.size > 0) {
-                        brandPreview.style.display = 'block';
-                        brandTags.innerHTML = Array.from(brands).map(b => 
-                            `<span class="brand-tag ${b}">${BRAND_DISPLAY[b] || b} (${brandCounts[b]})</span>`
-                        ).join('');
-                    }
-                    
-                    log(type, `Parsed ${results.data.length} rows across ${brands.size} brands`, 'success');
-                    btn.disabled = false;
-                },
-                error: function(err) {
-                    log(type, `Parse error: ${err.message}`, 'error');
-                }
-            });
-        }
-        
-        // =====================================================
-        // DATA UPLOAD FUNCTIONS
-        // =====================================================
-        
-        async function uploadCreatorData() {
-            if (!creatorFileData || creatorFileData.length === 0) {
-                log('creator', 'No data to upload', 'error');
-                return;
-            }
-            
-            const weekEndInput = document.getElementById('creatorWeekEnd').value;
-            // Parse date without timezone shift
-            const [year, month, day] = weekEndInput ? weekEndInput.split('-').map(Number) : [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()];
-            const weekEnd = new Date(year, month - 1, day);
-            const weekStart = new Date(year, month - 1, day - 6);
-            
-            const btn = document.getElementById('creatorUploadBtn');
-            const progress = document.getElementById('creatorProgress');
-            const progressFill = document.getElementById('creatorProgressFill');
-            const progressText = document.getElementById('creatorProgressText');
-            
-            btn.disabled = true;
-            progress.classList.add('visible');
-            
-            log('creator', `Starting upload for week ending ${weekEnd.toLocaleDateString()}...`, 'info');
-            
-            try {
-                // Group by brand and prepare records
-                const brandGroups = {};
-                
-                creatorFileData.forEach(row => {
-                    const brand = normalizeBrand(row['Brand']);
-                    if (!brand) return;
-                    
-                    if (!brandGroups[brand]) brandGroups[brand] = [];
-                    
-                    brandGroups[brand].push({
-                        week_start: formatDateForDB(weekStart),
-                        week_end: formatDateForDB(weekEnd),
-                        brand: brand,
-                        creator_name: row['Creator name'] || row['Account name'] || '',
-                        tiktok_username: row['Creator name'] || row['Account name'] || '',
-                        profile_link: row['Profile link'] || '',
-                        gmv: parseNumber(row['GMV']),
-                        orders: parseInt(row['Orders']) || 0,
-                        units_sold: parseInt(row['Items sold']) || 0,
-                        refunds: parseNumber(row['Refunds']),
-                        refund_orders: parseInt(row['Items refunded']) || 0,
-                        videos_posted: parseInt(row['Videos']) || 0,
-                        live_sessions: parseInt(row['LIVE streams']) || 0,
-                        commission: parseNumber(row['Est. commission']),
-                        is_managed: false
-                    });
-                });
-                
-                const allRecords = Object.values(brandGroups).flat().filter(r => r.creator_name);
-                log('creator', `Processing ${allRecords.length} creators across ${Object.keys(brandGroups).length} brands...`, 'info');
-                
-                // Upload in batches
-                const batchSize = 100;
-                let uploaded = 0;
-                
-                for (let i = 0; i < allRecords.length; i += batchSize) {
-                    const batch = allRecords.slice(i, i + batchSize);
-                    
-                    const { error } = await supabase
-                        .from('creator_performance')
-                        .upsert(batch, { 
-                            onConflict: 'brand,week_start,week_end,creator_name',
-                            ignoreDuplicates: false 
-                        });
-                    
-                    if (error) throw error;
-                    
-                    uploaded += batch.length;
-                    const pct = Math.round((uploaded / allRecords.length) * 100);
-                    progressFill.style.width = pct + '%';
-                    progressText.textContent = `Uploaded ${uploaded} of ${allRecords.length}`;
-                }
-                
-                // Log uploads per brand
-                for (const [brand, records] of Object.entries(brandGroups)) {
-                    const totalGMV = records.reduce((sum, r) => sum + (r.gmv || 0), 0);
-                    
-                    await supabase.from('upload_log').upsert({
-                        upload_type: 'creator',
-                        brand: brand,
-                        week_start: formatDateForDB(weekStart),
-                        week_end: formatDateForDB(weekEnd),
-                        records_imported: records.length,
-                        total_gmv: totalGMV
-                    }, { onConflict: 'upload_type,brand,week_start,week_end' });
-                    
-                    log('creator', `✅ ${BRAND_DISPLAY[brand]}: ${records.length} creators, $${totalGMV.toLocaleString()} GMV`, 'success');
-                }
-                
-                // Refresh stats
-                loadStats();
-                loadRecentUploads();
-                
-            } catch (err) {
-                log('creator', `Error: ${err.message}`, 'error');
-                console.error(err);
-            }
-            
-            btn.disabled = false;
-        }
-        
-        async function uploadVideoData() {
-            if (!videoFileData || videoFileData.length === 0) {
-                log('video', 'No data to upload', 'error');
-                return;
-            }
-            
-            const weekEndInput = document.getElementById('videoWeekEnd').value;
-            // Parse date without timezone shift
-            const [year, month, day] = weekEndInput ? weekEndInput.split('-').map(Number) : [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()];
-            const weekEnd = new Date(year, month - 1, day);
-            const weekStart = new Date(year, month - 1, day - 6);
-            
-            const btn = document.getElementById('videoUploadBtn');
-            const progress = document.getElementById('videoProgress');
-            const progressFill = document.getElementById('videoProgressFill');
-            const progressText = document.getElementById('videoProgressText');
-            
-            btn.disabled = true;
-            progress.classList.add('visible');
-            
-            log('video', `Starting upload for week ending ${weekEnd.toLocaleDateString()}...`, 'info');
-            
-            try {
-                // First pass: aggregate by video_id (same video can appear for multiple products)
-                const videoMap = {};
-                
-                videoFileData.forEach((row, idx) => {
-                    const brand = normalizeBrand(row['Brand']);
-                    if (!brand) return;
-                    
-                    const videoId = row['Video ID'] || `${brand}_${idx}`;
-                    const key = `${brand}_${videoId}`;
-                    
-                    if (!videoMap[key]) {
-                        videoMap[key] = {
-                            week_start: formatDateForDB(weekStart),
-                            week_end: formatDateForDB(weekEnd),
-                            brand: brand,
-                            video_id: videoId,
-                            video_title: (row['Video title'] || '').substring(0, 500),
-                            video_link: row['Video link'] || '',
-                            creator_name: row['Creator name'] || '',
-                            tiktok_username: row['Creator name'] || '',
-                            gmv: 0,
-                            orders: 0,
-                            units_sold: 0,
-                            views: parseInt(row['Views']) || 0,
-                            likes: parseInt(row['Likes']) || 0,
-                            comments: parseInt(row['Comments']) || 0,
-                            shares: parseInt(row['Shares']) || 0,
-                            post_date: null
-                        };
-                    }
-                    
-                    // Aggregate GMV and orders from duplicate entries
-                    videoMap[key].gmv += parseNumber(row['GMV']);
-                    videoMap[key].orders += parseInt(row['Orders']) || 0;
-                    videoMap[key].units_sold += parseInt(row['Items sold']) || 0;
-                });
-                
-                // Group by brand for logging
-                const brandGroups = {};
-                Object.values(videoMap).forEach(record => {
-                    if (!brandGroups[record.brand]) brandGroups[record.brand] = [];
-                    brandGroups[record.brand].push(record);
-                });
-                
-                const allRecords = Object.values(videoMap).filter(r => r.video_id);
-                log('video', `Processing ${allRecords.length} unique videos across ${Object.keys(brandGroups).length} brands...`, 'info');
-                
-                // Upload in batches
-                const batchSize = 100;
-                let uploaded = 0;
-                
-                for (let i = 0; i < allRecords.length; i += batchSize) {
-                    const batch = allRecords.slice(i, i + batchSize);
-                    
-                    const { error } = await supabase
-                        .from('video_performance')
-                        .upsert(batch, { 
-                            onConflict: 'brand,week_start,week_end,video_id',
-                            ignoreDuplicates: false 
-                        });
-                    
-                    if (error) throw error;
-                    
-                    uploaded += batch.length;
-                    const pct = Math.round((uploaded / allRecords.length) * 100);
-                    progressFill.style.width = pct + '%';
-                    progressText.textContent = `Uploaded ${uploaded} of ${allRecords.length}`;
-                }
-                
-                // Log uploads per brand
-                for (const [brand, records] of Object.entries(brandGroups)) {
-                    const totalGMV = records.reduce((sum, r) => sum + (r.gmv || 0), 0);
-                    
-                    await supabase.from('upload_log').upsert({
-                        upload_type: 'video',
-                        brand: brand,
-                        week_start: formatDateForDB(weekStart),
-                        week_end: formatDateForDB(weekEnd),
-                        records_imported: records.length,
-                        total_gmv: totalGMV
-                    }, { onConflict: 'upload_type,brand,week_start,week_end' });
-                    
-                    log('video', `✅ ${BRAND_DISPLAY[brand]}: ${records.length} videos, $${totalGMV.toLocaleString()} GMV`, 'success');
-                }
-                
-                // Refresh stats
-                loadStats();
-                loadRecentUploads();
-                
-            } catch (err) {
-                log('video', `Error: ${err.message}`, 'error');
-                console.error(err);
-            }
-            
-            btn.disabled = false;
-        }
-        
-        // =====================================================
-        // HELPER FUNCTIONS
-        // =====================================================
-        
-        function parseNumber(val) {
-            if (!val) return 0;
-            const cleaned = String(val).replace(/[$,]/g, '');
-            return parseFloat(cleaned) || 0;
-        }
-        
-        function formatDateForDB(date) {
-            // Format as YYYY-MM-DD without timezone conversion
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
-        
-        function log(type, message, level = 'info') {
-            const container = document.getElementById(type + 'Log');
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${level}`;
-            entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
-            container.appendChild(entry);
-            container.scrollTop = container.scrollHeight;
-        }
-        
-        async function loadStats() {
-            try {
-                const { count: creatorCount } = await supabase
-                    .from('creator_performance')
-                    .select('*', { count: 'exact', head: true });
-                
-                const { count: videoCount } = await supabase
-                    .from('video_performance')
-                    .select('*', { count: 'exact', head: true });
-                
-                const { data: gmvData } = await supabase
-                    .from('creator_performance')
-                    .select('gmv');
-                
-                const totalGMV = gmvData?.reduce((sum, r) => sum + (parseFloat(r.gmv) || 0), 0) || 0;
-                
-                const { data: weeksData } = await supabase
-                    .from('creator_performance')
-                    .select('week_end')
-                    .order('week_end', { ascending: false });
-                
-                const uniqueWeeks = new Set(weeksData?.map(r => r.week_end));
-                
-                document.getElementById('statTotalCreators').textContent = (creatorCount || 0).toLocaleString();
-                document.getElementById('statTotalVideos').textContent = (videoCount || 0).toLocaleString();
-                document.getElementById('statTotalGMV').textContent = '$' + totalGMV.toLocaleString(undefined, {maximumFractionDigits: 0});
-                document.getElementById('statWeeksData').textContent = uniqueWeeks.size;
-                
-            } catch (err) {
-                console.error('Error loading stats:', err);
-            }
-        }
-        
-        async function loadRecentUploads() {
-            try {
-                const { data, error } = await supabase
-                    .from('upload_log')
-                    .select('*')
-                    .order('uploaded_at', { ascending: false })
-                    .limit(10);
-                
-                if (error) throw error;
-                
-                const tbody = document.getElementById('uploadsTable');
-                
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No uploads yet</td></tr>';
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    window.location.href = 'index.html';
                     return;
                 }
+
+                const { data: profile } = await supabaseClient
+                    .from('user_profiles')
+                    .select('role, name')
+                    .eq('user_id', session.user.id)
+                    .single();
+
+                // Allow any authenticated user with a profile (or admin by default)
+                const teamRoles = ['admin', 'owner', 'super_admin', 'content_lead', 'analyst', 'payments', 'automations', 'va', 'manager'];
+                const hasAccess = profile || session.user.email; // Allow if has profile OR is authenticated
                 
-                tbody.innerHTML = data.map(row => `
+                if (!hasAccess) {
+                    alert('Access denied. Please contact admin.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                document.getElementById('authCheck').style.display = 'none';
+                currentUser = profile?.name || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User';
+                document.getElementById('userName').textContent = currentUser;
+
+                // Load initial data
+                loadDataMatrix();
+                loadUploadHistory();
+
+            } catch (err) {
+                console.error('Auth error:', err);
+                alert('Authentication error. Please login again.');
+                window.location.href = 'index.html';
+            }
+        })();
+
+        // ==================== TABS ====================
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+
+        // ==================== DATA STATUS MATRIX ====================
+        const MATRIX_DAYS = 14; // Show last 14 days
+        
+        async function loadDataMatrix() {
+            const thead = document.getElementById('matrixHead');
+            const tbody = document.getElementById('matrixBody');
+            const fileType = document.getElementById('matrixFileType')?.value || 'creator';
+            
+            tbody.innerHTML = '<tr><td colspan="15" style="text-align: center; padding: 40px; color: var(--text-muted);">Loading data status...</td></tr>';
+            
+            try {
+                // Generate date columns (last 14 days, newest first)
+                const dates = [];
+                const today = new Date();
+                today.setHours(12, 0, 0, 0);
+                
+                for (let i = 0; i < MATRIX_DAYS; i++) {
+                    const d = new Date(today);
+                    d.setDate(d.getDate() - i);
+                    dates.push(d.toISOString().split('T')[0]);
+                }
+                
+                // Build header row
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                thead.innerHTML = `
                     <tr>
-                        <td><span class="badge ${row.upload_type}">${row.upload_type}</span></td>
-                        <td><span class="badge ${row.brand}">${BRAND_DISPLAY[row.brand] || row.brand}</span></td>
-                        <td>${formatDate(row.week_start)} - ${formatDate(row.week_end)}</td>
-                        <td>${row.records_imported?.toLocaleString() || 0}</td>
-                        <td>$${(row.total_gmv || 0).toLocaleString()}</td>
-                        <td>${formatDateTime(row.uploaded_at)}</td>
+                        <th>Brand</th>
+                        ${dates.map(dateStr => {
+                            const d = new Date(dateStr + 'T12:00:00');
+                            const dayName = dayNames[d.getDay()];
+                            const dayNum = d.getDate();
+                            const month = d.toLocaleString('en-US', { month: 'short' });
+                            return `<th class="matrix-date-header"><div class="day">${dayNum}</div>${dayName}</th>`;
+                        }).join('')}
                     </tr>
-                `).join('');
+                `;
+                
+                // Determine table and date field based on file type
+                let table, dateField;
+                switch (fileType) {
+                    case 'creator':
+                        table = 'creator_performance';
+                        dateField = 'report_date';
+                        break;
+                    case 'video':
+                        table = 'video_performance';
+                        dateField = 'report_date';
+                        break;
+                    case 'videolist':
+                        table = 'videos';
+                        dateField = 'post_date';
+                        break;
+                    case 'product':
+                        table = 'product_performance';
+                        dateField = 'report_date';
+                        break;
+                }
+                
+                // Get all dates with data for each brand
+                const brandData = {};
+                for (const brand of BRANDS) {
+                    const { data } = await supabaseClient
+                        .from(table)
+                        .select(dateField)
+                        .eq('brand', brand)
+                        .gte(dateField, dates[dates.length - 1])
+                        .lte(dateField, dates[0]);
+                    
+                    // Create set of dates that have data
+                    brandData[brand] = new Set((data || []).map(row => row[dateField]));
+                }
+                
+                // Yesterday's date for comparison (data typically lags by 1 day)
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStr = yesterday.toISOString().split('T')[0];
+                
+                // Build table rows
+                tbody.innerHTML = BRANDS.map(brand => {
+                    const displayName = BRAND_DISPLAY[brand];
+                    const dataSet = brandData[brand];
+                    
+                    return `
+                        <tr>
+                            <td><strong>${displayName}</strong></td>
+                            ${dates.map(dateStr => {
+                                const hasData = dataSet.has(dateStr);
+                                const isFuture = dateStr > yesterdayStr;
+                                
+                                if (isFuture) {
+                                    return `<td><span class="matrix-check future">—</span></td>`;
+                                } else if (hasData) {
+                                    return `<td><span class="matrix-check ok">✓</span></td>`;
+                                } else {
+                                    return `<td><span class="matrix-check missing">✗</span></td>`;
+                                }
+                            }).join('')}
+                        </tr>
+                    `;
+                }).join('');
                 
             } catch (err) {
-                console.error('Error loading uploads:', err);
+                console.error('Error loading data matrix:', err);
+                tbody.innerHTML = '<tr><td colspan="15" style="text-align: center; padding: 40px; color: var(--error);">Error loading data: ' + err.message + '</td></tr>';
             }
         }
-        
-        function formatDate(dateStr) {
-            if (!dateStr) return '-';
-            const d = new Date(dateStr);
-            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+        // ==================== FILE HANDLING ====================
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+        uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragging'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragging'));
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragging');
+            handleFiles(e.dataTransfer.files);
+        });
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        function handleFiles(files) {
+            for (const file of files) {
+                if (!uploadQueue.find(f => f.name === file.name)) {
+                    const fileType = detectFileType(file.name);
+                    const brand = extractBrand(file.name);
+                    const reportDate = extractDate(file.name);
+
+                    uploadQueue.push({
+                        file,
+                        name: file.name,
+                        type: fileType,
+                        brand,
+                        reportDate,
+                        status: 'pending',
+                        rowCount: null
+                    });
+                }
+            }
+            renderQueue();
         }
-        
-        function formatDateTime(dateStr) {
-            if (!dateStr) return '-';
-            const d = new Date(dateStr);
-            return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+        function detectFileType(filename) {
+            const lower = filename.toLowerCase();
+            // Creator data
+            if (lower.includes('creator_data') || lower.includes('creator data')) return 'creator';
+            if (lower.includes('video_data') || lower.includes('video data')) return 'video';
+            if (lower.includes('video_list') || lower.includes('video list')) return 'videolist';
+            // Product/Transaction analysis
+            if (lower.includes('transaction_analysis') || lower.includes('affiliate_product')) return 'affiliateproduct';
+            if (lower.includes('product_list') || lower.includes('product list')) return 'product';
+            return 'unknown';
         }
-        
-        // =====================================================
-        // INITIALIZE
-        // =====================================================
-        
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('creatorWeekEnd').value = today;
-        document.getElementById('videoWeekEnd').value = today;
-        
-        setupDropZone('creatorZone', 'creatorFile', 'creator');
-        setupDropZone('videoZone', 'videoFile', 'video');
-        
-        initSupabase();
+
+        function extractBrand(filename) {
+            const match = filename.match(/^([^_]+)/);
+            if (match) {
+                const normalized = BRAND_MAP[match[1].toLowerCase().replace(/_/g, ' ')];
+                return normalized || 'unknown';
+            }
+            return 'unknown';
+        }
+
+        function extractDate(filename) {
+            // Date range pattern
+            const rangeMatch = filename.match(/(\d{4})(\d{2})(\d{2})-(\d{4})(\d{2})(\d{2})/);
+            if (rangeMatch) return `${rangeMatch[4]}-${rangeMatch[5]}-${rangeMatch[6]}`;
+            
+            // YYYYMMDD pattern
+            const match1 = filename.match(/_(\d{4})(\d{2})(\d{2})\./);
+            if (match1) return `${match1[1]}-${match1[2]}-${match1[3]}`;
+            
+            // YYYY-MM-DD pattern
+            const match2 = filename.match(/(\d{4})[._-](\d{1,2})[._-](\d{1,2})/);
+            if (match2) return `${match2[1]}-${match2[2].padStart(2, '0')}-${match2[3].padStart(2, '0')}`;
+            
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // ==================== QUEUE RENDERING ====================
+        function renderQueue() {
+            const section = document.getElementById('queueSection');
+            const content = document.getElementById('queueContent');
+            const count = document.getElementById('queueCount');
+
+            if (uploadQueue.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            count.textContent = uploadQueue.length;
+
+            // Group by brand
+            const grouped = {};
+            uploadQueue.forEach((f, idx) => {
+                const brand = f.brand || 'unknown';
+                if (!grouped[brand]) grouped[brand] = [];
+                grouped[brand].push({ ...f, index: idx });
+            });
+
+            content.innerHTML = Object.entries(grouped).map(([brand, files]) => {
+                const displayName = BRAND_DISPLAY[brand] || brand;
+                const filesHtml = files.map(f => {
+                    const typeInfo = FILE_TYPES[f.type] || FILE_TYPES.unknown;
+                    const statusClass = f.status === 'pending' ? 'ready' : f.status;
+                    const statusText = f.status === 'pending' ? '✓ Ready' : 
+                                      f.status === 'uploading' ? '⟳ Uploading...' :
+                                      f.status === 'success' ? '✓ Done' :
+                                      f.status === 'error' ? '✗ Error' : f.status;
+                    
+                    const isUnknown = f.type === 'unknown';
+                    const hasError = f.status === 'error';
+                    
+                    let warningHtml = '';
+                    if (isUnknown && f.status !== 'error') {
+                        warningHtml = `
+                            <div style="font-size: 0.7rem; color: var(--warning); margin-top: 4px;">
+                                ⚠️ Rename file to include: Creator_Data, Video_Data, Video_List, or Transaction_Analysis
+                            </div>
+                        `;
+                    } else if (hasError && f.errorMessage) {
+                        warningHtml = `
+                            <div style="font-size: 0.7rem; color: var(--error); margin-top: 4px;">
+                                ❌ ${f.errorMessage}
+                            </div>
+                        `;
+                    }
+                    
+                    return `
+                        <div class="file-item" ${isUnknown || hasError ? 'style="border-left: 3px solid ' + (hasError ? 'var(--error)' : 'var(--warning)') + ';"' : ''}>
+                            <div class="file-item-left">
+                                <div class="file-item-dot" style="background: ${typeInfo.color};"></div>
+                                <div class="file-item-info">
+                                    <div class="file-item-type">${typeInfo.name}</div>
+                                    <div class="file-item-meta">${f.reportDate}${f.rowCount ? ' • ' + f.rowCount.toLocaleString() + ' rows' : ''}</div>
+                                    ${warningHtml}
+                                </div>
+                            </div>
+                            <div class="file-item-right">
+                                <span class="file-item-status ${statusClass}">${isUnknown && f.status === 'pending' ? '⚠️ Fix name' : statusText}</span>
+                                ${f.status === 'pending' ? `<button class="file-item-remove" onclick="removeFile(${f.index})">×</button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="brand-group" id="group-${brand}">
+                        <div class="brand-group-header" onclick="toggleGroup('${brand}')">
+                            <div class="brand-group-left">
+                                <span class="brand-group-toggle">▼</span>
+                                <span class="brand-group-name">${displayName}</span>
+                                <span class="brand-group-meta">${files.length} file${files.length > 1 ? 's' : ''}</span>
+                            </div>
+                        </div>
+                        <div class="brand-group-files">
+                            ${filesHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateUploadButton();
+        }
+
+        function toggleGroup(brand) {
+            const group = document.getElementById('group-' + brand);
+            group.classList.toggle('collapsed');
+        }
+
+        function removeFile(index) {
+            uploadQueue.splice(index, 1);
+            renderQueue();
+        }
+
+        function clearQueue() {
+            uploadQueue = [];
+            renderQueue();
+            document.getElementById('logSection').classList.remove('active');
+        }
+
+        function updateUploadButton() {
+            const btn = document.getElementById('uploadAllBtn');
+            const pending = uploadQueue.filter(f => f.status === 'pending');
+            const unknownBrand = pending.filter(f => f.brand === 'unknown');
+            
+            if (unknownBrand.length > 0) {
+                btn.disabled = true;
+                btn.textContent = `Fix ${unknownBrand.length} file(s) with unknown brand`;
+            } else if (pending.length === 0) {
+                btn.disabled = true;
+                btn.textContent = 'All files uploaded';
+            } else {
+                btn.disabled = false;
+                btn.textContent = `Upload ${pending.length} File${pending.length > 1 ? 's' : ''}`;
+            }
+        }
+
+        // ==================== UPLOAD LOGIC ====================
+        async function uploadAll() {
+            const pending = uploadQueue.filter(f => f.status === 'pending');
+            if (pending.length === 0) return;
+
+            const progressSection = document.getElementById('uploadProgress');
+            const logSection = document.getElementById('logSection');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const progressPercent = document.getElementById('progressPercent');
+
+            progressSection.classList.add('active');
+            logSection.innerHTML = '';
+            logSection.classList.add('active');
+            document.getElementById('uploadAllBtn').disabled = true;
+
+            let completed = 0;
+            const total = pending.length;
+
+            for (const fileObj of pending) {
+                try {
+                    fileObj.status = 'uploading';
+                    renderQueue();
+                    log(`Processing ${fileObj.name}...`);
+
+                    const data = await readExcelFile(fileObj.file);
+                    fileObj.rowCount = data.length;
+                    renderQueue();
+
+                    // Upload based on type
+                    switch (fileObj.type) {
+                        case 'creator':
+                            await uploadCreatorData(data, fileObj);
+                            break;
+                        case 'video':
+                            await uploadVideoData(data, fileObj);
+                            break;
+                        case 'videolist':
+                            await uploadVideoListData(data, fileObj);
+                            break;
+                        case 'affiliateproduct':
+                            await uploadAffiliateProductData(data, fileObj);
+                            break;
+                        case 'product':
+                            await uploadProductData(data, fileObj);
+                            break;
+                        case 'unknown':
+                            throw new Error('Could not detect file type. Please rename file to include: Creator_Data, Video_Data, Video_List, or Transaction_Analysis');
+                        default:
+                            throw new Error(`Unknown file type: ${fileObj.type}`);
+                    }
+
+                    fileObj.status = 'success';
+                    log(`✓ ${fileObj.name} uploaded successfully`, 'success');
+                    await logUploadActivity(fileObj);
+
+                } catch (err) {
+                    console.error('Upload error for', fileObj.name, ':', err);
+                    fileObj.status = 'error';
+                    fileObj.errorMessage = err.message || 'Unknown error';
+                    log(`✗ ${fileObj.name}: ${err.message}`, 'error');
+                    
+                    // Show detailed error info
+                    if (err.code) {
+                        log(`  Error code: ${err.code}`, 'error');
+                    }
+                    if (err.details) {
+                        log(`  Details: ${err.details}`, 'error');
+                    }
+                }
+
+                completed++;
+                const pct = Math.round((completed / total) * 100);
+                progressFill.style.width = pct + '%';
+                progressPercent.textContent = pct + '%';
+                progressText.textContent = `Uploaded ${completed} of ${total} files`;
+                renderQueue();
+            }
+
+            log('');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+            log(`✓ Upload complete! ${pending.filter(f => f.status === 'success').length}/${total} files successful`, 'success');
+
+            // Refresh data
+            loadDataMatrix();
+            loadUploadHistory();
+        }
+
+        // ==================== EXCEL READING ====================
+        async function readExcelFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const workbook = XLSX.read(e.target.result, { type: 'array' });
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const data = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+                        resolve(data);
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        async function readExcelFileRaw(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const workbook = XLSX.read(e.target.result, { type: 'array' });
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const data = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+                        resolve(data);
+                    } catch (err) {
+                        reject(err);
+                    }
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // ==================== UPLOAD FUNCTIONS ====================
+        function parseNum(val) {
+            if (val === null || val === undefined || val === '') return 0;
+            const str = String(val).replace(/[$,]/g, '').trim();
+            const num = parseFloat(str);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function sanitizeText(text) {
+            if (!text) return '';
+            let str = String(text);
+            // Remove control characters
+            str = str.replace(/[\x00-\x1F\x7F]/g, '');
+            // Remove ALL surrogate pairs (emojis, special chars) to avoid JSON issues
+            str = str.replace(/[\uD800-\uDFFF]/g, '');
+            // Remove other problematic characters for JSON/PostgreSQL
+            str = str.replace(/[\uFFFE\uFFFF]/g, '');
+            // Remove any remaining non-printable characters
+            str = str.replace(/[^\x20-\x7E\u00A0-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u1E00-\u1EFF]/g, '');
+            return str.trim();
+        }
+
+        async function uploadCreatorData(data, fileObj) {
+            log(`  → Parsing ${data.length} rows...`, 'info');
+            
+            // Check what columns exist (handle variations)
+            const firstRow = data[0] || {};
+            const columns = Object.keys(firstRow);
+            log(`  → Columns found: ${columns.slice(0, 5).join(', ')}...`, 'info');
+            
+            // Find creator name column (try variations)
+            const creatorNameCol = columns.find(c => 
+                c.toLowerCase().includes('creator name') || 
+                c.toLowerCase() === 'creator' ||
+                c.toLowerCase().includes('username')
+            ) || 'Creator name';
+            
+            const records = data.map(row => ({
+                report_date: fileObj.reportDate,
+                period_type: 'daily',
+                brand: fileObj.brand,
+                creator_name: sanitizeText(row[creatorNameCol] || '').trim(),
+                gmv: parseNum(row['GMV']),
+                orders: parseInt(row['Orders']) || 0,
+                videos: parseInt(row['Videos']) || 0,
+                samples_shipped: parseInt(row['Samples shipped']) || 0,
+                est_commission: parseNum(row['Est. commission'])
+            })).filter(r => r.creator_name);
+
+            if (records.length === 0) {
+                throw new Error(`No valid creator records found. Columns in file: ${columns.slice(0, 8).join(', ')}`);
+            }
+
+            await batchUpsert('creator_performance', records, 'creator_name,brand,report_date');
+            log(`  → ${records.length} creator records uploaded`, 'success');
+        }
+
+        async function uploadVideoData(data, fileObj) {
+            log(`  → Parsing ${data.length} rows...`, 'info');
+            
+            const records = data.map(row => ({
+                report_date: fileObj.reportDate,
+                period_type: 'daily',
+                brand: fileObj.brand,
+                video_id: String(row['Video ID'] || '').trim(),
+                video_title: sanitizeText(row['Video title'] || '').substring(0, 500),
+                video_link: sanitizeText(row['Video link'] || '').substring(0, 1000),
+                creator_name: sanitizeText(row['Creator name'] || '').trim(),
+                product_name: sanitizeText(row['Product name'] || '').substring(0, 500),
+                product_id: String(row['Product ID'] || '').trim(),
+                gmv: parseNum(row['GMV']),
+                orders: parseInt(row['Orders']) || 0,
+                items_sold: parseInt(row['Items sold']) || 0,
+                est_commission: parseNum(row['Est. commission'])
+            })).filter(r => r.video_id && r.creator_name);
+
+            if (records.length === 0) {
+                throw new Error('No valid video records found. Check that "Video ID" and "Creator name" columns exist.');
+            }
+
+            await batchUpsert('video_performance', records, 'video_id,product_id,brand,report_date');
+            log(`  → ${records.length} video records uploaded`, 'success');
+            
+            // Also populate video_catalog for accurate post counting
+            // Get unique video_ids (a video may appear multiple times with different products)
+            const uniqueVideos = {};
+            records.forEach(r => {
+                const key = `${r.video_id}_${r.brand}`;
+                if (!uniqueVideos[key]) {
+                    uniqueVideos[key] = {
+                        video_id: r.video_id,
+                        creator_name: r.creator_name.toLowerCase(),
+                        brand: r.brand,
+                        first_seen_date: fileObj.reportDate,
+                        video_title: r.video_title,
+                        product_name: r.product_name
+                    };
+                }
+            });
+            
+            const catalogRecords = Object.values(uniqueVideos);
+            if (catalogRecords.length > 0) {
+                // Use upsert with ON CONFLICT DO NOTHING to only insert truly new videos
+                const { error: catalogError } = await supabaseClient
+                    .from('video_catalog')
+                    .upsert(catalogRecords, { 
+                        onConflict: 'video_id,brand',
+                        ignoreDuplicates: true  // Don't update existing - keep original first_seen_date
+                    });
+                
+                if (catalogError) {
+                    console.warn('Video catalog update warning:', catalogError);
+                    // Don't throw - this is supplementary data
+                } else {
+                    log(`  → ${catalogRecords.length} unique videos tracked in catalog`, 'info');
+                }
+            }
+        }
+
+        async function uploadVideoListData(data, fileObj) {
+            function extractVideoId(url) {
+                const match = String(url || '').match(/\/video\/(\d+)/);
+                return match ? match[1] : null;
+            }
+
+            function parsePostDate(val) {
+                if (!val) return null;
+                if (val instanceof Date) return val.toISOString().split('T')[0];
+                const str = String(val).trim();
+                if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+                const date = new Date(str);
+                return !isNaN(date.getTime()) ? date.toISOString().split('T')[0] : null;
+            }
+
+            const records = data.map(row => {
+                // Try Video ID column first (for consistency with video_performance)
+                // Fall back to extracting from Video link URL
+                let videoId = String(row['Video ID'] || '').trim();
+                if (!videoId) {
+                    videoId = extractVideoId(row['Video link']);
+                }
+                if (!videoId) return null;
+                
+                return {
+                    video_id: videoId,
+                    brand: fileObj.brand,
+                    creator_name: sanitizeText(row['Creator username'] || '').trim(),
+                    video_name: sanitizeText(row['Video name'] || '').substring(0, 500),
+                    video_link: sanitizeText(row['Video link'] || '').substring(0, 1000),
+                    post_date: parsePostDate(row['Video post date']),
+                    total_gmv: parseNum(row['GMV']),
+                    affiliate_gmv: parseNum(row['Affiliate shoppable video GMV']),
+                    items_sold: parseInt(row['Affiliate items sold '] || row['Affiliate items sold']) || 0,
+                    orders: parseInt(row['Affiliate orders']) || 0,
+                    impressions: parseInt(row['Shoppable video impressions']) || 0,
+                    likes: parseInt(row['Shoppable video likes']) || 0,
+                    comments: parseInt(row['Shoppable video comments']) || 0,
+                    est_commission: parseNum(row['Est. commission'])
+                };
+            }).filter(r => r && r.video_id && r.creator_name);
+
+            await batchUpsert('videos', records, 'video_id,brand');
+            const withPostDate = records.filter(r => r.post_date).length;
+            log(`  → ${records.length} videos (${withPostDate} with post dates)`, 'info');
+            
+            // Update video_catalog with actual posted_date where available
+            const catalogUpdates = records
+                .filter(r => r.post_date)
+                .map(r => ({
+                    video_id: r.video_id,
+                    creator_name: r.creator_name.toLowerCase(),
+                    brand: r.brand,
+                    first_seen_date: r.post_date, // Use post_date as first_seen if we're inserting
+                    posted_date: r.post_date,
+                    video_title: r.video_name
+                }));
+            
+            if (catalogUpdates.length > 0) {
+                // Upsert - this will update posted_date for existing records
+                // or insert new records with both dates set
+                const { error: catalogError } = await supabaseClient
+                    .from('video_catalog')
+                    .upsert(catalogUpdates, { 
+                        onConflict: 'video_id,brand'
+                    });
+                
+                if (catalogError) {
+                    console.warn('Video catalog update warning:', catalogError);
+                } else {
+                    log(`  → ${catalogUpdates.length} videos updated with post dates in catalog`, 'info');
+                }
+            }
+        }
+
+        async function uploadAffiliateProductData(data, fileObj) {
+            log(`  → Parsing ${data.length} rows...`, 'info');
+            
+            const records = data.map(row => {
+                const productId = String(row['Product ID'] || '').trim();
+                if (!productId || productId.length < 5) return null;
+                return {
+                    report_date: fileObj.reportDate,
+                    brand: fileObj.brand,
+                    product_id: productId,
+                    product_name: sanitizeText(row['Product name'] || '').substring(0, 500),
+                    product_category: sanitizeText(row['Product category'] || '').substring(0, 200),
+                    gmv: parseNum(row['GMV']),
+                    refunds: parseNum(row['Refunds']),
+                    items_sold: parseInt(row['Items sold']) || 0,
+                    items_refunded: parseInt(row['Items refunded']) || 0,
+                    orders: parseInt(row['Orders']) || 0,
+                    avg_daily_customers: parseNum(row['Avg. daily customers']),
+                    avg_daily_creators_with_sales: parseNum(row['Avg. daily creators with sales']),
+                    avg_daily_creators_posted: parseNum(row['Avg. daily creators posted content']),
+                    avg_daily_videos_with_sales: parseNum(row['Avg. daily videos with sales']),
+                    avg_daily_lives_with_sales: parseNum(row['Avg. daily LIVE streams with sales']),
+                    videos: parseInt(row['Videos']) || 0,
+                    live_streams: parseInt(row['LIVE streams']) || 0,
+                    est_commission: parseNum(row['Est. commission']),
+                    samples_shipped: parseInt(row['Samples shipped']) || 0,
+                    est_flat_fee: parseNum(row['Est. flat fee'])
+                };
+            }).filter(r => r && r.product_id);
+
+            if (records.length === 0) {
+                throw new Error('No valid product records found. Check that "Product ID" column exists and has valid IDs.');
+            }
+
+            await batchUpsert('product_performance', records, 'product_id,brand,report_date');
+            const totalGmv = records.reduce((sum, r) => sum + (r.gmv || 0), 0);
+            log(`  → ${records.length} products, $${totalGmv.toLocaleString()} GMV`, 'success');
+        }
+
+        async function uploadProductData(data, fileObj) {
+            // Legacy product list support
+            const rawData = await readExcelFileRaw(fileObj.file);
+            let headerRowIdx = -1;
+            for (let i = 0; i < Math.min(10, rawData.length); i++) {
+                const row = rawData[i];
+                const hasIdCol = row.some(c => c && (c.toString() === 'ID' || c.toString().toLowerCase().includes('product id')));
+                const hasProductCol = row.some(c => c && (c.toString() === 'Product' || c.toString().toLowerCase().includes('product name')));
+                if (hasIdCol && hasProductCol) {
+                    headerRowIdx = i;
+                    break;
+                }
+            }
+            if (headerRowIdx === -1) headerRowIdx = 0;
+
+            const dataRows = rawData.slice(headerRowIdx + 1).filter(row => {
+                const id = row[0];
+                return id && !isNaN(id) && id.toString().length > 5;
+            });
+
+            const records = dataRows.map(row => ({
+                report_date: fileObj.reportDate,
+                period_type: 'daily',
+                brand: fileObj.brand,
+                product_id: String(row[0] || '').trim(),
+                product_name: sanitizeText(row[1] || '').substring(0, 500),
+                status: row[2] || '',
+                gmv: parseNum(row[3]),
+                items_sold: parseInt(row[4]) || 0,
+                orders: parseInt(row[5]) || 0
+            })).filter(r => r.product_id);
+
+            await batchUpsert('product_performance', records, 'product_id,brand,report_date');
+            log(`  → ${records.length} products (legacy format)`, 'info');
+        }
+
+        async function batchUpsert(table, records, conflictColumns) {
+            if (!records || records.length === 0) {
+                log(`  → No records to upload`, 'warning');
+                return;
+            }
+            
+            const batchSize = 500;
+            for (let i = 0; i < records.length; i += batchSize) {
+                const batch = records.slice(i, i + batchSize);
+                const { error } = await supabaseClient.from(table).upsert(batch, { onConflict: conflictColumns });
+                if (error) {
+                    console.error('Supabase upsert error:', error);
+                    console.error('Sample record:', batch[0]);
+                    throw new Error(`Database error: ${error.message || error.code || 'Unknown error'}`);
+                }
+            }
+        }
+
+        // ==================== UPLOAD HISTORY ====================
+        async function loadUploadHistory() {
+            const list = document.getElementById('historyList');
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('activity_log')
+                    .select('*')
+                    .eq('activity_type', 'upload')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<div class="history-empty">No recent uploads</div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(item => {
+                    const date = new Date(item.created_at);
+                    const timeStr = formatRelativeTime(date);
+                    const details = item.details || {};
+                    
+                    return `
+                        <div class="history-item">
+                            <div class="history-item-left">
+                                <div class="history-item-icon">✓</div>
+                                <div class="history-item-info">
+                                    <div class="history-item-title">${item.user_name || 'Unknown'} uploaded ${details.fileName || 'file'}</div>
+                                    <div class="history-item-meta">${BRAND_DISPLAY[item.brand] || item.brand} • ${details.rowCount?.toLocaleString() || '?'} records</div>
+                                </div>
+                            </div>
+                            <div class="history-item-time">${timeStr}</div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error('Error loading history:', err);
+                list.innerHTML = '<div class="history-empty">Error loading history</div>';
+            }
+        }
+
+        function formatRelativeTime(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        async function logUploadActivity(fileObj) {
+            try {
+                await supabaseClient.from('activity_log').insert({
+                    activity_type: 'upload',
+                    description: `Uploaded ${fileObj.name} (${fileObj.rowCount || 0} records)`,
+                    brand: fileObj.brand,
+                    details: { fileName: fileObj.name, fileType: fileObj.type, rowCount: fileObj.rowCount, reportDate: fileObj.reportDate },
+                    user_name: currentUser
+                });
+            } catch (err) {
+                console.warn('Failed to log activity:', err);
+            }
+        }
+
+        // ==================== LOGGING ====================
+        function log(message, type = 'info') {
+            const section = document.getElementById('logSection');
+            const line = document.createElement('div');
+            line.className = `log-line ${type}`;
+            line.textContent = message;
+            section.appendChild(line);
+            section.scrollTop = section.scrollHeight;
+        }
+
+        // ==================== ROSTER ====================
+        const rosterUploadZone = document.getElementById('rosterUploadZone');
+        const rosterFileInput = document.getElementById('rosterFileInput');
+        let rosterFile = null;
+
+        rosterUploadZone.addEventListener('click', () => rosterFileInput.click());
+        rosterUploadZone.addEventListener('dragover', (e) => { e.preventDefault(); rosterUploadZone.classList.add('dragging'); });
+        rosterUploadZone.addEventListener('dragleave', () => rosterUploadZone.classList.remove('dragging'));
+        rosterUploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            rosterUploadZone.classList.remove('dragging');
+            handleRosterFile(e.dataTransfer.files[0]);
+        });
+        rosterFileInput.addEventListener('change', (e) => handleRosterFile(e.target.files[0]));
+
+        function handleRosterFile(file) {
+            if (!file) return;
+            rosterFile = file;
+            document.getElementById('rosterFileName').textContent = file.name;
+            document.getElementById('rosterFileInfo').style.display = 'block';
+            document.getElementById('rosterUploadBtn').disabled = false;
+        }
+
+        function clearRoster() {
+            rosterFile = null;
+            document.getElementById('rosterFileInfo').style.display = 'none';
+            document.getElementById('rosterUploadBtn').disabled = true;
+            rosterFileInput.value = '';
+        }
+
+        async function uploadRoster() {
+            if (!rosterFile) return;
+
+            const logSection = document.getElementById('rosterLogSection');
+            logSection.innerHTML = '';
+            logSection.classList.add('active');
+            document.getElementById('rosterUploadBtn').disabled = true;
+            document.getElementById('rosterStatus').textContent = '⟳ Uploading...';
+            document.getElementById('rosterStatus').className = 'file-item-status uploading';
+
+            try {
+                const data = await readExcelFile(rosterFile);
+                logSection.innerHTML += `<div class="log-line info">Found ${data.length} creators</div>`;
+
+                function normalizeBrand(val) {
+                    if (!val) return 'unknown';
+                    const key = String(val).toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+                    return BRAND_MAP[key] || BRAND_MAP[String(val).toLowerCase().trim()] || 'unknown';
+                }
+
+                const records = data.map(row => ({
+                    real_name: String(row['Real Name'] || '').trim(),
+                    discord_name: String(row['Discord Name'] || '').trim(),
+                    brand: normalizeBrand(row['Brand']),
+                    role: String(row['Role'] || '').trim(),
+                    retainer: parseNum(row['Retainer']),
+                    account_1: String(row['Account 1'] || '').trim().toLowerCase() || null,
+                    account_2: String(row['Account 2'] || '').trim().toLowerCase() || null,
+                    account_3: String(row['Account 3'] || '').trim().toLowerCase() || null,
+                    account_4: String(row['Account 4'] || '').trim().toLowerCase() || null,
+                    account_5: String(row['Account 5'] || '').trim().toLowerCase() || null
+                })).filter(r => r.real_name || r.discord_name || r.account_1);
+
+                logSection.innerHTML += `<div class="log-line info">Clearing existing roster...</div>`;
+                await supabaseClient.from('managed_creators').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+
+                logSection.innerHTML += `<div class="log-line info">Inserting new roster...</div>`;
+                const batchSize = 100;
+                let inserted = 0;
+                for (let i = 0; i < records.length; i += batchSize) {
+                    const batch = records.slice(i, i + batchSize);
+                    const { error } = await supabaseClient.from('managed_creators').insert(batch);
+                    if (!error) inserted += batch.length;
+                }
+
+                logSection.innerHTML += `<div class="log-line success">✓ Imported ${inserted} creators</div>`;
+                document.getElementById('rosterStatus').textContent = '✓ Done';
+                document.getElementById('rosterStatus').className = 'file-item-status done';
+
+            } catch (err) {
+                console.error('Roster upload error:', err);
+                logSection.innerHTML += `<div class="log-line error">✗ Error: ${err.message}</div>`;
+                document.getElementById('rosterStatus').textContent = '✗ Error';
+                document.getElementById('rosterStatus').className = 'file-item-status error';
+            }
+        }
     </script>
 </body>
 </html>
