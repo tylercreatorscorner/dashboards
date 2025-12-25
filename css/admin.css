@@ -5331,12 +5331,12 @@
         }
         .ops-list-header {
             display: grid;
-            grid-template-columns: minmax(200px, 2fr) 90px 70px 90px 70px 90px 130px;
-            gap: 16px;
-            padding: 14px 20px;
+            grid-template-columns: minmax(180px, 1.5fr) 80px 60px 80px 60px 80px 110px;
+            gap: 8px;
+            padding: 12px 16px;
             background: var(--bg-card);
             border-bottom: 2px solid var(--border);
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -5357,17 +5357,17 @@
             justify-content: flex-end;
         }
         .ops-list-body {
-            max-height: 500px;
+            max-height: 450px;
             overflow-y: auto;
         }
         .ops-list-row {
             display: grid;
-            grid-template-columns: minmax(200px, 2fr) 90px 70px 90px 70px 90px 130px;
-            gap: 16px;
-            padding: 12px 20px;
+            grid-template-columns: minmax(180px, 1.5fr) 80px 60px 80px 60px 80px 110px;
+            gap: 8px;
+            padding: 10px 16px;
             border-bottom: 1px solid var(--border);
             align-items: center;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             transition: all 0.15s ease;
         }
         .ops-list-row:hover {
@@ -5388,12 +5388,12 @@
         .ops-list-creator {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             min-width: 0;
         }
         .ops-list-avatar {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--accent-dim) 0%, var(--bg-card) 100%);
             border: 2px solid var(--border);
@@ -5402,7 +5402,7 @@
             justify-content: center;
             font-weight: 700;
             color: var(--accent);
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             flex-shrink: 0;
         }
         .ops-list-info {
@@ -5411,17 +5411,18 @@
         }
         .ops-list-name {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
         .ops-list-meta {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
+            gap: 4px;
+            font-size: 0.65rem;
+            flex-wrap: wrap;
         }
         .ops-list-handle {
             color: var(--blue);
@@ -5435,7 +5436,7 @@
         .ops-list-retainer {
             font-weight: 600;
             color: var(--accent);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         .ops-list-retainer.none {
             color: var(--text-muted);
@@ -5450,7 +5451,7 @@
         }
         .ops-list-posts-num {
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             line-height: 1;
         }
         .ops-list-posts-num.ghost { color: var(--text-muted); }
@@ -5462,7 +5463,7 @@
         .ops-list-gmv {
             font-weight: 600;
             color: var(--success);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-align: right;
         }
         .ops-list-gmv.zero {
@@ -5471,7 +5472,7 @@
         
         .ops-list-roi {
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-align: center;
         }
         .ops-list-roi.excellent { color: var(--purple); }
@@ -5481,13 +5482,13 @@
         .ops-list-roi.na { color: var(--text-muted); font-weight: 400; }
         
         .ops-list-contact {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 500;
         }
         .ops-list-contact.today { 
             color: var(--success); 
             background: var(--success-dim);
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
         }
         .ops-list-contact.recent { color: var(--success); }
@@ -5497,13 +5498,13 @@
         
         .ops-list-actions {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             justify-content: flex-end;
         }
         .ops-list-actions .btn {
-            padding: 6px 10px;
-            font-size: 0.75rem;
-            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 0.7rem;
+            border-radius: 5px;
             border: 1px solid var(--border);
             background: var(--bg-card);
             cursor: pointer;
@@ -5527,12 +5528,12 @@
         /* Mini Bar Chart - Polished */
         .ops-mini-chart {
             display: flex;
-            gap: 2px;
+            gap: 1px;
             align-items: flex-end;
-            height: 16px;
+            height: 14px;
         }
         .ops-mini-bar {
-            width: 6px;
+            width: 5px;
             min-height: 2px;
             border-radius: 1px;
             background: var(--border);
