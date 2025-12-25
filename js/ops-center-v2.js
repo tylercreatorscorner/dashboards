@@ -92,7 +92,7 @@ function switchOpsView(view) {
     renderPostingCards(); // Re-render with new view
 }
 
-// ==================== LIST VIEW RENDERING ====================
+// ==================== LIST VIEW RENDERING - POLISHED ====================
 function renderPostingListView(sectionName, creators, accentColor) {
     const container = document.getElementById(`posting${sectionName}Grid`);
     if (!container) return;
@@ -117,50 +117,68 @@ function renderPostingListView(sectionName, creators, accentColor) {
             <div class="ops-list-header">
                 <div>Creator</div>
                 <div>Retainer</div>
-                <div style="text-align: center;">Posts</div>
-                <div style="text-align: right;">GMV</div>
-                <div style="text-align: center;">ROI</div>
+                <div style="justify-content: center;">Posts</div>
+                <div style="justify-content: flex-end;">GMV</div>
+                <div style="justify-content: center;">ROI</div>
                 <div>Last Contact</div>
-                <div>Actions</div>
+                <div style="justify-content: flex-end;">Actions</div>
             </div>
-            ${visibleCreators.map(c => renderListRow(c, statusClass)).join('')}
-            ${hasMore ? `
-                <div class="ops-pagination">
-                    <span class="ops-page-info">Showing ${visibleCreators.length} of ${creators.length}</span>
+            <div class="ops-list-body">
+                ${visibleCreators.map(c => renderListRowPolished(c, statusClass)).join('')}
+            </div>
+            <div class="ops-pagination">
+                <span class="ops-page-info">Showing ${visibleCreators.length} of ${creators.length}</span>
+                ${hasMore ? `
                     <button class="ops-load-more" onclick="loadMorePosting('${sectionName.toLowerCase()}')">
                         Load More (${Math.min(pageSize, creators.length - endIdx)} more)
                     </button>
-                </div>
-            ` : `
-                <div class="ops-pagination">
-                    <span class="ops-page-info">Showing all ${creators.length} creators</span>
-                </div>
-            `}
+                ` : ''}
+            </div>
         </div>
     `;
 }
 
-function renderListRow(c, statusClass) {
+function renderListRowPolished(c, statusClass) {
     // Recently contacted check
     const today = new Date().toISOString().split('T')[0];
     const isContactedToday = c.lastContact === today;
     const contactedClass = isContactedToday ? 'contacted' : '';
     
-    // ROI color
+    // Retainer display
+    const retainerDisplay = c.isRetainer && c.retainer > 0 
+        ? `<span class="ops-list-retainer">${fmtMoney(c.retainer)}</span>`
+        : `<span class="ops-list-retainer none">—</span>`;
+    
+    // ROI calculation and styling
     const roi = c.roi || 0;
-    const roiClass = roi >= 3 ? 'good' : roi >= 1 ? 'ok' : 'bad';
-    const roiDisplay = c.isRetainer && c.retainer > 0 ? `${roi.toFixed(1)}x` : '-';
+    let roiClass = 'na';
+    let roiDisplay = '—';
+    if (c.isRetainer && c.retainer > 0) {
+        if (roi >= 5) roiClass = 'excellent';
+        else if (roi >= 2) roiClass = 'good';
+        else if (roi >= 1) roiClass = 'ok';
+        else roiClass = 'bad';
+        roiDisplay = `${roi.toFixed(1)}x`;
+    }
+    
+    // GMV display
+    const gmv = c.gmv || 0;
+    const gmvClass = gmv === 0 ? 'zero' : '';
     
     // Contact display
-    let contactDisplay = '<span class="never">Never</span>';
+    let contactDisplay = 'Never';
     let contactClass = 'never';
     if (c.lastContact) {
-        const daysSince = Math.floor((new Date() - new Date(c.lastContact)) / (1000 * 60 * 60 * 24));
+        const contactDate = new Date(c.lastContact);
+        const daysSince = Math.floor((new Date() - contactDate) / (1000 * 60 * 60 * 24));
         if (daysSince === 0) {
             contactDisplay = 'Today';
-            contactClass = 'recent';
+            contactClass = 'today';
         } else if (daysSince === 1) {
             contactDisplay = 'Yesterday';
+            contactClass = 'recent';
+        } else if (daysSince <= 3) {
+            contactDisplay = `${daysSince}d ago`;
             contactClass = 'recent';
         } else if (daysSince <= 7) {
             contactDisplay = `${daysSince}d ago`;
@@ -171,51 +189,60 @@ function renderListRow(c, statusClass) {
         }
     }
     
-    // Mini bar chart
-    const miniChart = renderMiniChart(c.dailyPosts);
+    // Brand badge
+    const brandColors = {
+        'physicians_choice': '#22c55e',
+        'catakor': '#f59e0b', 
+        'jiyu': '#3b82f6',
+        'peach_slices': '#ec4899',
+        'yerba_magic': '#8b5cf6'
+    };
+    const brandColor = brandColors[c.brand] || 'var(--accent)';
+    const brandDisplay = BRAND_DISPLAY[c.brand] || c.brand;
+    
+    // Fiber badge
+    const isPCFiber = c.brand === 'physicians_choice' && c.productRetainers && c.productRetainers['pc_fiber'] > 0;
+    const fiberBadge = isPCFiber ? `<span class="ops-badge ops-badge-fiber">FIBER</span>` : '';
     
     // Discord button
     const discordBtn = c.discordChannelId 
-        ? `<button onclick="openDiscordChannel('${c.brand}', '${c.discordChannelId}')" class="btn btn-sm" style="background: #5865F2; color: white; padding: 4px 8px;">💬</button>`
+        ? `<button onclick="openDiscordChannel('${c.brand}', '${c.discordChannelId}')" class="btn btn-discord" title="Open Discord">💬</button>`
         : '';
     
+    // Mini chart
+    const miniChart = renderMiniChartPolished(c.dailyPosts);
+    
     return `
-        <div class="ops-list-row ${contactedClass}">
+        <div class="ops-list-row ${contactedClass}" data-status="${statusClass}">
             <div class="ops-list-creator">
                 <div class="ops-list-avatar">${(c.name || '?')[0].toUpperCase()}</div>
                 <div class="ops-list-info">
                     <div class="ops-list-name">${sanitize(c.name)}</div>
-                    <div class="ops-list-handle">
-                        <a href="https://tiktok.com/@${c.handle}" target="_blank">@${c.handle}</a>
-                        <span class="ops-badge ops-badge-brand" style="margin-left: 4px;">${BRAND_DISPLAY[c.brand] || c.brand}</span>
-                        ${c.isRetainer && c.productRetainers?.['pc_fiber'] > 0 ? '<span class="ops-badge ops-badge-fiber" style="margin-left: 2px;">FIBER</span>' : ''}
+                    <div class="ops-list-meta">
+                        <a href="https://tiktok.com/@${c.handle}" target="_blank" class="ops-list-handle">@${c.handle}</a>
+                        <span class="ops-badge" style="background: ${brandColor}20; color: ${brandColor}; font-size: 0.6rem;">${brandDisplay}</span>
+                        ${fiberBadge}
                     </div>
                 </div>
             </div>
-            <div>${c.isRetainer ? fmtMoney(c.retainer) : '<span style="color: var(--text-muted);">-</span>'}</div>
-            <div style="text-align: center;">
-                <span class="ops-list-posts ${statusClass}">${c.posts7d || 0}</span>
+            <div>${retainerDisplay}</div>
+            <div class="ops-list-posts">
+                <span class="ops-list-posts-num ${statusClass}">${c.posts7d || 0}</span>
                 ${miniChart}
             </div>
-            <div class="ops-list-gmv" style="text-align: right;">${fmtMoney(c.gmv)}</div>
-            <div class="ops-list-roi ${roiClass}" style="text-align: center;">${roiDisplay}</div>
+            <div class="ops-list-gmv ${gmvClass}">${fmtMoney(gmv)}</div>
+            <div class="ops-list-roi ${roiClass}">${roiDisplay}</div>
             <div class="ops-list-contact ${contactClass}">${contactDisplay}</div>
             <div class="ops-list-actions">
-                <button onclick="quickMarkContacted('${c.handle?.toLowerCase()}', '${c.brand}')" class="btn btn-sm" style="background: #22c55e; color: white;" title="Quick contact">✓</button>
-                <button onclick="markContacted('${c.handle?.toLowerCase()}|${c.brand}')" class="btn btn-sm" title="Log details">📝</button>
+                <button onclick="quickMarkContacted('${c.handle?.toLowerCase()}', '${c.brand}')" class="btn btn-success" title="Mark contacted">✓</button>
+                <button onclick="markContacted('${c.handle?.toLowerCase()}|${c.brand}')" class="btn" title="Log details">📝</button>
                 ${discordBtn}
             </div>
         </div>
     `;
 }
 
-function renderMiniChart(dailyPosts) {
-    if (!dailyPosts || Object.keys(dailyPosts).length === 0) {
-        return '<div class="ops-mini-chart" style="margin-top: 4px;">' + 
-               Array(7).fill('<div class="ops-mini-bar" style="height: 2px;"></div>').join('') + 
-               '</div>';
-    }
-    
+function renderMiniChartPolished(dailyPosts) {
     // Get last 7 days
     const dates = [];
     for (let i = 7; i >= 1; i--) {
@@ -224,16 +251,21 @@ function renderMiniChart(dailyPosts) {
         dates.push(d.toISOString().split('T')[0]);
     }
     
+    if (!dailyPosts || Object.keys(dailyPosts).length === 0) {
+        const emptyBars = dates.map(() => `<div class="ops-mini-bar" style="height: 2px;"></div>`).join('');
+        return `<div class="ops-mini-chart">${emptyBars}</div>`;
+    }
+    
     const maxVal = Math.max(...Object.values(dailyPosts), 1);
     
     const bars = dates.map(date => {
         const count = dailyPosts[date] || 0;
-        const height = count > 0 ? Math.max(3, (count / maxVal) * 16) : 2;
+        const height = count > 0 ? Math.max(3, Math.round((count / maxVal) * 14)) : 2;
         const barClass = count >= 5 ? 'burst' : count > 0 ? 'active' : '';
-        return `<div class="ops-mini-bar ${barClass}" style="height: ${height}px;" title="${date}: ${count}"></div>`;
+        return `<div class="ops-mini-bar ${barClass}" style="height: ${height}px;" title="${date}: ${count} posts"></div>`;
     }).join('');
     
-    return `<div class="ops-mini-chart" style="margin-top: 4px;">${bars}</div>`;
+    return `<div class="ops-mini-chart">${bars}</div>`;
 }
 
 // ==================== CARD VIEW WITH PAGINATION ====================
