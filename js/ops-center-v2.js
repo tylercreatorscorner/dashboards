@@ -97,6 +97,10 @@ function renderPostingListView(sectionName, creators, accentColor) {
     const container = document.getElementById(`posting${sectionName}Grid`);
     if (!container) return;
     
+    // Override parent grid styles for list view
+    container.style.display = 'block';
+    container.style.gridTemplateColumns = 'none';
+    
     // Get paginated subset
     const page = OpsViewState.currentPage[sectionName.toLowerCase()] || 1;
     const pageSize = OpsViewState.pageSize;
@@ -117,11 +121,11 @@ function renderPostingListView(sectionName, creators, accentColor) {
             <div class="ops-list-header">
                 <div>Creator</div>
                 <div>Retainer</div>
-                <div style="justify-content: center;">Posts</div>
-                <div style="justify-content: flex-end;">GMV</div>
-                <div style="justify-content: center;">ROI</div>
-                <div>Last Contact</div>
-                <div style="justify-content: flex-end;">Actions</div>
+                <div>Posts</div>
+                <div>GMV</div>
+                <div>ROI</div>
+                <div>Contact</div>
+                <div>Actions</div>
             </div>
             <div class="ops-list-body">
                 ${visibleCreators.map(c => renderListRowPolished(c, statusClass)).join('')}
@@ -272,6 +276,10 @@ function renderMiniChartPolished(dailyPosts) {
 function renderPostingCardView(sectionName, creators, accentColor) {
     const container = document.getElementById(`posting${sectionName}Grid`);
     if (!container) return;
+    
+    // Restore card grid styles
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
     
     // Get paginated subset
     const page = OpsViewState.currentPage[sectionName.toLowerCase()] || 1;
