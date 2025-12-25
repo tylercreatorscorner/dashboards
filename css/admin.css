@@ -5322,21 +5322,22 @@
             border-right: 1px solid var(--border);
         }
         
-        /* List View Styles - Polished */
+        /* List View Styles - Desktop Optimized */
         .ops-list-container {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
+            width: 100%;
         }
         .ops-list-header {
             display: grid;
-            grid-template-columns: minmax(180px, 1.5fr) 80px 60px 80px 60px 80px 110px;
-            gap: 8px;
-            padding: 12px 16px;
+            grid-template-columns: 2fr 100px 80px 100px 80px 100px 140px;
+            gap: 12px;
+            padding: 12px 20px;
             background: var(--bg-card);
             border-bottom: 2px solid var(--border);
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -5349,25 +5350,28 @@
             display: flex;
             align-items: center;
         }
-        .ops-list-header > div:nth-child(3),
-        .ops-list-header > div:nth-child(5) {
+        .ops-list-header > div:nth-child(3) {
             justify-content: center;
         }
-        .ops-list-header > div:nth-child(4) {
+        .ops-list-header > div:nth-child(4),
+        .ops-list-header > div:nth-child(5) {
+            justify-content: flex-end;
+        }
+        .ops-list-header > div:nth-child(7) {
             justify-content: flex-end;
         }
         .ops-list-body {
-            max-height: 450px;
+            max-height: 500px;
             overflow-y: auto;
         }
         .ops-list-row {
             display: grid;
-            grid-template-columns: minmax(180px, 1.5fr) 80px 60px 80px 60px 80px 110px;
-            gap: 8px;
-            padding: 10px 16px;
+            grid-template-columns: 2fr 100px 80px 100px 80px 100px 140px;
+            gap: 12px;
+            padding: 12px 20px;
             border-bottom: 1px solid var(--border);
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             transition: all 0.15s ease;
         }
         .ops-list-row:hover {
@@ -5388,12 +5392,12 @@
         .ops-list-creator {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             min-width: 0;
         }
         .ops-list-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--accent-dim) 0%, var(--bg-card) 100%);
             border: 2px solid var(--border);
@@ -5402,7 +5406,7 @@
             justify-content: center;
             font-weight: 700;
             color: var(--accent);
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             flex-shrink: 0;
         }
         .ops-list-info {
@@ -5411,17 +5415,17 @@
         }
         .ops-list-name {
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 1px;
+            margin-bottom: 2px;
         }
         .ops-list-meta {
             display: flex;
             align-items: center;
-            gap: 4px;
-            font-size: 0.65rem;
+            gap: 6px;
+            font-size: 0.7rem;
             flex-wrap: wrap;
         }
         .ops-list-handle {
@@ -5436,7 +5440,7 @@
         .ops-list-retainer {
             font-weight: 600;
             color: var(--accent);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
         .ops-list-retainer.none {
             color: var(--text-muted);
@@ -5447,7 +5451,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 3px;
         }
         .ops-list-posts-num {
             font-weight: 800;
@@ -5463,7 +5467,7 @@
         .ops-list-gmv {
             font-weight: 600;
             color: var(--success);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             text-align: right;
         }
         .ops-list-gmv.zero {
@@ -5472,8 +5476,8 @@
         
         .ops-list-roi {
             font-weight: 700;
-            font-size: 0.8rem;
-            text-align: center;
+            font-size: 0.85rem;
+            text-align: right;
         }
         .ops-list-roi.excellent { color: var(--purple); }
         .ops-list-roi.good { color: var(--success); }
@@ -5482,14 +5486,16 @@
         .ops-list-roi.na { color: var(--text-muted); font-weight: 400; }
         
         .ops-list-contact {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 500;
+            text-align: right;
         }
         .ops-list-contact.today { 
             color: var(--success); 
             background: var(--success-dim);
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
+            display: inline-block;
         }
         .ops-list-contact.recent { color: var(--success); }
         .ops-list-contact.stale { color: var(--warning); }
@@ -5498,13 +5504,13 @@
         
         .ops-list-actions {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             justify-content: flex-end;
         }
         .ops-list-actions .btn {
-            padding: 5px 8px;
-            font-size: 0.7rem;
-            border-radius: 5px;
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            border-radius: 6px;
             border: 1px solid var(--border);
             background: var(--bg-card);
             cursor: pointer;
@@ -5528,7 +5534,7 @@
         /* Mini Bar Chart - Polished */
         .ops-mini-chart {
             display: flex;
-            gap: 1px;
+            gap: 2px;
             align-items: flex-end;
             height: 14px;
         }
